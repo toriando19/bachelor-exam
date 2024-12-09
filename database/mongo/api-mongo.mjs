@@ -1,9 +1,10 @@
-import { connectToMongoDB } from './connect-mongo.mjs';
+// api.mjs
+import { connectToMongoDB } from './connect-mongo.mjs'; // Import the connectToMongoDB function
 
 // Function to fetch documents from the 'test' collection
-async function fetchDocuments() {
+export async function fetchDocuments() {
   try {
-    // Get the database and collection connection from dbConnection
+    // Get the database and collection connection from connectToMongoDB
     const { collection, client } = await connectToMongoDB();
 
     // Fetch all documents from the collection
@@ -20,5 +21,5 @@ async function fetchDocuments() {
   }
 }
 
-// Call the fetch function (or use it in an API route if needed)
+// Call the fetch function (this can be triggered by an API endpoint or another part of the app)
 fetchDocuments();

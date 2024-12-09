@@ -1,6 +1,7 @@
 import path from 'path';
 import express from 'express';
 import { fetchAllUsers } from '../database/postgres/api-postgres.mjs';
+import { fetchDocuments } from '../database/mongo/api-mongo.mjs'; 
 
 const router = express.Router();
 
@@ -14,5 +15,6 @@ router.get('/', (req, res) => {
 
 // API route for fetching all users
 router.use('/users', fetchAllUsers);
+router.use('/logs', fetchDocuments);
 
 export default router;
