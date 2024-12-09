@@ -9,8 +9,7 @@ export async function fetchDocuments() {
 
     // Fetch all documents from the collection
     const documents = await collection.find({}).toArray();
-    console.log('Documents:', documents);
-
+    
     // Close the client connection after query
     await client.close();
 

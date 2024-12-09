@@ -10,4 +10,6 @@ export const fetchAllUsers = async () => {
   }
 };
 
+// Call the fetch function (this can be triggered by an API endpoint or another part of the app)
+fetchAllUsers();
 

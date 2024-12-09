@@ -14,7 +14,7 @@ const postgresDB = new Client({
 export const connectToPGDatabase = async () => {
   try {
     await postgresDB.connect(); 
-    // console.log("Connected to the database successfully!");
+    console.log("Connected successfully to Postgres");
   } catch (err) {
     console.error("Database connection failed:", err.stack);
   }
