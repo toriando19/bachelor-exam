@@ -1,1 +1,1 @@
-alert('Connected to JS');
+// alert('Connected to JS');
