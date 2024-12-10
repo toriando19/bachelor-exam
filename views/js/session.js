@@ -25,16 +25,26 @@ document.querySelector('#loginForm').addEventListener('submit', async function (
             return;
         }
 
-        // Set session data with user details
+        // Fetch user interests data
+        const interestResponse = await fetch('http://localhost:3000/userinterest');
+        if (!interestResponse.ok) {
+            throw new Error('Failed to fetch user interests');
+        }
+
+        const userInterests = await interestResponse.json();
+        
+        // Filter the interests based on the logged-in user_id (make sure to compare numbers)
+        const userInterest = userInterests.filter(interest => parseInt(interest.user_interest_user) === user.user_id);
+
+        // Set session data with user details and user interests (without console log)
         const sessionData = {
             user_id: user.user_id,
             username: user.user_username,
             user_name: user.user_name,
             user_email: user.user_email,
-            user_password: user.user_password // For demonstration only (avoid storing plaintext passwords in production)
+            user_password: user.user_password, // For demonstration only (avoid storing plaintext passwords in production)
+            user_interest: userInterest // Add user interests to the session data
         };
-
-        console.log('Session Data:', sessionData);
 
         // Store session data in sessionStorage
         sessionStorage.setItem('sessionData', JSON.stringify(sessionData));
@@ -102,6 +112,12 @@ window.addEventListener('load', function () {
         // Get session data and display welcome message
         const userData = JSON.parse(sessionData);
         document.querySelector('#welcomeUser').innerHTML = `Welcome, ${userData.user_name}!`;
+
+        // Access the user interests directly from sessionData
+        const userInterests = userData.user_interest;
+        // if (userInterests.length > 0) {
+        //     // You can use the interests here, e.g., display them or store them for later use
+        // }
     } else {
         // If no session data, show only the login form
         document.querySelector('.application').style.display = 'none';
