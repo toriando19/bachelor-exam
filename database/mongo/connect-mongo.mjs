@@ -23,7 +23,7 @@ export async function connectToMongoDB() {
     const db = client.db(dbName);
 
     // Get the collection object ('test' collection)
-    const collection = db.collection('test');
+    const collection = db.collection('chats');
 
     // Return both db and collection objects
     return { db, collection, client };
