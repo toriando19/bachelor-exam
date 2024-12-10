@@ -5,7 +5,7 @@ const { Client } = pkg;
 const postgresDB = new Client({
   user: 'postgres', 
   host: 'localhost',
-  database: 'demo',
+  database: 'bachelor',
   password: 'postgresAdmin4',
   port: 5432,
 });

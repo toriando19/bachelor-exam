@@ -10,11 +10,20 @@ router.use(express.static(path.join(path.resolve(), 'views'))); // Adjust 'publi
 
 // Serve the index.html as the root
 router.get('/', (req, res) => {
+  console.log('Hello');
   res.sendFile(path.resolve('views/index.html')); // Serve from the public folder
 });
 
 // API route for fetching all users
-router.use('/users', fetchAllUsers);
-router.use('/logs', fetchDocuments);
+router.use('/users', async (req,res) => {
+  const data = await fetchAllUsers();
+  res.json(data);
+});
+
+// API route for fetching all logging
+router.use('/logs', async (req,res) => {
+  const data = await fetchDocuments();
+  res.json(data);
+});
 
 export default router;
