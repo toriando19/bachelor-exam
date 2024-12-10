@@ -1,3 +1,7 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Login Function  ////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 document.querySelector('#loginForm').addEventListener('submit', async function (e) {
     e.preventDefault(); // Prevent form submission refresh
 
@@ -32,8 +36,8 @@ document.querySelector('#loginForm').addEventListener('submit', async function (
 
         console.log('Session Data:', sessionData);
 
-        // Store session data in localStorage
-        localStorage.setItem('sessionData', JSON.stringify(sessionData));
+        // Store session data in sessionStorage
+        sessionStorage.setItem('sessionData', JSON.stringify(sessionData));
         alert(`Login successful! Welcome ${user.user_name}`);
 
         // Change display properties
@@ -41,9 +45,64 @@ document.querySelector('#loginForm').addEventListener('submit', async function (
         document.querySelector('.login').style.display = 'none';
 
         // Display a welcome message in the application section
-        document.querySelector('.application').innerHTML = `<h1>Welcome, ${user.user_name}!</h1>`;
+        document.querySelector('#welcomeUser').innerHTML = `Welcome, ${user.user_name}!`;  // Update welcome message
     } catch (error) {
         console.error('Error during login:', error);
         alert('An error occurred. Please try again.');
     }
 });
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Logout Function  ///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+document.querySelector('#logoutBtn').addEventListener('click', function () {
+    const confirmLogout = confirm('You sure you wanna logout?'); // Confirm the logout action
+
+    if (confirmLogout) {
+        // Delete session data from sessionStorage
+        sessionStorage.removeItem('sessionData');
+
+        // Redirect to login screen and hide application section
+        document.querySelector('.application').style.display = 'none';
+        document.querySelector('.login').style.display = 'block';
+
+        alert('You have been logged out.');
+    }
+});
+
+// Prevent unauthorized access to the application section
+window.addEventListener('load', function () {
+    const sessionData = sessionStorage.getItem('sessionData');
+    if (!sessionData) {
+        // If no session data, ensure only the login form is visible
+        document.querySelector('.application').style.display = 'none';
+        document.querySelector('.login').style.display = 'block';
+    }
+});
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Check for Session on Load  ////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+window.addEventListener('load', function () {
+    const sessionData = sessionStorage.getItem('sessionData');
+    if (sessionData) {
+        // If session data exists, show the application and hide the login form
+        document.querySelector('.application').style.display = 'block';
+        document.querySelector('.login').style.display = 'none';
+
+        // Get session data and display welcome message
+        const userData = JSON.parse(sessionData);
+        document.querySelector('#welcomeUser').innerHTML = `Welcome, ${userData.user_name}!`;
+    } else {
+        // If no session data, show only the login form
+        document.querySelector('.application').style.display = 'none';
+        document.querySelector('.login').style.display = 'block';
+    }
+});
+
+
+
