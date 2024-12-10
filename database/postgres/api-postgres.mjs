@@ -20,7 +20,7 @@ export const fetchAllInterests = async () => {
   }
 };
 
-// Fetch all User-Interest
+// Fetch all user-interest
 export const fetchAllUserInterest = async () => {
   try {
     const users = await queryDatabase('SELECT * FROM user_interest');
@@ -30,6 +30,15 @@ export const fetchAllUserInterest = async () => {
   }
 };
 
-// Call the fetch function (this can be triggered by an API endpoint or another part of the app)
-// fetchAllUsers();
+// Fetch all matches
+export const fetchAllMatches = async () => {
+  try {
+    const users = await queryDatabase('SELECT * FROM matches');
+    return users;
+  } catch (err) {
+    throw new Error("Error fetching users: " + err.message);
+  }
+};
+
+
 

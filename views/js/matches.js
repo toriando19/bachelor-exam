@@ -56,10 +56,6 @@ async function displayMatchingUsers() {
             let userInfo = matchingUsers.map(user => {
                 const sharedInterestCount = userInterestCounts[user.user_id];
                 const percentage = Math.round((sharedInterestCount / totalUserInterests) * 100); // Calculate percentage and round it
-
-                // Debugging: Log the sharedInterestCount and percentage
-                console.log(`User: ${user.user_username}, Shared Interests: ${sharedInterestCount}, Percentage: ${percentage}%`);
-
                 return `${user.user_username}: ${percentage}% match`;
             }).join('<br>');
 
