@@ -1,6 +1,6 @@
 import path from 'path';
 import express from 'express';
-import { fetchAllUsers, fetchAllInterests } from '../database/postgres/api-postgres.mjs';
+import { fetchAllUsers, fetchAllInterests, fetchAllUserInterest } from '../database/postgres/api-postgres.mjs';
 import { fetchDocuments } from '../database/mongo/api-mongo.mjs'; 
 
 const router = express.Router();
@@ -23,6 +23,12 @@ router.use('/users', async (req,res) => {
 // API route for fetching all users
 router.use('/interests', async (req,res) => {
   const data = await fetchAllInterests();
+  res.json(data);
+});
+
+// API route for fetching all users
+router.use('/userinterest', async (req,res) => {
+  const data = await fetchAllUserInterest();
   res.json(data);
 });
 
