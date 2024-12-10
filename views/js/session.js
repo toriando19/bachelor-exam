@@ -17,7 +17,6 @@ document.querySelector('#loginForm').addEventListener('submit', async function (
         }
 
         const users = await response.json(); // Assume the data is an array of user objects
-        // Match using the correct keys from the DB
         const user = users.find(u => u.user_email === email && u.user_password === password);
 
         if (!user) {
@@ -36,7 +35,7 @@ document.querySelector('#loginForm').addEventListener('submit', async function (
         // Filter the interests based on the logged-in user_id (make sure to compare numbers)
         const userInterest = userInterests.filter(interest => parseInt(interest.user_interest_user) === user.user_id);
 
-        // Set session data with user details and user interests (without console log)
+        // Set session data with user details and user interests
         const sessionData = {
             user_id: user.user_id,
             username: user.user_username,
@@ -53,17 +52,49 @@ document.querySelector('#loginForm').addEventListener('submit', async function (
         document.querySelector('#email').value = '';
         document.querySelector('#password').value = '';
 
-        // Change display properties
-        document.querySelector('.application').style.display = 'block';
-        document.querySelector('.login').style.display = 'none';
+        // Update the application state and content without reloading the page
+        updateApplicationUI(user, userInterest);
 
-        // Display a welcome message in the application section
-        document.querySelector('#welcomeUser').innerHTML = `Welcome, ${user.user_name}!`;  // Update welcome message
     } catch (error) {
         console.error('Error during login:', error);
         alert('An error occurred. Please try again.');
     }
 });
+
+// Function to update the application UI after login
+function updateApplicationUI(user, userInterest) {
+    // Hide login and show application content
+    document.querySelector('.application').style.display = 'block';
+    document.querySelector('.login').style.display = 'none';
+
+    // Update the welcome message
+    document.querySelector('#welcomeUser').innerHTML = `Welcome, ${user.user_name}!`;
+
+    // Optionally, update user interests
+    updateUserInterests(userInterest);
+}
+
+// Function to update user interests dynamically
+function updateUserInterests(userInterest) {
+    // Assuming you have checkboxes for the user interests
+    const checkboxes = document.querySelectorAll('.user-profile input[type="checkbox"]');
+    
+    checkboxes.forEach(checkbox => {
+        const label = checkbox.nextElementSibling; // Assumes label is next to input
+        const interestName = label.textContent.trim();
+
+        // Check if the interest matches any of the user's interests
+        const interest = userInterest.find(ui => ui.user_interest_interest === checkbox.getAttribute('data-interest-id'));
+
+        if (interest) {
+            checkbox.checked = true; // Mark checkbox as checked if it's one of the user's interests
+        } else {
+            checkbox.checked = false; // Uncheck if it's not in the user's interests
+        }
+    });
+}
+
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
