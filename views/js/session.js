@@ -38,7 +38,10 @@ document.querySelector('#loginForm').addEventListener('submit', async function (
 
         // Store session data in sessionStorage
         sessionStorage.setItem('sessionData', JSON.stringify(sessionData));
-        alert(`Login successful! Welcome ${user.user_name}`);
+
+        // Clear input fields after login
+        document.querySelector('#email').value = '';
+        document.querySelector('#password').value = '';
 
         // Change display properties
         document.querySelector('.application').style.display = 'block';
@@ -68,7 +71,9 @@ document.querySelector('#logoutBtn').addEventListener('click', function () {
         document.querySelector('.application').style.display = 'none';
         document.querySelector('.login').style.display = 'block';
 
-        alert('You have been logged out.');
+        // Clear input fields on logout
+        document.querySelector('#email').value = '';
+        document.querySelector('#password').value = '';
     }
 });
 
@@ -103,6 +108,3 @@ window.addEventListener('load', function () {
         document.querySelector('.login').style.display = 'block';
     }
 });
-
-
-
