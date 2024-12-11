@@ -48,7 +48,7 @@ router.use('/matches', async (req,res) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // API route for fetching all logging
-router.use('/logs', async (req,res) => {
+router.use('/chats', async (req,res) => {
   const data = await fetchDocuments();
   res.json(data);
 });
