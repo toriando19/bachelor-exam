@@ -23,8 +23,8 @@ async function fetchChatDocuments() {
       // Get the list of chats in JSON format
       const chats = await chatResponse.json();
       
-      // Filter chats to get those where chat_user_1 is equal to user_id
-      const filteredChats = chats.filter(chat => chat.chat_user_1 === user_id);
+      // Filter chats to get those where user_id matches either chat_user_1 or chat_user_2
+      const filteredChats = chats.filter(chat => chat.chat_user_1 === user_id || chat.chat_user_2 === user_id);
   
       // Fetch users data
       const userResponse = await fetch('http://localhost:3000/users');
@@ -45,13 +45,14 @@ async function fetchChatDocuments() {
   
       // Loop through each filtered chat and create a <p> tag for its chat details
       filteredChats.forEach(chat => {
-        // Find the user whose user_id matches chat_user_2
-        const matchedUser = users.find(user => user.user_id === chat.chat_user_2);
+        // Find the user whose user_id matches chat_user_1 or chat_user_2 (depending on which is not user_id)
+        const matchedUser = users.find(user => user.user_id === (chat.chat_user_1 === user_id ? chat.chat_user_2 : chat.chat_user_1));
   
-        // If user found, display the chat with the user's username
+        // If user found, display the chat with the user's nickname (if available) or username
         if (matchedUser) {
           const p = document.createElement('p');
-          p.textContent = `Chat with ${matchedUser.user_username} (Chat ID: ${chat._id})`;
+          const displayName = matchedUser.user_nickname || matchedUser.user_username; // If nickname exists, use it; otherwise, use username
+          p.textContent = `Chat with ${displayName}`;
           resultContainer.appendChild(p);
         }
       });
@@ -63,4 +64,3 @@ async function fetchChatDocuments() {
   
   // Call the function to fetch and display chat documents
   fetchChatDocuments();
-  
