@@ -7,17 +7,10 @@ import { connectToMongoDB } from './connect-mongo.mjs'; // Import the connectToM
 // Function to fetch documents from the 'chats' collection
 export async function fetchDocuments() {
   try {
-    // Get the database and collection connection from connectToMongoDB
-    const { chatCollection, client } = await connectToMongoDB('chats'); // Ensure you're targeting the 'chats' collection
-
-    // Fetch all documents from the collection
+    const { chatCollection, client } = await connectToMongoDB('chats');
     const documents = await chatCollection.find({}).toArray();
-    
-    // Close the client connection after query
     await client.close();
-
     return documents;
-
   } catch (error) {
     console.error('Error fetching documents:', error);
   }
@@ -26,33 +19,23 @@ export async function fetchDocuments() {
 // Function to fetch documents from the 'notifications' collection
 export async function fetchNotifications() {
   try {
-    // Get the database and collection connection from connectToMongoDB
-    const { logsCollection, client } = await connectToMongoDB('logs'); // Ensure you're targeting the 'chats' collection
-
-    // Fetch all documents from the collection
+    const { logsCollection, client } = await connectToMongoDB('logs');
     const documents = await logsCollection.find({}).toArray();
-    
-    // Close the client connection after query
     await client.close();
-
     return documents;
-
   } catch (error) {
-    console.error('Error fetching documents:', error);
+    console.error('Error fetching notifications:', error);
   }
 }
-
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Create Chat  ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Create a chat function
+// Function to create a chat and log the activity
 export async function createChat(chat_user_1, chat_user_2) {
   try {
-    // Get the database and collection connection from connectToMongoDB
-    const { chatCollection, client } = await connectToMongoDB('chats'); // Ensure you're inserting into the 'chats' collection
+    const { chatCollection, logsCollection, client } = await connectToMongoDB('chats');
 
     // Generate a unique id for the chat
     const chatId = `chat-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`;
@@ -62,21 +45,35 @@ export async function createChat(chat_user_1, chat_user_2) {
       id: chatId,
       chat_user_1: chat_user_1,
       chat_user_2: chat_user_2,
-      created_at: new Date(), // Current timestamp
+      created_at: new Date(),
     };
 
-    console.log('New chat data:', newChat); // Log the data before inserting
+    console.log('New chat data:', newChat);
 
     // Insert the new chat document into the collection
-    const result = await chatCollection.insertOne(newChat);
-    console.log('Insert result:', result); // Log the result of the insert operation
+    const chatResult = await chatCollection.insertOne(newChat);
+    console.log('Chat Insert Result:', chatResult);
 
-    // Close the client connection after inserting the document
+    // Log the creation as a notification
+    const newChatNotification = {
+      id: `log-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`,
+      event_type: `chats`,
+      user_id: ``,
+      related_user: ``,
+      message: `A new chat has been created between ${chat_user_1} and ${chat_user_2}.`,
+      created_at: new Date(),
+    };
+
+    console.log('New notification data:', newChatNotification);
+
+    // Insert the notification into the logs collection
+    const logResult = await logsCollection.insertOne(newChatNotification);
+    console.log('Log Insert Result:', logResult);
+
+    // Close the client connection after operations
     await client.close();
 
-    // Return the result of the insert operation
-    return result;
-
+    return { chatResult, logResult };
   } catch (error) {
     console.error('Error creating chat:', error);
   }
