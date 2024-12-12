@@ -62,22 +62,41 @@ async function displayMatchingUsers() {
             matchingUsers.forEach(user => {
                 const sharedInterestCount = userInterestCounts[user.user_id];
                 const percentage = Math.round((sharedInterestCount / totalUserInterests) * 100); // Calculate percentage and round it
+
+                // Create a container for each match
+                const matchContainer = document.createElement('div');
+                matchContainer.classList.add('match-container');
+
+                // Add user info and percentage
+                const userInfo = document.createElement('p');
+                userInfo.textContent = `${user.user_username} – ${percentage}%`;
+                matchContainer.appendChild(userInfo);
+
+                // Create a button for viewing user info
+                const viewButton = document.createElement('button');
+                viewButton.textContent = 'View Profile';
                 
-                // Create a button for each user to initiate a new chat
-                const button = document.createElement('button');
-                button.textContent = `Chat with ${user.user_username} (${percentage}% match)`;
+                // Add event listener to display user info when the button is clicked
+                viewButton.onclick = () => {
+                    viewUserInfo(user.user_username);
+                };
+
+                // Create a button for initiating chat
+                const chatButton = document.createElement('button');
+                chatButton.textContent = 'Chat';
                 
                 // Add event listener to create a new chat when the button is clicked
-                button.onclick = () => {
-                    // Show alert with the message before initiating the chat
+                chatButton.onclick = () => {
                     alert(`You're starting a chat with ${user.user_username}`);
-                    // Create the chat with session username and the clicked user's username
                     createChat(currentUserUsername, user.user_username);  // Pass usernames instead of IDs
                 };
 
-                // Append button to the DOM
-                exploreMatches.appendChild(button);
-                exploreMatches.appendChild(document.createElement('br')); // Add a line break
+                // Append buttons to the container
+                matchContainer.appendChild(viewButton);
+                matchContainer.appendChild(chatButton);
+
+                // Append the container to the DOM
+                exploreMatches.appendChild(matchContainer);
             });
         } else {
             exploreMatches.innerHTML = 'No matching users found.';
@@ -119,5 +138,38 @@ async function createChat(chat_user_1, chat_user_2) {
     } catch (error) {
         console.error('Error creating chat:', error);
         alert('Error creating chat');
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// View User Info //////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Function to fetch and display user info in a separate section
+async function viewUserInfo(username) {
+    try {
+        // Fetch all users to find the matching username
+        const usersResponse = await fetch('http://localhost:3000/users');
+        const users = await usersResponse.json();
+
+        // Find the user matching the given username
+        const user = users.find(user => user.user_username === username);
+
+        if (user) {
+            // Display the user's information in a designated section
+            const userInfoSection = document.getElementById('userInfoSection');
+            userInfoSection.innerHTML = `
+                <h3>User Info</h3>
+                <p><strong>Username:</strong> ${user.user_username}</p>
+                <p><strong>Full Name:</strong> ${user.user_name}</p>
+                <p><strong>Email:</strong> ${user.user_email}</p>
+                <p><strong>Bio:</strong> ${user.user_bio}</p>
+            `;
+        } else {
+            alert('User not found.');
+        }
+    } catch (error) {
+        console.error('Error fetching user info:', error);
+        alert('Error fetching user info.');
     }
 }
