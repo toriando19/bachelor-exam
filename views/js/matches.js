@@ -78,7 +78,7 @@ async function displayMatchingUsers() {
                 
                 // Add event listener to display user info when the button is clicked
                 viewButton.onclick = () => {
-                    viewUserInfo(user.user_username);
+                    viewUserInfo(user.user_username, percentage); // Pass username and percentage
                 };
 
                 // Create a button for initiating chat
@@ -108,6 +108,7 @@ async function displayMatchingUsers() {
 
 // Call the function to display matching users when the page loads
 window.onload = displayMatchingUsers;
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Create Chat  ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -146,7 +147,7 @@ async function createChat(chat_user_1, chat_user_2) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Function to fetch and display user info in a separate section
-async function viewUserInfo(username) {
+async function viewUserInfo(username, matchPercentage) {
     try {
         // Fetch all users to find the matching username
         const usersResponse = await fetch('http://localhost:3000/users');
@@ -155,21 +156,51 @@ async function viewUserInfo(username) {
         // Find the user matching the given username
         const user = users.find(user => user.user_username === username);
 
-        if (user) {
-            // Display the user's information in a designated section
-            const userInfoSection = document.getElementById('userInfoSection');
-            userInfoSection.innerHTML = `
-                <h3>User Info</h3>
-                <p><strong>Username:</strong> ${user.user_username}</p>
-                <p><strong>Full Name:</strong> ${user.user_name}</p>
-                <p><strong>Email:</strong> ${user.user_email}</p>
-                <p><strong>Bio:</strong> ${user.user_bio}</p>
-            `;
-        } else {
+        if (!user) {
             alert('User not found.');
+            return;
         }
+
+        const userId = user.user_id; // Get the user_id of the matched user
+
+        // Fetch user interests for the clicked user
+        const userInterestResponse = await fetch('http://localhost:3000/userinterest');
+        const userInterests = await userInterestResponse.json();
+
+        // Filter interests of the clicked user
+        const matchedInterests = userInterests.filter(interest => interest.user_interest_user === userId);
+
+        // Fetch all interests to get the descriptions
+        const interestsResponse = await fetch('http://localhost:3000/interests');
+        const interests = await interestsResponse.json();
+
+        const interestDescriptions = matchedInterests.map(matchedInterest => {
+            const interest = interests.find(i => i.interest_id === matchedInterest.user_interest_interest);
+            return interest ? interest.interest_description : 'Unknown Interest';
+        });
+
+        // Display the user's information and interests in a designated section
+        const userInfoSection = document.getElementById('userInfoSection');
+        if (!userInfoSection) {
+            console.error('User info section element not found.');
+            alert('User info section is missing in the UI.');
+            return;
+        }
+
+        userInfoSection.innerHTML = `
+            <h3>User Info</h3>
+            <p><strong>Username:</strong> ${user.user_username}</p>
+            <p><strong>Percent Match:</strong> ${matchPercentage}%</p> <!-- Reuse passed match percentage -->
+            <p><strong>User Interests:</strong></p>
+            <ul>
+                ${interestDescriptions.map(description => `<li>${description}</li>`).join('')}
+            </ul>
+        `;
     } catch (error) {
         console.error('Error fetching user info:', error);
         alert('Error fetching user info.');
     }
 }
+
+
+
