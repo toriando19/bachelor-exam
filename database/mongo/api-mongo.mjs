@@ -58,9 +58,9 @@ export async function createChat(chat_user_1, chat_user_2) {
     const newChatNotification = {
       id: `log-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`,
       event_type: `chats`,
-      user_id: ``,
-      related_user: ``,
-      message: `A new chat has been created between ${chat_user_1} and ${chat_user_2}.`,
+      user_id: 4,
+      related_user: 6,
+      message: `A new chat has been created between brugerH4p5 and brugerW3l7.`,
       created_at: new Date(),
     };
 
