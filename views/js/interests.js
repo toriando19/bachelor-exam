@@ -13,30 +13,57 @@ window.addEventListener('load', async function () {
             throw new Error('No session data found');
         }
 
-        // Clear previous checked checkboxes
+        // Track initial states of checkboxes to detect changes
+        const initialStates = {};
         const checkboxes = document.querySelectorAll('.user-profile input[type="checkbox"]');
+        
         checkboxes.forEach(checkbox => {
-            checkbox.checked = false; // Reset checked state
+            initialStates[checkbox.id] = checkbox.checked;
         });
 
-        // Fetch user interests from sessionData
-        const userInterestsFromStorage = sessionData.user_interest || [];
+        // Function to update checkboxes based on the session data
+        const updateCheckboxes = () => {
+            checkboxes.forEach(checkbox => {
+                const interestId = checkbox.getAttribute('data-interest-id');
+                const isUserInterested = sessionData.user_interest.some(
+                    userInterest =>
+                        userInterest.user_interest_interest == interestId &&
+                        userInterest.user_interest_user == sessionData.user_id
+                );
+                checkbox.checked = isUserInterested;
+                initialStates[checkbox.id] = checkbox.checked; // update initial state to match the session data
+            });
+        };
 
-        // Pre-check interests based on session data
+        // Initial rendering of checkboxes
+        updateCheckboxes();
+
+        // Create and append the submit button
+        const submitButton = document.createElement('button');
+        submitButton.type = 'submit';
+        submitButton.textContent = 'Submit Changes';
+        submitButton.disabled = true;  // Disable initially
+        const interestForm = document.getElementById('interestForm');
+        interestForm.appendChild(submitButton);
+
+        // Monitor checkbox changes and enable/disable the submit button
         checkboxes.forEach(checkbox => {
-            const interestId = checkbox.getAttribute('data-interest-id');
+            checkbox.addEventListener('change', () => {
+                let changesMade = false;
 
-            const isUserInterested = userInterestsFromStorage.some(
-                userInterest =>
-                    userInterest.user_interest_interest == interestId &&
-                    userInterest.user_interest_user == sessionData.user_id
-            );
+                // Check if any checkbox has changed
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked !== initialStates[checkbox.id]) {
+                        changesMade = true;
+                    }
+                });
 
-            checkbox.checked = isUserInterested;
+                // Enable or disable the submit button based on changes
+                submitButton.disabled = !changesMade;
+            });
         });
 
         // Handle form submission
-        const interestForm = document.getElementById('interestForm');
         interestForm.addEventListener('submit', async function (event) {
             event.preventDefault(); // Prevent default form submission
 
@@ -48,7 +75,7 @@ window.addEventListener('load', async function () {
                 const interestId = checkbox.getAttribute('data-interest-id');
                 const isChecked = checkbox.checked;
 
-                const isCurrentlyInSession = userInterestsFromStorage.some(
+                const isCurrentlyInSession = sessionData.user_interest.some(
                     userInterest =>
                     userInterest.user_interest_interest == interestId &&
                     userInterest.user_interest_user == sessionData.user_id
@@ -86,6 +113,19 @@ window.addEventListener('load', async function () {
             });
 
             sessionStorage.setItem('sessionData', JSON.stringify(sessionData));
+
+            // Update the checkboxes based on the new data
+            updateCheckboxes();
+
+            // Reset initialStates after submission
+            checkboxes.forEach(checkbox => {
+                initialStates[checkbox.id] = checkbox.checked;
+            });
+
+            // Disable the submit button again after submission if no changes
+            submitButton.disabled = true;
+            
+            // Alert the user that changes have been saved
             alert('Changes have been successfully saved!');
         });
 
