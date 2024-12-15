@@ -51,14 +51,14 @@ window.addEventListener('load', async function () {
             checkbox.addEventListener('change', () => {
                 let changesMade = false;
 
-                // Check if any checkbox has changed
+                // Check if any checkbox has changed by comparing current state with initial state
                 checkboxes.forEach(checkbox => {
                     if (checkbox.checked !== initialStates[checkbox.id]) {
                         changesMade = true;
                     }
                 });
 
-                // Enable or disable the submit button based on changes
+                // Enable or disable the submit button based on whether there are changes
                 submitButton.disabled = !changesMade;
             });
         });
