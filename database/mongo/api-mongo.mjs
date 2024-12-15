@@ -5,7 +5,7 @@ import { connectToMongoDB } from './connect-mongo.mjs'; // Import the connectToM
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Function to fetch documents from the 'chats' collection
-export async function fetchDocuments() {
+export async function fetchChats() {
   try {
     const { chatCollection, client } = await connectToMongoDB('chats');
     const documents = await chatCollection.find({}).toArray();
@@ -21,6 +21,18 @@ export async function fetchNotifications() {
   try {
     const { logsCollection, client } = await connectToMongoDB('logs');
     const documents = await logsCollection.find({}).toArray();
+    await client.close();
+    return documents;
+  } catch (error) {
+    console.error('Error fetching notifications:', error);
+  }
+}
+
+// Function to fetch documents from the 'messages' collection
+export async function fetchMessages() {
+  try {
+    const { messagesCollection, client } = await connectToMongoDB('messages');
+    const documents = await messagesCollection.find({}).toArray();
     await client.close();
     return documents;
   } catch (error) {
