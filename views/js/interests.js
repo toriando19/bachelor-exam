@@ -88,6 +88,27 @@ window.addEventListener('load', async function () {
             sessionStorage.setItem('sessionData', JSON.stringify(sessionData));
             alert('Changes have been successfully saved!');
         });
+
+        // Function to add user interest by making a request
+        async function addUserInterest(userId, interestId) {
+            const response = await fetch(`http://localhost:3000/add-userinterest?user_interest_user=${userId}&user_interest_interest=${interestId}`, {
+                method: 'GET'
+            });
+            if (!response.ok) {
+                throw new Error(`Failed to add interest for user ${userId} and interest ${interestId}`);
+            }
+        }
+
+        // Function to remove user interest by making a request
+        async function removeUserInterest(userId, interestId) {
+            const response = await fetch(`http://localhost:3000/remove-userinterest?user_interest_user=${userId}&user_interest_interest=${interestId}`, {
+                method: 'GET'
+            });
+            if (!response.ok) {
+                throw new Error(`Failed to remove interest for user ${userId} and interest ${interestId}`);
+            }
+        }
+
     } catch (error) {
         console.error('Error:', error);
     }
