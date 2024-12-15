@@ -1,158 +1,130 @@
-// Function to show message input field when a user is clicked
-function showMessageInput(chat_id, recipient_id, recipient_name) {
-  // Get the container where the message input will appear
+// Function to show message input field and existing messages when a user is clicked
+async function showMessageInput(chat_id, recipient_id, recipient_name) {
+  // Get the container where the message input and messages will appear
   const inputDiv = document.getElementById('message-input');
+  const messageTimelineDiv = document.getElementById('message-timeline');
+
+  // Clear the message timeline to ensure fresh display
+  messageTimelineDiv.innerHTML = '';
+
+  // Fetch existing messages for the selected chat
+  const messagesResponse = await fetch(`http://localhost:3000/messages`);
+  if (!messagesResponse.ok) {
+    console.error("Failed to fetch messages");
+    return;
+  }
+
+  const messages = await messagesResponse.json();
+
+  // Filter messages to only include those that match the chat_id
+  const filteredMessages = messages.filter(message => message.chat_id === chat_id);
+
+  // Display the filtered messages in a timeline (oldest on top)
+  filteredMessages.sort((a, b) => new Date(a.sent_at) - new Date(b.sent_at));  // Sort by timestamp (ascending)
   
-  // Create an input field and submit button
+  filteredMessages.forEach(message => {
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message');
+    messageElement.innerHTML = `
+      <p><strong>${message.sender_id}</strong> at ${new Date(message.sent_at).toLocaleString()}:</p>
+      <p>${message.message}</p>
+    `;
+    messageTimelineDiv.appendChild(messageElement);
+  });
+
+  // Create an input field and submit button for sending a new message
   inputDiv.innerHTML = `
-      <input type="text" id="userMessage" placeholder="Type your message here" />
-      <button id="submitMessage">Send Message</button>
+    <input type="text" id="userMessage" placeholder="Type your message here" />
+    <button id="submitMessage">Send Message</button>
   `;
 
   // Handle the submit button click
   document.getElementById('submitMessage').addEventListener('click', async () => {
-      const message = document.getElementById('userMessage').value;
-      const sender_id = JSON.parse(sessionStorage.getItem("sessionData")).user_id; // Sender ID from session data
+    const message = document.getElementById('userMessage').value;
+    const sender_id = JSON.parse(sessionStorage.getItem("sessionData")).user_id; // Sender ID from session data
 
-      if (message.trim() !== "") {
-          // Send the message to the backend API
-          await sendMessageToAPI(chat_id, sender_id, recipient_id, message);
-          // Clear input field after sending the message
-          document.getElementById('userMessage').value = '';
-      } else {
-          alert("Message cannot be empty");
-      }
+    if (message.trim() !== "") {
+      // Send the message to the backend API
+      await sendMessageToAPI(chat_id, sender_id, recipient_id, message);
+      // Clear input field after sending the message
+      document.getElementById('userMessage').value = '';
+      
+      // Refresh the messages immediately after sending
+      showMessageInput(chat_id, recipient_id, recipient_name);  // Re-fetch and display messages
+    } else {
+      alert("Message cannot be empty");
+    }
   });
 }
+
 
 // Function to send message to the create-message API
 async function sendMessageToAPI(chat_id, sender_id, recipient_id, message) {
   try {
-      // Make sure to verify if all required values are provided
-      if (!chat_id || !sender_id || !recipient_id || !message) {
-          console.error("Missing data: chat_id, sender_id, recipient_id, or message is undefined.");
-          return;
-      }
+    const response = await fetch('http://localhost:3000/create-message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id,
+        sender_id,
+        recipient_id,
+        message,
+        sent_at: new Date(),
+      }),
+    });
 
-      // Log the message data before sending to the API for debugging purposes
-      console.log("Sending message data:", { chat_id, sender_id, recipient_id, message });
-
-      const response = await fetch('http://localhost:3000/create-message', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-              chat_id: chat_id,        // Chat ID
-              sender_id: sender_id,    // Sender ID
-              recipient_id: recipient_id, // Recipient ID
-              message: message,        // The message content
-              sent_at: new Date(),     // Timestamp of the message
-          }),
-      });
-
-      if (response.ok) {
-          console.log(`Message sent: ${message}`);
-
-          // Log the notification (just for debugging)
-          const logData = {
-              id: `log-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`,
-              event_type: 'message',
-              user_id: sender_id, // Sender ID
-              related_user: recipient_id, // Recipient ID
-              message: `User ${sender_id} sent a message in chat ${chat_id}: "${message}"`, // Message content
-              created_at: new Date(),
-          };
-
-          console.log("New message notification data:", logData);
-
-          // Insert the log (notification) into the logs collection (if needed)
-          const logResponse = await fetch('http://localhost:3000/notifications', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(logData),
-          });
-
-          if (logResponse.ok) {
-              console.log("Log Insert Result:", await logResponse.json());
-          } else {
-              console.error("Failed to insert log");
-          }
-      } else {
-          console.error('Failed to send message:', response.statusText);
-      }
+    if (response.ok) {
+      console.log(`Message sent: ${message}`);
+    } else {
+      console.error('Failed to send message:', response.statusText);
+    }
   } catch (error) {
-      console.error('Error sending message:', error);
+    console.error('Error sending message:', error);
   }
 }
 
 // Function to fetch and display chat information based on the user_id
 async function fetchChatDocuments() {
-    // Retrieve the sessionData from sessionStorage and parse it as an object
-    const sessionData = JSON.parse(sessionStorage.getItem("sessionData"));
+  const sessionData = JSON.parse(sessionStorage.getItem("sessionData"));
+  
+  if (!sessionData || !sessionData.user_id) {
+    console.error('User ID not found in session data');
+    return;
+  }
+
+  const user_id = sessionData.user_id;
+
+  try {
+    const chatResponse = await fetch('http://localhost:3000/chats');
+    if (!chatResponse.ok) throw new Error('Failed to fetch chats');
     
-    // Check if sessionData and user_id exist
-    if (!sessionData || !sessionData.user_id) {
-      console.error('User ID not found in session data');
-      return;
-    }
-  
-    const user_id = sessionData.user_id; // Get the user_id from the sessionData object
-  
-    try {
-      // Fetch chats from the server
-      const chatResponse = await fetch('http://localhost:3000/chats');
+    const chats = await chatResponse.json();
+    const filteredChats = chats.filter(chat => chat.chat_user_1 === user_id || chat.chat_user_2 === user_id);
+
+    const userResponse = await fetch('http://localhost:3000/users');
+    if (!userResponse.ok) throw new Error('Failed to fetch users');
+    
+    const users = await userResponse.json();
+    const resultContainer = document.getElementById('chat-result');
+    resultContainer.innerHTML = '';  // Clear previous results
+
+    filteredChats.forEach(chat => {
+      const matchedUser = users.find(user => user.user_id === (chat.chat_user_1 === user_id ? chat.chat_user_2 : chat.chat_user_1));
       
-      // Check if the response is successful
-      if (!chatResponse.ok) {
-        throw new Error('Failed to fetch chats');
+      if (matchedUser) {
+        const p = document.createElement('p');
+        const displayName = matchedUser.user_nickname || matchedUser.user_username;
+        p.textContent = `Chat with ${displayName}`;
+        
+        // Add event listener to show message input and timeline
+        p.addEventListener('click', () => showMessageInput(chat.id, matchedUser.user_id, displayName));
+        resultContainer.appendChild(p);
       }
-  
-      // Get the list of chats in JSON format
-      const chats = await chatResponse.json();
-      
-      // Filter chats to get those where user_id matches either chat_user_1 or chat_user_2
-      const filteredChats = chats.filter(chat => chat.chat_user_1 === user_id || chat.chat_user_2 === user_id);
-  
-      // Fetch users data
-      const userResponse = await fetch('http://localhost:3000/users');
-      
-      // Check if the response is successful
-      if (!userResponse.ok) {
-        throw new Error('Failed to fetch users');
-      }
-  
-      // Get the list of users in JSON format
-      const users = await userResponse.json();
-  
-      // Get the container where we want to display the results
-      const resultContainer = document.getElementById('chat-result');
-      
-      // Clear any previous results in case this function is called multiple times
-      resultContainer.innerHTML = '';
-  
-      // Loop through each filtered chat and create a <p> tag for its chat details
-      filteredChats.forEach(chat => {
-        // Find the user whose user_id matches chat_user_1 or chat_user_2 (depending on which is not user_id)
-        const matchedUser = users.find(user => user.user_id === (chat.chat_user_1 === user_id ? chat.chat_user_2 : chat.chat_user_1));
-  
-        // If user found, display the chat with the user's nickname (if available) or username
-        if (matchedUser) {
-          const p = document.createElement('p');
-          const displayName = matchedUser.user_nickname || matchedUser.user_username; // If nickname exists, use it; otherwise, use username
-          p.textContent = `Chat with ${displayName}`;
-          
-          // Adding event listener to show message input on click
-          p.addEventListener('click', () => showMessageInput(chat.id, matchedUser.user_id, displayName));
-          resultContainer.appendChild(p);
-        }
-      });
-      
-    } catch (error) {
-      console.error('Error fetching chat documents or users:', error);
-    }
+    });
+    
+  } catch (error) {
+    console.error('Error fetching chat documents or users:', error);
+  }
 }
 
 // Call the function to fetch and display chat documents
