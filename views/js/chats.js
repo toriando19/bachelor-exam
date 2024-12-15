@@ -67,31 +67,6 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
 
 
 
-// Function to send message to the create-message API
-async function sendMessageToAPI(chat_id, sender_id, recipient_id, message) {
-  try {
-    const response = await fetch('http://localhost:3000/create-message', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id,
-        sender_id,
-        recipient_id,
-        message,
-        sent_at: new Date(),
-      }),
-    });
-
-    if (response.ok) {
-      console.log(`Message sent: ${message}`);
-    } else {
-      console.error('Failed to send message:', response.statusText);
-    }
-  } catch (error) {
-    console.error('Error sending message:', error);
-  }
-}
-
 // Function to fetch and display chat information based on the user_id
 async function fetchChatDocuments() {
   const sessionData = JSON.parse(sessionStorage.getItem("sessionData"));
@@ -126,7 +101,21 @@ async function fetchChatDocuments() {
         p.textContent = `Chat with ${displayName}`;
         
         // Add event listener to show message input and timeline
-        p.addEventListener('click', () => showMessageInput(chat.id, matchedUser.user_id, displayName));
+        p.addEventListener('click', async () => {
+          // Check if chat exists for these two users, else create a new one
+          // Update the call to the 'new-chat' route with query parameters
+          const existingChat = await fetch(`http://localhost:3000/new-chat?chat_user_1=${user_id}&chat_user_2=${matchedUser.user_id}`);
+
+          if (!existingChat.ok) {
+            console.error('Failed to create a new chat');
+            return;
+          }
+
+          const chat = await existingChat.json();
+          showMessageInput(chat.id, matchedUser.user_id, displayName);
+
+        });
+
         resultContainer.appendChild(p);
       }
     });
@@ -138,6 +127,8 @@ async function fetchChatDocuments() {
 
 // Call the function to fetch and display chat documents
 fetchChatDocuments();
+
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

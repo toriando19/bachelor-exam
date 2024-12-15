@@ -14,7 +14,10 @@ router.get('/', (req, res) => {
   res.sendFile(path.resolve('views/index.html')); // Serve from the public folder
 });
 
-// Postgres Routes
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Postgres Routes  ///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 router.get('/users', async (req, res) => {
   const data = await fetchAllUsers();
   res.json(data);
@@ -66,16 +69,36 @@ router.get('/matches', async (req, res) => {
   res.json(data);
 });
 
-// Mongo Routes
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Mongo Routes  //////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 router.get('/chats', async (req, res) => {
   const data = await fetchChats();
   res.json(data);
 });
 
 router.get('/new-chat', async (req, res) => {
-  const data = await createChat();
-  res.json(data);
+  // Extract chat_user_1 and chat_user_2 from the query string
+  const { chat_user_1, chat_user_2 } = req.query;
+
+  // Ensure both users are provided
+  if (!chat_user_1 || !chat_user_2) {
+    return res.status(400).json({ error: 'Both chat_user_1 and chat_user_2 are required' });
+  }
+
+  try {
+    // Call the createChat function with the extracted users
+    const data = await createChat(chat_user_1, chat_user_2);
+    res.json(data);  // Return the created chat data as a JSON response
+  } catch (error) {
+    console.error('Error in creating new chat:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
+
 
 router.get('/notifications', async (req, res) => {
   const data = await fetchNotifications();

@@ -66,13 +66,13 @@ export async function createChat(chat_user_1, chat_user_2) {
     const chatResult = await chatCollection.insertOne(newChat);
     console.log('Chat Insert Result:', chatResult);
 
-    // Log the creation as a notification
+    // Log the creation as a notification (You might want to dynamically set user IDs here)
     const newChatNotification = {
       id: `log-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`,
       event_type: `chats`,
-      user_id: 4,
-      related_user: 6,
-      message: `A new chat has been created between brugerH4p5 and brugerW3l7.`,
+      user_id: chat_user_1,  // Assuming user_id of the first user creates the log
+      related_user: chat_user_2,  // Assuming the second user is related
+      message: `A new chat has been created between user ${chat_user_1} and user ${chat_user_2}.`,
       created_at: new Date(),
     };
 
@@ -88,8 +88,10 @@ export async function createChat(chat_user_1, chat_user_2) {
     return { chatResult, logResult };
   } catch (error) {
     console.error('Error creating chat:', error);
+    throw error;  // Ensure the error is thrown for handling in the route
   }
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Create Message  ///////////////////////////////////////////////////////////////////////////////////////////////////
