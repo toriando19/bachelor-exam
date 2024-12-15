@@ -22,58 +22,71 @@ window.addEventListener('load', async function () {
         // Fetch user interests from sessionData
         const userInterestsFromStorage = sessionData.user_interest || [];
 
-        // Loop through each checkbox and assign the interest_id from the fetched data
+        // Pre-check interests based on session data
         checkboxes.forEach(checkbox => {
-            const label = checkbox.nextElementSibling; // Assumes label is right after input
+            const interestId = checkbox.getAttribute('data-interest-id');
 
-            // Find the interest based on the label text
-            const interest = interests.find(interest => interest.interest_name === label.textContent.trim());
-            if (interest) {
-                checkbox.setAttribute('data-interest-id', interest.interest_id);
-            }
-
-            // Check if the user interests contain this interest from sessionData
-            const matchingUserInterest = userInterestsFromStorage.find(
+            const isUserInterested = userInterestsFromStorage.some(
                 userInterest =>
-                    userInterest.user_interest_interest == checkbox.getAttribute('data-interest-id') &&
+                    userInterest.user_interest_interest == interestId &&
                     userInterest.user_interest_user == sessionData.user_id
             );
 
-            // If interest is in session storage, check the checkbox
-            if (matchingUserInterest) {
-                checkbox.checked = true;
-            }
+            checkbox.checked = isUserInterested;
+        });
 
-            // Listen for checkbox state change
-            checkbox.addEventListener('change', function () {
+        // Handle form submission
+        const interestForm = document.getElementById('interestForm');
+        interestForm.addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Prepare data for additions and removals
+            const additions = [];
+            const removals = [];
+
+            checkboxes.forEach(checkbox => {
                 const interestId = checkbox.getAttribute('data-interest-id');
                 const isChecked = checkbox.checked;
 
-                // Update sessionData.user_interest dynamically
-                if (isChecked) {
-                    // Add interest if checkbox is checked and not already in sessionData
-                    const isAlreadyInSession = sessionData.user_interest.some(
-                        userInterest =>
-                            userInterest.user_interest_interest == interestId &&
-                            userInterest.user_interest_user == sessionData.user_id
-                    );
+                const isCurrentlyInSession = userInterestsFromStorage.some(
+                    userInterest =>
+                    userInterest.user_interest_interest == interestId &&
+                    userInterest.user_interest_user == sessionData.user_id
+                );
 
-                    if (!isAlreadyInSession) {
-                        sessionData.user_interest.push({
-                            user_interest_user: sessionData.user_id,
-                            user_interest_interest: interestId
-                        });
-                    }
-                } else {
-                    // Remove interest if checkbox is unchecked
-                    sessionData.user_interest = sessionData.user_interest.filter(
-                        userInterest => userInterest.user_interest_interest != interestId
-                    );
+                if (isChecked && !isCurrentlyInSession) {
+                    additions.push({ userId: sessionData.user_id, interestId });
+                } else if (!isChecked && isCurrentlyInSession) {
+                    removals.push({ userId: sessionData.user_id, interestId });
                 }
-
-                // Update sessionStorage with the modified sessionData
-                sessionStorage.setItem('sessionData', JSON.stringify(sessionData));
             });
+
+            // Execute additions
+            for (const addition of additions) {
+                await addUserInterest(addition.userId, addition.interestId);
+            }
+
+            // Execute removals
+            for (const removal of removals) {
+                await removeUserInterest(removal.userId, removal.interestId);
+            }
+
+            // Update sessionData and sessionStorage
+            additions.forEach(addition => {
+                sessionData.user_interest.push({
+                    user_interest_user: addition.userId,
+                    user_interest_interest: addition.interestId
+                });
+            });
+
+            removals.forEach(removal => {
+                sessionData.user_interest = sessionData.user_interest.filter(
+                    userInterest => userInterest.user_interest_interest != removal.interestId
+                );
+            });
+
+            sessionStorage.setItem('sessionData', JSON.stringify(sessionData));
+            alert('Changes have been successfully saved!');
         });
     } catch (error) {
         console.error('Error:', error);

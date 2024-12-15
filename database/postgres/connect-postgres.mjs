@@ -20,10 +20,10 @@ export const connectToPGDatabase = async () => {
   }
 };
 
-// Function to execute a query
-export const queryDatabase = async (query) => {
+// Function to execute a query with parameters
+export const queryDatabase = async (query, params = []) => {
   try {
-    const result = await postgresDB.query(query);
+    const result = await postgresDB.query(query, params); // Pass parameters here
     return result.rows;
   } catch (err) {
     console.error("Query execution failed:", err.stack);

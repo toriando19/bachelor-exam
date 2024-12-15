@@ -1,7 +1,7 @@
 import path from 'path';
 import express from 'express';
-import { fetchAllUsers, fetchAllInterests, fetchAllUserInterest, fetchAllMatches } from '../database/postgres/api-postgres.mjs';
-import { fetchChats, createChat, fetchNotifications,fetchMessages, createMessage } from '../database/mongo/api-mongo.mjs'; 
+import { fetchAllUsers, fetchAllInterests, fetchAllUserInterest, fetchAllMatches, addUserInterest, removeUserInterest } from '../database/postgres/api-postgres.mjs';
+import { fetchChats, createChat, fetchNotifications, fetchMessages, createMessage } from '../database/mongo/api-mongo.mjs';
 
 const router = express.Router();
 
@@ -14,65 +14,80 @@ router.get('/', (req, res) => {
   res.sendFile(path.resolve('views/index.html')); // Serve from the public folder
 });
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Postgres Routes  ///////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// API route for fetching all users
-router.use('/users', async (req,res) => {
+// Postgres Routes
+router.get('/users', async (req, res) => {
   const data = await fetchAllUsers();
   res.json(data);
 });
 
-// API route for fetching all interests
-router.use('/interests', async (req,res) => {
+router.get('/interests', async (req, res) => {
   const data = await fetchAllInterests();
   res.json(data);
 });
 
-// API route for fetching all user-interests
-router.use('/userinterest', async (req,res) => {
+router.get('/userinterest', async (req, res) => {
   const data = await fetchAllUserInterest();
   res.json(data);
 });
 
+router.get('/add-userinterest', async (req, res) => {
+  try {
+    const {user_interest_user, user_interest_interest} = req.query;
+    if (!user_interest_user || !user_interest_interest) {
+      return res.status(400).json({ error: 'Missing required parameters: user_interest_user or user_interest_interest' });
+    }
+
+    const result = await addUserInterest(user_interest_user, user_interest_interest);
+    res.json({ success: true, result });
+  } catch (error) {
+    console.error('Error adding interest:', error);
+    res.status(500).json({ error: 'Failed to add user interest' });
+  }
+});
+
+router.get('/remove-userinterest', async (req, res) => {
+  try {
+    const { userId, interestId } = req.query;
+    if (!userId || !interestId) {
+      return res.status(400).json({ error: 'Missing required parameters: userId or interestId' });
+    }
+
+    const result = await removeUserInterest(userId, interestId);
+    res.json({ success: true, result });
+  } catch (error) {
+    console.error('Error removing interest:', error);
+    res.status(500).json({ error: 'Failed to remove user interest' });
+  }
+});
+
 // API route for fetching all matches
-router.use('/matches', async (req,res) => {
+router.get('/matches', async (req, res) => {
   const data = await fetchAllMatches();
   res.json(data);
 });
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Mongo Routes  //////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// API route for fetching all logging
-router.use('/chats', async (req,res) => {
+// Mongo Routes
+router.get('/chats', async (req, res) => {
   const data = await fetchChats();
   res.json(data);
 });
 
-// API route for fetching all logging
-router.use('/new-chat', async (req,res) => {
+router.get('/new-chat', async (req, res) => {
   const data = await createChat();
   res.json(data);
 });
 
-// API route for fetching all logging
-router.use('/notifications', async (req,res) => {
+router.get('/notifications', async (req, res) => {
   const data = await fetchNotifications();
   res.json(data);
 });
 
-// API route for fetching all logging
-router.use('/messages', async (req,res) => {
+router.get('/messages', async (req, res) => {
   const data = await fetchMessages();
   res.json(data);
 });
 
-// API route for fetching all logging
-router.use('/create-message', async (req,res) => {
+router.get('/create-message', async (req, res) => {
   const data = await createMessage();
   res.json(data);
 });
