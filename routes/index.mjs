@@ -47,12 +47,12 @@ router.get('/add-userinterest', async (req, res) => {
 
 router.get('/remove-userinterest', async (req, res) => {
   try {
-    const { userId, interestId } = req.query;
-    if (!userId || !interestId) {
-      return res.status(400).json({ error: 'Missing required parameters: userId or interestId' });
+    const { user_interest_user, user_interest_interest } = req.query;
+    if (!user_interest_user || !user_interest_interest) {
+      return res.status(400).json({ error: 'Missing required parameters: user_interest_user or user_interest_interest' });
     }
 
-    const result = await removeUserInterest(userId, interestId);
+    const result = await removeUserInterest(user_interest_user, user_interest_interest);
     res.json({ success: true, result });
   } catch (error) {
     console.error('Error removing interest:', error);
