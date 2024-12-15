@@ -19,14 +19,22 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
   // Filter messages to only include those that match the chat_id
   const filteredMessages = messages.filter(message => message.chat_id === chat_id);
 
+  // Get the user_id from the session
+  const sessionData = JSON.parse(sessionStorage.getItem("sessionData"));
+  const user_id = sessionData.user_id;
+
   // Display the filtered messages in a timeline (oldest on top)
   filteredMessages.sort((a, b) => new Date(a.sent_at) - new Date(b.sent_at));  // Sort by timestamp (ascending)
   
   filteredMessages.forEach(message => {
     const messageElement = document.createElement('div');
     messageElement.classList.add('message');
+    
+    // Check if sender_id matches user_id to display "Me"
+    const senderName = message.sender_id === user_id ? "Me" : message.sender_name;
+
     messageElement.innerHTML = `
-      <p><strong>${message.sender_id}</strong> at ${new Date(message.sent_at).toLocaleString()}:</p>
+      <p><strong>${senderName}</strong> at ${new Date(message.sent_at).toLocaleString()}:</p>
       <p>${message.message}</p>
     `;
     messageTimelineDiv.appendChild(messageElement);
@@ -41,7 +49,7 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
   // Handle the submit button click
   document.getElementById('submitMessage').addEventListener('click', async () => {
     const message = document.getElementById('userMessage').value;
-    const sender_id = JSON.parse(sessionStorage.getItem("sessionData")).user_id; // Sender ID from session data
+    const sender_id = user_id; // Sender ID from session data
 
     if (message.trim() !== "") {
       // Send the message to the backend API
@@ -56,6 +64,7 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
     }
   });
 }
+
 
 
 // Function to send message to the create-message API

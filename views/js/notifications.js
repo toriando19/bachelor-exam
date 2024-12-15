@@ -11,7 +11,7 @@ try {
     }
 
     const data = await response.json(); // Parse JSON response
-    console.log('Fetched Data:', data); // Debugging: Inspect the fetched data
+    // console.log('Fetched Data:', data); // Debugging: Inspect the fetched data
 
     const logNotificationsDiv = document.getElementById('logNotifications');
 
