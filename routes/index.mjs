@@ -1,7 +1,7 @@
 import path from 'path';
 import express from 'express';
 import { fetchAllUsers, fetchAllInterests, fetchAllUserInterest, fetchAllMatches } from '../database/postgres/api-postgres.mjs';
-import { fetchChats, createChat, fetchNotifications,fetchMessages } from '../database/mongo/api-mongo.mjs'; 
+import { fetchChats, createChat, fetchNotifications,fetchMessages, createMessage } from '../database/mongo/api-mongo.mjs'; 
 
 const router = express.Router();
 
@@ -68,6 +68,12 @@ router.use('/notifications', async (req,res) => {
 // API route for fetching all logging
 router.use('/messages', async (req,res) => {
   const data = await fetchMessages();
+  res.json(data);
+});
+
+// API route for fetching all logging
+router.use('/create-message', async (req,res) => {
+  const data = await createMessage();
   res.json(data);
 });
 

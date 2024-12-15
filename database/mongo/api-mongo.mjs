@@ -90,3 +90,55 @@ export async function createChat(chat_user_1, chat_user_2) {
     console.error('Error creating chat:', error);
   }
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Create Message  ///////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Function to create a new message and log the activity
+export async function createMessage(chat_id, sender_id, message) {
+  try {
+    const { messagesCollection, logsCollection, client } = await connectToMongoDB('messages');
+
+    // Generate a unique id for the message
+    const messageId = `message-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`;
+
+    // Create the new message document
+    const newMessage = {
+      id: messageId,
+      chat_id: chat_id, // Chat ID associated with the message
+      sender_id: sender_id, // Sender ID (user_id from sessionData)
+      message: message, // Message text from the input field
+      sent_at: new Date(), // Timestamp for when the message is sent
+    };
+
+    console.log('New message data:', newMessage);
+
+    // Insert the new message document into the messages collection
+    const messageResult = await messagesCollection.insertOne(newMessage);
+    console.log('Message Insert Result:', messageResult);
+
+    // Log the message creation as a notification (optional)
+    const newMessageNotification = {
+      id: `log-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`,
+      event_type: `message`,
+      user_id: sender_id, // The sender's user ID
+      related_user: chat_id, // The chat ID (or related user, depending on your logic)
+      message: `User ${sender_id} sent a message in chat ${chat_id}: "${message}"`,
+      created_at: new Date(),
+    };
+
+    console.log('New message notification data:', newMessageNotification);
+
+    // Insert the notification into the logs collection
+    const logResult = await logsCollection.insertOne(newMessageNotification);
+    console.log('Log Insert Result:', logResult);
+
+    // Close the client connection after operations
+    await client.close();
+
+    return { messageResult, logResult };
+  } catch (error) {
+    console.error('Error creating message:', error);
+  }
+}
