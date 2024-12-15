@@ -80,24 +80,31 @@ router.get('/chats', async (req, res) => {
   res.json(data);
 });
 
+
+// MongoDB Route to handle creating a new chat
 router.get('/new-chat', async (req, res) => {
-  // Extract chat_user_1 and chat_user_2 from the query string
+  // Log the query parameters to ensure we're receiving them
+  console.log('Received request to create a new chat:', req.query);
+
   const { chat_user_1, chat_user_2 } = req.query;
 
-  // Ensure both users are provided
+  // Validate the query parameters
   if (!chat_user_1 || !chat_user_2) {
     return res.status(400).json({ error: 'Both chat_user_1 and chat_user_2 are required' });
   }
 
   try {
-    // Call the createChat function with the extracted users
+    // Call the createChat function and pass the user IDs
     const data = await createChat(chat_user_1, chat_user_2);
-    res.json(data);  // Return the created chat data as a JSON response
+    
+    // Return the result as a JSON response
+    res.json(data);
   } catch (error) {
     console.error('Error in creating new chat:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 router.get('/notifications', async (req, res) => {
