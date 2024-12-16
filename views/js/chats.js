@@ -67,6 +67,31 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
 
 
 
+// Function to send message to the create-message API
+async function sendMessageToAPI(chat_id, sender_id, recipient_id, message) {
+  try {
+    const response = await fetch('http://localhost:3000/create-message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id,
+        sender_id,
+        recipient_id,
+        message,
+        sent_at: new Date(),
+      }),
+    });
+
+    if (response.ok) {
+      console.log(`Message sent: ${message}`);
+    } else {
+      console.error('Failed to send message:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error sending message:', error);
+  }
+}
+
 // Function to fetch and display chat information based on the user_id
 async function fetchChatDocuments() {
   const sessionData = JSON.parse(sessionStorage.getItem("sessionData"));
@@ -101,21 +126,7 @@ async function fetchChatDocuments() {
         p.textContent = `Chat with ${displayName}`;
         
         // Add event listener to show message input and timeline
-        p.addEventListener('click', async () => {
-          // Check if chat exists for these two users, else create a new one
-          // Update the call to the 'new-chat' route with query parameters
-          const existingChat = await fetch(`http://localhost:3000/new-chat?chat_user_1=${user_id}&chat_user_2=${matchedUser.user_id}`);
-
-          if (!existingChat.ok) {
-            console.error('Failed to create a new chat');
-            return;
-          }
-
-          const chat = await existingChat.json();
-          showMessageInput(chat.id, matchedUser.user_id, displayName);
-
-        });
-
+        p.addEventListener('click', () => showMessageInput(chat.id, matchedUser.user_id, displayName));
         resultContainer.appendChild(p);
       }
     });
@@ -127,66 +138,3 @@ async function fetchChatDocuments() {
 
 // Call the function to fetch and display chat documents
 fetchChatDocuments();
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Icebreaker  ////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Array of 20 strings
-const strings = [
-  "What's your favorite hobby?",
-  "If you could visit any place in the world, where would it be?",
-  "What’s the best meal you’ve ever had?",
-  "Do you have a favorite movie or TV show?",
-  "What’s the most interesting book you’ve read?",
-  "If you could have any superpower, what would it be?",
-  "What’s one thing on your bucket list?",
-  "What’s your favorite season of the year?",
-  "Do you prefer coffee or tea?",
-  "What’s the most exciting trip you’ve been on?",
-  "What’s your dream job?",
-  "What’s one skill you wish you could master?",
-  "If you could meet any historical figure, who would it be?",
-  "What’s your favorite type of music?",
-  "Do you have a favorite sport or physical activity?",
-  "What’s your go-to comfort food?",
-  "What’s your favorite holiday tradition?",
-  "Do you prefer sunrise or sunset?",
-  "What’s one thing you’re grateful for today?",
-  "If you could live in any time period, which one would it be?"
-];
-
-// Function to shuffle an array
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-// Function to shuffle and display 3 strings
-function shuffleAndDisplay() {
-  shuffleArray(strings);
-  const selectedStrings = strings.slice(0, 3);
-  const icebreakerDiv = document.getElementById('icebreaker');
-  
-  // Create HTML for the icebreaker questions and add event listeners to them
-  icebreakerDiv.innerHTML = selectedStrings.map(str => `<p class="icebreaker-question">${str}</p>`).join('');
-
-  // Add event listener to each question
-  const questionElements = document.querySelectorAll('.icebreaker-question');
-  questionElements.forEach(question => {
-    question.addEventListener('click', () => {
-      // When a question is clicked, set it as the value of the input field
-      const userMessageInput = document.getElementById('userMessage');
-      userMessageInput.value = question.textContent;  // Set clicked question in the input field
-    });
-  });
-}
-
-// Add event listener to the button
-document.getElementById('shuffleIcebreaker').addEventListener('click', shuffleAndDisplay);
-

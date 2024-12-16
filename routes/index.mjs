@@ -117,7 +117,7 @@ router.get('/messages', async (req, res) => {
   res.json(data);
 });
 
-router.get('/create-message', async (req, res) => {
+router.post('/create-message', async (req, res) => {
   const data = await createMessage();
   res.json(data);
 });
