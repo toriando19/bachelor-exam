@@ -126,23 +126,3 @@
     display: none;
 }
 
-/* /////////////////////////////////////////////////////////////////////////// */
-/* MEDIA QUERIES */
-
-/* Ensure the application is visible only on mobile (max-width: 390px) */
-@media screen and (max-width: 390px) {
-    .application {
-        display: block;
-    }
-
-    .login {
-        display: block;
-    }
-}
-
-/* Show only the error-class if screen size is larger than 390px */
-@media screen and (min-width: 391px) {
-    .desktop-error {
-        display: block;
-    }
-}
