@@ -144,5 +144,80 @@
 /* APPLICATION STYLING */
 .application {
     display: none;
+    padding-left: 1rem;
 }
+
+/* /////////////////////////////////////////////////////////////////////////// */
+/* HEADER */
+.header {
+    height: 10vh;
+    margin-left: -1rem;
+    padding-top: 1rem;
+    background-color: var(--colorRed);
+    z-index: 10;
+    position: fixed;
+    display: grid;
+    /* gap: 1rem; */
+    grid-template-columns: 1fr 5fr;
+    /* grid-template-rows: 1fr 1fr; */
+}
+
+.header img {
+    width: 100%;
+    padding-left: 1rem;
+}
+
+.header button {
+    float: right;
+    margin-top: 5px;
+    border: none;
+    background-color: var(--colorRed);
+    color: var(--colorLightText);
+    font-size: 25px;
+}
+
+.burger-menu {
+    display: none;
+    position: absolute;
+    z-index: 5;
+    background-color: var(--colorGreyDark);
+    top: 10%; 
+    left: 10%;
+    height: 90vh;
+    position: fixed;
+}
+
+.burger-menu-overlay {
+    display: none;
+    position: relative;
+    background-color: var(--colorDarkText);
+    opacity: 50%;
+    height: 100vh;
+    z-index: 20;
+}
+
+.dr-nav {
+    color: var(--colorLightText);
+    border-bottom: 1px var(--colorLightText) solid;
+    width: 17rem;
+    padding-bottom: 5px;
+    margin-left: 2rem;
+}
+
+.dr-nav a {
+    margin-right: 1rem;
+    font-size: 12px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 

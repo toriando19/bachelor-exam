@@ -24,35 +24,63 @@
             <img src="img/medr-logo.png" alt="logo">
             <h1> MeDR </h1>
             <p> Sammen om det vigtige </p>
-
+            
             <form class="login-form">
                 <label for="email">E-mail</label> <br>
                 <input id="email" name="email" type="text" placeholder="Skriv din e-mail" required>
-        
+                
                 <br><br>
-
+                
                 <label for="password">Kodeord</label> <br>
                 <input id="password" name="password" type="password" placeholder="Skriv dit kodeord" required>
-        
+                
                 <br> 
-
+                
                 <button type="submit" id="loginSubmit"> LOG IND </button>
             </form>
         </div>
     </section>
 
-
+    
     <!-- APPLICATION STARTS HERE -->
-
+    
     <section class="application">
-
+        
         <!-- HEADER -->
-        <section class="welcome-user">
-            <h1 id="welcomeUser">Welcome </h1> 
-            <button id="logoutBtn"> Logout </button>
+        <section class="header">
+            <img src="img/medr-logo.png" alt="logo">
+            
+            <div>
+                <div class="dr-nav">
+                    <a> DR.DK </a>
+                    <a> DRTV </a>
+                    <a> DR LYD </a>
+                    <a> <strong> MEDR </strong> </a>
+                </div>
+                
+                <button id="hamburgerMenu"> ☰ </button>
+                <button id="chats"> 💬 </button>
+                <!-- <button id="hamburgerMenu"> X </button> -->
+            </div>
+
+            <!-- HAMBURGERMENU -->
+            <div class="burger-menu">
+                <h1 id="welcomeUser">Welcome </h1> 
+                <button id="logoutBtn"> Logout </button>
+                
+                <div class="menu-nav">
+                    <a> FORSIDE </a>
+                    <a> MIN PROFIL </a>
+                    <a> MINE CHATS </a>
+                    <a> MINE MATCHES </a>
+                </div>
+
+                <div class="burger-menu-overlay"></div>
+            </div>
+
         </section>
 
-        <br><br>
+        <br><br><br><br><br>
 
         <section class="user-profile">
             <!-- PROFILE INFO -->
