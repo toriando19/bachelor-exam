@@ -1,7 +1,6 @@
 /* /////////////////////////////////////////////////////////////////////////// */
 /* COLOR PALETTE */
 :root {
-
     /* Basic Colors */
     --colorBackground:      rgb(255,255,255);
     --colorLightText:       rgb(255,255,255);
@@ -39,10 +38,14 @@
     background-color: var(--colorBackground);
 }
 
+.desktop-error {
+    display: none;
+}
+
 /* /////////////////////////////////////////////////////////////////////////// */
 /* LOGIN SECTION */
 .login {
-    display: block;
+    display: none;
     background: linear-gradient(to top, var(--colorShadeRed), var(--colorRed));
     height: 100vh;
     padding: 1.5rem;
@@ -123,3 +126,23 @@
     display: none;
 }
 
+/* /////////////////////////////////////////////////////////////////////////// */
+/* MEDIA QUERIES */
+
+/* Ensure the application is visible only on mobile (max-width: 390px) */
+@media screen and (max-width: 390px) {
+    .application {
+        display: block;
+    }
+
+    .login {
+        display: block;
+    }
+}
+
+/* Show only the error-class if screen size is larger than 390px */
+@media screen and (min-width: 391px) {
+    .desktop-error {
+        display: block;
+    }
+}

@@ -6,53 +6,49 @@ document.querySelector('#loginForm').addEventListener('submit', async function (
     e.preventDefault(); // Prevent form submission refresh
 
     // Get the input values
-    const email = document.querySelector('#email').value.trim(); // Use `user_email` from DB
-    const password = document.querySelector('#password').value.trim(); // Use `user_password` from DB
+    const email = document.querySelector('#email').value.trim();
+    const password = document.querySelector('#password').value.trim();
+
+    if (!email || !password) {
+        alert('Please fill in both email and password.');
+        return;
+    }
 
     try {
-        // Fetch user data from the PostgreSQL backend
+        // Fetch user data from the backend
         const response = await fetch('http://localhost:3000/users');
-        if (!response.ok) {
-            throw new Error('Failed to fetch user data');
-        }
+        if (!response.ok) throw new Error('Failed to fetch user data');
 
-        const users = await response.json(); // Assume the data is an array of user objects
+        const users = await response.json();
         const user = users.find(u => u.user_email === email && u.user_password === password);
 
         if (!user) {
-            alert('Invalid credentials');
+            alert('Invalid credentials. Please try again.');
             return;
         }
 
         // Fetch user interests data
         const interestResponse = await fetch('http://localhost:3000/userinterest');
-        if (!interestResponse.ok) {
-            throw new Error('Failed to fetch user interests');
-        }
+        if (!interestResponse.ok) throw new Error('Failed to fetch user interests');
 
         const userInterests = await interestResponse.json();
-        
-        // Filter the interests based on the logged-in user_id (make sure to compare numbers)
         const userInterest = userInterests.filter(interest => parseInt(interest.user_interest_user) === user.user_id);
 
-        // Set session data with user details and user interests
+        // Store session data
         const sessionData = {
             user_id: user.user_id,
             username: user.user_username,
             user_name: user.user_name,
             user_email: user.user_email,
-            user_password: user.user_password, // For demonstration only (avoid storing plaintext passwords in production)
-            user_interest: userInterest // Add user interests to the session data
+            user_interest: userInterest
         };
-
-        // Store session data in sessionStorage
         sessionStorage.setItem('sessionData', JSON.stringify(sessionData));
 
-        // Clear input fields after login
+        // Clear input fields
         document.querySelector('#email').value = '';
         document.querySelector('#password').value = '';
 
-        // Update the application state and content without reloading the page
+        // Update the UI
         updateApplicationUI(user, userInterest);
 
     } catch (error) {
@@ -63,95 +59,68 @@ document.querySelector('#loginForm').addEventListener('submit', async function (
 
 // Function to update the application UI after login
 function updateApplicationUI(user, userInterest) {
-    // Hide login and show application content
-    document.querySelector('.application').style.display = 'block';
-    document.querySelector('.login').style.display = 'none';
+    if (window.innerWidth <= 390) {
+        document.querySelector('.application').style.display = 'block';
+        document.querySelector('.login').style.display = 'none';
+        document.querySelector('#welcomeUser').innerHTML = `Welcome, ${user.user_name}!`;
 
-    // Update the welcome message
-    document.querySelector('#welcomeUser').innerHTML = `Welcome, ${user.user_name}!`;
-
-    // Optionally, update user interests
-    updateUserInterests(userInterest);
+        updateUserInterests(userInterest);
+    } else {
+        document.querySelector('.application').style.display = 'none';
+        document.querySelector('.login').style.display = 'block';
+    }
 }
 
 // Function to update user interests dynamically
 function updateUserInterests(userInterest) {
-    // Assuming you have checkboxes for the user interests
     const checkboxes = document.querySelectorAll('.user-profile input[type="checkbox"]');
-    
     checkboxes.forEach(checkbox => {
-        const label = checkbox.nextElementSibling; // Assumes label is next to input
-        const interestName = label.textContent.trim();
-
-        // Check if the interest matches any of the user's interests
-        const interest = userInterest.find(ui => ui.user_interest_interest === checkbox.getAttribute('data-interest-id'));
-
-        if (interest) {
-            checkbox.checked = true; // Mark checkbox as checked if it's one of the user's interests
-        } else {
-            checkbox.checked = false; // Uncheck if it's not in the user's interests
-        }
+        const interestId = checkbox.getAttribute('data-interest-id');
+        checkbox.checked = userInterest.some(ui => ui.user_interest_interest == interestId);
     });
 }
-
-
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Logout Function  ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 document.querySelector('#logoutBtn').addEventListener('click', function () {
-    const confirmLogout = confirm('You sure you wanna logout?'); // Confirm the logout action
-
-    if (confirmLogout) {
-        // Delete session data from sessionStorage
+    if (confirm('Are you sure you want to logout?')) {
         sessionStorage.removeItem('sessionData');
-
-        // Redirect to login screen and hide application section
         document.querySelector('.application').style.display = 'none';
         document.querySelector('.login').style.display = 'block';
-
-        // Clear input fields on logout
         document.querySelector('#email').value = '';
         document.querySelector('#password').value = '';
     }
 });
 
-// Prevent unauthorized access to the application section
-window.addEventListener('load', function () {
-    const sessionData = sessionStorage.getItem('sessionData');
-    if (!sessionData) {
-        // If no session data, ensure only the login form is visible
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Session Management and Mobile-Only Enforcement ////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function enforceMobileOnly() {
+    if (window.innerWidth > 390) {
         document.querySelector('.application').style.display = 'none';
-        document.querySelector('.login').style.display = 'block';
-    }
-});
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Check for Session on Load  ////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-window.addEventListener('load', function () {
-    const sessionData = sessionStorage.getItem('sessionData');
-    if (sessionData) {
-        // If session data exists, show the application and hide the login form
-        document.querySelector('.application').style.display = 'block';
         document.querySelector('.login').style.display = 'none';
-
-        // Get session data and display welcome message
-        const userData = JSON.parse(sessionData);
-        document.querySelector('#welcomeUser').innerHTML = `Welcome, ${userData.user_name}!`;
-
-        // Access the user interests directly from sessionData
-        const userInterests = userData.user_interest;
-        // if (userInterests.length > 0) {
-        //     // You can use the interests here, e.g., display them or store them for later use
-        // }
+        document.querySelector('.desktop-error').style.display = 'block';
     } else {
-        // If no session data, show only the login form
-        document.querySelector('.application').style.display = 'none';
-        document.querySelector('.login').style.display = 'block';
+        const sessionData = sessionStorage.getItem('sessionData');
+        if (sessionData) {
+            document.querySelector('.application').style.display = 'block';
+            document.querySelector('.login').style.display = 'none';
+            const userData = JSON.parse(sessionData);
+            document.querySelector('#welcomeUser').innerHTML = `Welcome, ${userData.user_name}!`;
+            updateUserInterests(userData.user_interest);
+        } else {
+            document.querySelector('.application').style.display = 'none';
+            document.querySelector('.login').style.display = 'block';
+        }
+        document.querySelector('.desktop-error').style.display = 'none';
     }
-});
+}
+
+// On initial load
+window.addEventListener('load', enforceMobileOnly);
+
+// On window resize
+window.addEventListener('resize', enforceMobileOnly);
