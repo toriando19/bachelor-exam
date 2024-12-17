@@ -8,6 +8,8 @@
     --colorGreyLight:       rgb(160, 160, 160);
     --colorGreyDark:        rgb(90, 90, 90);
     --colorDarkText:        rgb(0,0,0);
+    --colorDrRed:           rgb(255,0,30);
+    --colorDrDarkRed:       rgb(155,0,0);
     
     /* DR P5 - colorpalette */
     --colorRed:             rgb(230,105,90);
@@ -18,10 +20,10 @@
     /* Contrast Shades */
     --colorShadeLight:      rgb(245,240,235);
     --colorShadeDark:       rgb(45,40,45);
-    --colorShadeRed:        rgb(184, 84, 72);
-    --colorShadeYellow:     rgb(196, 156, 72);
-    --colorShadeGreen:      rgb(112, 160, 144);
-    --colorShadeBlue:       rgb(0, 60, 80);
+    --colorShadeRed:        rgb(138, 63, 54);
+    --colorShadeYellow:     rgb(147, 117, 54);
+    --colorShadeGreen:      rgb(84, 120, 108);
+    --colorShadeBlue:       rgb(0, 45, 60);
 
 }
 
@@ -30,6 +32,7 @@
 
 * {
     margin: 0;
+    /* letter-spacing: 0.8px; */
 }
 
 .body {
@@ -39,7 +42,79 @@
 /* /////////////////////////////////////////////////////////////////////////// */
 /* LOGIN SECTION */
 .login {
-    
+    display: block;
+    background: linear-gradient(to top, var(--colorShadeRed), var(--colorRed));
+    height: 100vh;
+    padding: 1.5rem;
+    position: fixed;
+    font-size: 14px;
+}
+
+.login-container {
+    background-color: var(--colorBackground);
+    padding: 2rem;
+    padding-top: 5rem;
+    margin-top: 8rem;
+    position: relative; /* Ensures the container is a positioning context for the logo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Allows stacking of logo and other content */
+}
+
+.login-container img {
+    width: 25%;
+    position: absolute;
+    top: 0%; /* Adjust to place it overlapping the white box */
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centers the logo horizontally and vertically relative to the top edge */
+    z-index: 1; /* Ensures it appears on top of the white box */
+}
+
+.login-container h1 {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.login-container p {
+    text-align: center;
+    font-size: 13px;
+    /* font-style: italic; */
+}
+
+.login-form {
+    margin-top: 4rem;
+    font-size: 14px;
+}
+
+.login-form label {
+    font-weight: 700;
+
+}
+
+.login-form input {
+    margin-top: 5px;
+    width: 65vw;
+    padding: 10px;
+    border: 1px solid var(--colorGreyLight);
+}
+
+.login-form button {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    font-size: 14px;
+    padding: 10px;
+    width: 70vw;
+    border: none;
+    background-color: var(--colorDrRed);
+    color: var(--colorLightText);
+    font-weight: 700;
+}
+
+.login-form button:hover {
+    background-color: var(--colorDrDarkRed);
+    text-decoration: underline;
 }
 
 /* /////////////////////////////////////////////////////////////////////////// */
