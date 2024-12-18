@@ -176,6 +176,8 @@
     font-size: 25px;
 }
 
+/* /////////////////////////////////////////////////////////////////////////// */
+/* BURGER MENU */
 .burger-menu {
     display: none;
     position: absolute;
@@ -208,6 +210,15 @@
     margin-right: 1rem;
     font-size: 12px;
 }
+
+/* /////////////////////////////////////////////////////////////////////////// */
+/* USER PROFILE */
+.user-profile {
+    display: none;
+}
+
+
+
 
 
 
