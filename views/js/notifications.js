@@ -42,6 +42,14 @@ async function fetchNotifications() {
                     ? new Date(notification.created_at).toLocaleString()
                     : 'No date available';
 
+                // Check if event_type is "chats", and if so, add a button
+                let actionButton = '';
+                if (notification.event_type === 'chats') {
+                    actionButton = `
+                        <button class="chat-button" data-user-id="${notification.user_id}">Start a chat</button>
+                    `;
+                }
+
                 return `
                 <div class="notification">
                     <div class="timeline-container">
@@ -53,6 +61,7 @@ async function fetchNotifications() {
                     <div class="notification-details">
                         <p><strong>Message:</strong> ${message}</p>
                         <p><strong>Created At:</strong> ${createdAt}</p>
+                        ${actionButton}  <!-- Display button if event_type is "chat" -->
                     </div>
                 </div>
                 `;
@@ -65,6 +74,15 @@ async function fetchNotifications() {
                     ${notificationsHTML}
                 </div>
             `;
+
+            // Add event listeners to "Start a chat" buttons
+            const chatButtons = document.querySelectorAll('.chat-button');
+            chatButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const userId = button.getAttribute('data-user-id');
+                    startChat(userId); // Call startChat with the user_id from the button
+                });
+            });
         } else {
             logNotificationsDiv.innerHTML = '<p>No notifications found for the current user.</p>';
         }
@@ -76,3 +94,32 @@ async function fetchNotifications() {
 
 // Fetch notifications when the script loads
 fetchNotifications();
+
+
+// Ensure the createChat function is defined within the same file
+async function createChat(chat_user_1_id, chat_user_2_id) {
+    try {
+        // Send GET request to the endpoint with query parameters
+        const response = await fetch(`http://localhost:3000/new-chat?chat_user_1=${chat_user_1_id}&chat_user_2=${chat_user_2_id}`);
+
+        const result = await response.json();
+        console.log('Response from createChat API:', result);
+
+        if (response.ok) {
+            alert('Chat created successfully!');
+        } else {
+            alert(`Error creating chat: ${result.message || 'Unknown error'}`);
+        }
+    } catch (error) {
+        console.error('Error creating chat:', error);
+        alert('Error creating chat');
+    }
+}
+
+// Function to handle starting a chat
+function startChat(userId) {
+    // You can modify this logic depending on how you want to start the chat
+    alert(`Starting a chat with user ID: ${userId}`);
+    // Call createChat or any other function to initiate the chat
+    createChat(sessionData.user_id, userId);  // Assuming sessionData has user_id
+}
