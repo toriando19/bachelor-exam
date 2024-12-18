@@ -56,18 +56,25 @@ async function displayMatchingUsers() {
                 const matchContainer = document.createElement('div');
                 matchContainer.classList.add('match-container');
 
+                const newMatch = document.createElement('h4');
+                newMatch.textContent = 'Nyt match';
+                newMatch.classList.add('newMatch');
+                matchContainer.appendChild(newMatch);
+                
                 const userInfo = document.createElement('p');
-                userInfo.textContent = `${user.user_username} – ${percentage}%`;
+                userInfo.textContent = `${percentage}% match`;
                 matchContainer.appendChild(userInfo);
-
+                
                 const viewButton = document.createElement('button');
-                viewButton.textContent = 'View Profile';
+                viewButton.classList.add('match-view');
+                viewButton.textContent = 'Se match';
                 viewButton.onclick = () => {
                     viewUserInfo(user.user_username, percentage);
                 };
-
+                
                 const chatButton = document.createElement('button');
                 chatButton.textContent = 'Chat';
+                chatButton.classList.add('match-chat');
                 chatButton.onclick = () => {
                     alert(`You're starting a chat with ${user.user_username}`);
                     createChat(currentUserId, user.user_id);  // Pass user IDs instead of usernames

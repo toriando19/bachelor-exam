@@ -176,6 +176,12 @@
     font-size: 25px;
 }
 
+.section-header {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
 /* /////////////////////////////////////////////////////////////////////////// */
 /* BURGER MENU */
 .burger-menu {
@@ -218,9 +224,50 @@
 }
 
 
+/* /////////////////////////////////////////////////////////////////////////// */
+/* EXPLORE MATCHES */
 
+#exploreMatches {
+    display: flex;
+    gap: 1rem;
+    overflow-x: scroll;
+}
 
+.match-container {
+    background-color: var(--colorBlue);
+    color: var(--colorLightText);
+    font-size: 18px;
+    font-weight: 700;
+}
 
+.match-container p {
+    padding: 1rem;
+}
+
+.match-view {
+    margin-top: 3rem;
+    background-color: var(--colorRed);
+    border: none;
+    padding: 5px;
+    width: 100%;
+    color: var(--colorLightText);
+}
+
+.match-chat {
+    display: none;
+    background-color: var(--colorRed);
+}
+
+.newMatch {
+    margin: 1rem 1rem 0rem 1rem;
+    border: 2px solid var(--colorGreen);
+    /* background-color: var(--colorGreen); */
+    padding: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--colorGreen);
+    text-align: center;
+}
 
 
 
