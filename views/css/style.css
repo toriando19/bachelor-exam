@@ -31,6 +31,7 @@
 
 * {
     margin: 0;
+    line-height: 1.5rem;
     /* letter-spacing: 0.8px; */
 }
 
@@ -214,7 +215,7 @@
 
 .dr-nav a {
     margin-right: 1rem;
-    font-size: 12px;
+    font-size: 13px;
 }
 
 /* /////////////////////////////////////////////////////////////////////////// */
@@ -222,6 +223,84 @@
 .user-profile {
     display: none;
 }
+
+
+/* /////////////////////////////////////////////////////////////////////////// */
+/* NOTIFICATIONS */
+
+.log-notifications {
+    background-color: var(--colorBlue);
+    margin-top: -2rem;
+    margin-left: -1rem;
+    padding: 1rem;
+}
+
+.log-notifications h1 {
+    margin-top: 20px;
+    color: var(--colorLightText);
+}
+
+.notifications-container {
+    margin-right: -1rem;
+    display: flex; 
+    flex-direction: row; 
+    overflow-x: auto; 
+    /* gap: 2rem;  */
+}
+
+.notification {
+    color: var(--colorLightText);
+    width: 20rem; /* Frame width for each notification */
+    min-width: 20rem; /* Ensures consistency when scrolling */
+    overflow: hidden; /* Prevent overflow of content */
+}
+
+.notification p {
+    margin: 0.5rem 0; /* Spacing between text lines */
+    word-wrap: break-word; /* Force long words to wrap */
+}
+
+
+.timeline-container {
+    margin-top: 0.5rem;
+    height: 1rem;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.timeline-line {
+    position: absolute;
+    top: 10%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--colorYellow);
+    z-index: 1;
+}
+
+.timeline-bullets {
+    position: absolute; /* Positioning them on top of the timeline line */
+    top: 5px; /* Adjust bullets to align with the line in the middle */
+    width: 100%;
+    display: flex;
+    /* justify-content: space-between; */
+    /* gap: 1rem; Adjust gap between bullets */
+    z-index: 2;
+}
+
+.timeline-bullet {
+    width: 10px;
+    height: 10px;
+    background-color: var(--colorYellow);
+    border-radius: 50%; 
+    position: absolute; 
+    top: -0.5rem; 
+}
+
+
+
 
 
 /* /////////////////////////////////////////////////////////////////////////// */
