@@ -38,9 +38,10 @@ async function fetchNotifications() {
             const notificationsHTML = sortedNotifications
             .map((notification, index) => {
                 const message = notification.message || 'No message available';
-                const createdAt = notification.created_at
-                    ? new Date(notification.created_at).toLocaleString()
-                    : 'No date available';
+                const createdAt = formatTimeAgo(notification.created_at);
+
+                // Set notification genre based on event_type
+                let notificationGenre = notification.event_type === 'chats' ? 'Matches' : 'Other'; // Set genre based on event_type
 
                 // Check if event_type is "chats", and if so, add a button
                 let actionButton = '';
@@ -51,7 +52,7 @@ async function fetchNotifications() {
                     relatedUserId = notification.related_user === sessionData.user_id ? notification.user_id : notification.related_user;
 
                     actionButton = `
-                        <button class="chat-button" data-user-id="${relatedUserId}">Start a chat with user ${relatedUserId} </button>
+                        <button class="chat-button" data-user-id="${relatedUserId}">Start en chat med <strong> USER ${relatedUserId} </strong> </button>
                     `;
                 }
 
@@ -64,8 +65,11 @@ async function fetchNotifications() {
                         </div>
                     </div>
                     <div class="notification-details">
-                        <p><strong>Message:</strong> ${message}</p>
-                        <p><strong>Created At:</strong> ${createdAt}</p>
+                        <div class="notiDetails"> 
+                            <p class="notiCreate"> ${createdAt} </p>
+                            <p class="notiTheme"> | ${notificationGenre} </p> <!-- Display the notificationGenre here -->
+                        </div>
+                        <p> ${message} </p>
                         ${actionButton}  <!-- Display button if event_type is "chat" -->
                     </div>
                 </div>
@@ -96,6 +100,31 @@ async function fetchNotifications() {
         console.error('Error fetching notifications:', error);
     }
 }
+
+// Function to format time ago
+function formatTimeAgo(createdAt) {
+    const now = new Date();
+    const createdAtDate = new Date(createdAt);
+    const timeDifference = now - createdAtDate; // Difference in milliseconds
+
+    const minutes = Math.floor(timeDifference / 60000);
+    const hours = Math.floor(timeDifference / 3600000);
+    const days = Math.floor(timeDifference / 86400000);
+
+    // Check if the time difference is less than a minute
+    if (timeDifference < 60000) {
+        return `<strong> Lige nu </strong>`;
+    } else if (minutes < 60) {
+        return `<strong> ${minutes} min </strong> siden`;
+    } else if (hours < 24) {
+        return `<strong> ${hours} t. </strong> siden`;
+    } else if (days < 7) {
+        return `<strong> ${days} dag(e) </strong> siden`;
+    } else {
+        return createdAtDate.toLocaleDateString(); // Show exact date if more than 7 days
+    }
+}
+
 
 // Fetch notifications when the script loads
 fetchNotifications();

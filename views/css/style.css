@@ -247,6 +247,22 @@
     /* gap: 2rem;  */
 }
 
+.notiDetails {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.notiCreate {
+    color: var(--colorGreen);
+    font-size: 12px;
+}
+
+.notiTheme {
+    color: var(--colorGreyLight);
+    font-size: 12px;
+}
+
 .notification {
     color: var(--colorLightText);
     width: 20rem; /* Frame width for each notification */
@@ -257,6 +273,12 @@
 .notification p {
     margin: 0.5rem 0; /* Spacing between text lines */
     word-wrap: break-word; /* Force long words to wrap */
+}
+
+.chat-button {
+    background-color: var(--colorRed);
+    border: none;
+    color: var(--colorLightText);
 }
 
 
