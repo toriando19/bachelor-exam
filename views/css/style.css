@@ -260,7 +260,7 @@
 
 .newMatch {
     margin: 1rem 1rem 0rem 1rem;
-    border: 2px solid var(--colorGreen);
+    border: 1px solid var(--colorGreen);
     /* background-color: var(--colorGreen); */
     padding: 5px;
     font-size: 14px;
