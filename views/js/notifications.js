@@ -69,7 +69,7 @@ async function fetchNotifications() {
                             <p class="notiCreate"> ${createdAt} </p>
                             <p class="notiTheme"> | ${notificationGenre} </p> <!-- Display the notificationGenre here -->
                         </div>
-                        <p> ${message} </p>
+                        <p> <strong> User ${relatedUserId} </strong> ${message} </p>
                         ${actionButton}  <!-- Display button if event_type is "chat" -->
                     </div>
                 </div>
