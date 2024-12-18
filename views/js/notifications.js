@@ -34,10 +34,12 @@ async function fetchNotifications() {
         });
 
         // Build HTML for sorted notifications, bullets, and timeline
+        // Build HTML for sorted notifications, bullets, and timeline
         if (sortedNotifications.length > 0) {
             const notificationsHTML = sortedNotifications
             .map((notification, index) => {
-                const message = notification.message || 'No message available';
+                const message1 = notification.message1 || 'No message available';
+                const message2 = notification.message2 || 'No message available';
                 const createdAt = formatTimeAgo(notification.created_at);
 
                 // Set notification genre based on event_type
@@ -46,15 +48,31 @@ async function fetchNotifications() {
                 // Check if event_type is "chats", and if so, add a button
                 let actionButton = '';
                 let relatedUserId = null;
+                
+                 // Determine the correct message link based on the format
+                let displayMessage = '';
+                let relatedUser = notification.related_user !== sessionData.user_id ?  notification.related_user : notification.user_id;
+                let loggedInData = sessionData.user_id;
 
                 if (notification.event_type === 'chats') {
                     // The user we want to start the chat with is the one who is not the current user
                     relatedUserId = notification.related_user === sessionData.user_id ? notification.user_id : notification.related_user;
 
                     actionButton = `
-                        <button class="chat-button" data-user-id="${relatedUserId}">Start en chat med <strong> USER ${relatedUserId} </strong> </button>
+                        <button class="chat-button" data-user-id="${relatedUserId}"> Skriv en besked til <strong> user ${relatedUser} </strong> </button>
                     `;
                 }
+
+                if (loggedInData === sessionData.user_id) {
+                    // User who started the chat sees the message in this format
+                    displayMessage = `<strong> User ${relatedUser} </strong> ${message2}`;
+                } 
+                
+                if (loggedInData === !sessionData.user_id){
+                    // User who is the recipient of the chat sees the message in this format
+                    displayMessage = `${message1} <strong> User ${relatedUser} </strong>`;
+                }                
+                
 
                 return `
                 <div class="notification">
@@ -70,11 +88,9 @@ async function fetchNotifications() {
                             <p class="notiTheme"> | ${notificationGenre} </p> <!-- Display the notificationGenre here -->
                         </div>
 
-                        <!-- Conditional display for message based on relatedUserId -->
+                        <!-- Display the appropriate message -->
                         <p>
-                            ${relatedUserId === sessionData.user_id 
-                                ? `<strong> User ${relatedUserId} </strong> ${message}`
-                                : `${message} <strong> User ${relatedUserId} </strong>`} 
+                            ${displayMessage}
                         </p>
 
                         ${actionButton}  <!-- Display button if event_type is "chat" -->
@@ -102,6 +118,7 @@ async function fetchNotifications() {
         } else {
             logNotificationsDiv.innerHTML = '<p>No notifications found for the current user.</p>';
         }
+
 
     } catch (error) {
         console.error('Error fetching notifications:', error);
