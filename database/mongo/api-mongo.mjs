@@ -72,9 +72,10 @@ export async function createChat(chat_user_1, chat_user_2) {
       event_type: `chats`,
       user_id: chat_user_1,  // Assuming user_id of the first user creates the log
       related_user: chat_user_2,  // Assuming the second user is related
-      message: `A new chat has been created between user ${chat_user_1} and user ${chat_user_2}.`,
+      message: chat_user_1 === chat_user_1 ? `Du har startet en chat med` : "har startet en chat med dig",
       created_at: new Date(),
     };
+
 
     console.log('New notification data:', newChatNotification);
 

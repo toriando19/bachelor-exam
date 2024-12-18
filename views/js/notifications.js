@@ -69,7 +69,14 @@ async function fetchNotifications() {
                             <p class="notiCreate"> ${createdAt} </p>
                             <p class="notiTheme"> | ${notificationGenre} </p> <!-- Display the notificationGenre here -->
                         </div>
-                        <p> <strong> User ${relatedUserId} </strong> ${message} </p>
+
+                        <!-- Conditional display for message based on relatedUserId -->
+                        <p>
+                            ${relatedUserId === sessionData.user_id 
+                                ? `<strong> User ${relatedUserId} </strong> ${message}`
+                                : `${message} <strong> User ${relatedUserId} </strong>`} 
+                        </p>
+
                         ${actionButton}  <!-- Display button if event_type is "chat" -->
                     </div>
                 </div>
