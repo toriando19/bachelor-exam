@@ -44,9 +44,14 @@ async function fetchNotifications() {
 
                 // Check if event_type is "chats", and if so, add a button
                 let actionButton = '';
+                let relatedUserId = null;
+
                 if (notification.event_type === 'chats') {
+                    // The user we want to start the chat with is the one who is not the current user
+                    relatedUserId = notification.related_user === sessionData.user_id ? notification.user_id : notification.related_user;
+
                     actionButton = `
-                        <button class="chat-button" data-user-id="${notification.user_id}">Start a chat</button>
+                        <button class="chat-button" data-user-id="${relatedUserId}">Start a chat with user ${relatedUserId} </button>
                     `;
                 }
 
@@ -80,7 +85,7 @@ async function fetchNotifications() {
             chatButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const userId = button.getAttribute('data-user-id');
-                    startChat(userId); // Call startChat with the user_id from the button
+                    startChat(userId); // Call startChat with the related user ID from the button
                 });
             });
         } else {
