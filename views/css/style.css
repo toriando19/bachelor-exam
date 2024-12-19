@@ -332,15 +332,21 @@
 
 #exploreMatches {
     display: flex;
-    gap: 1rem;
-    overflow-x: scroll;
+    flex-direction: row; 
+    /* gap: 1rem; */
+    overflow-x: auto; 
+    scrollbar-width: none;
 }
 
 .match-container {
     background-color: var(--colorBlue);
     color: var(--colorLightText);
-    font-size: 18px;
+    font-size: 20px;
+    text-align: center;
     font-weight: 700;
+    flex-shrink: 0;
+    width: 8rem;
+    margin-right: 1rem;
 }
 
 .match-container p {
@@ -362,14 +368,13 @@
 }
 
 .newMatch {
-    margin: 1rem 1rem 0rem 1rem;
+    margin: 1rem auto 0rem auto;
     border: 1px solid var(--colorGreen);
-    /* background-color: var(--colorGreen); */
-    padding: 5px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--colorGreen);
     text-align: center;
+    width: 50%;
 }
 
 
