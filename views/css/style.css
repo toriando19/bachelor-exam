@@ -393,8 +393,9 @@
 .interests-overview {
     background-color: var(--colorShadeLight);
     margin-left: -1rem;
-    padding: 1rem;
-    padding-top: 2rem;
+    padding-left: 1rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
 }
 
 .interests-overview-header {
@@ -409,6 +410,22 @@
     border: none;
     padding: 0;
     margin-top: -1rem;
+}
+
+#matchingInterestsContainer {
+    display: flex; 
+    flex-direction: row; 
+    overflow-x: auto; 
+    scrollbar-width: none;
+}
+
+#matchingInterestsContainer p {
+    margin-right: 1rem;
+    border: 1px solid var(--colorGreyLight);
+    color: var(--colorGreyDark);
+    padding: 10px;
+    font-size: 14px;
+    flex-shrink: 0;
 }
 
 
