@@ -46,9 +46,8 @@
     position: fixed; /* Makes it a child of the overlay */
     top: 10%;
     left: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: var(--colorBackground);
     color: var(--colorLightText);
-    padding: 2rem;
     width: 100vw; /* Adjust width as per your needs */
     height: 100vh;
     z-index: 3; /* Ensure the profile content is above the overlay */
@@ -56,17 +55,24 @@
 
 .overlay-header {
     background-color: var(--colorBlue);
+    padding: 2rem 2rem 1rem 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-direction: row;
+    box-shadow: 0px 10px 6px rgba(0, 0, 0, 0.2);
+}
+
+.overlay-h1 {
+    font-size: 20px;
 }
 
 .overlay-close {
-    position: absolute;
-    background-color: var(--colorBackground);
+    background-color: var(--colorBlue);
     border: none;
     top: 0;
     left: 0;
-    margin-top: 2rem;
-    margin-left: 1rem;
     font-size: 14px;
+    color: var(--colorLightText);
 }
 
 /* /////////////////////////////////////////////////////////////////////////// */
@@ -251,34 +257,28 @@
 /* /////////////////////////////////////////////////////////////////////////// */
 /* USER PROFILE */
 
-#profileClose {
-    position: absolute;
-    background-color: var(--colorBackground);
-    border: none;
-    top: 0;
-    left: 0;
-    margin-top: 2rem;
-    margin-left: 1rem;
-    font-size: 14px;
-}
-
 #profileOverlay {
     display: none;
 }
 
-.user-profile {
-    position: fixed; /* Makes it a child of the overlay */
-    top: 10%;
-    left: 0;
-    background-color: var(--colorBackground);
+.user-profile-info {
+    margin: 1rem;
+    margin-left: 2rem;
     color: var(--colorDarkText);
-    padding-top: 3rem;
-    padding: 2rem;
-    width: 50vh;
-    z-index: 5; /* Ensure the profile content is above the overlay */
+}
+
+.user-profile-interest {
+    margin: 1rem;
+    margin-left: 2rem;
+    color: var(--colorDarkText);
+}
+
+.user-profile-interest button{
+    /* background-color: var(--colorRed); */
 }
 
 
+/* /////////////////////////////////////////////////////////////////////////// */
 /* HEADER STYLING */
 .header {
     height: 10vh;
