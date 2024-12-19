@@ -149,6 +149,34 @@ window.addEventListener('load', async function () {
             }
         }
 
+        // New function to display titles of interests that match the user interest
+        const displayMatchingInterests = () => {
+            const matchingInterests = interests.filter(interest =>
+                sessionData.user_interest.some(userInterest =>
+                    userInterest.user_interest_interest == interest.interest_id &&
+                    userInterest.user_interest_user == sessionData.user_id
+                )
+            );
+
+            const titles = matchingInterests.map(interest => interest.interest_title);
+
+            // Display the titles (you can append them to a specific element in your DOM)
+            const titlesContainer = document.getElementById('matchingInterestsContainer');
+            titlesContainer.innerHTML = '';  // Clear existing titles before appending new ones
+            titles.forEach(title => {
+                const titleElement = document.createElement('p');
+                titleElement.textContent = title;
+                titlesContainer.appendChild(titleElement);
+            });
+
+            // Display the number of checked interests
+            const countElement = document.getElementById('matchingInterestsCount');
+            countElement.textContent = `You have selected ${titles.length} interests.`;
+        };
+
+        // Call the displayMatchingInterests function to show the titles on page load
+        displayMatchingInterests();
+
     } catch (error) {
         console.error('Error:', error);
     }
