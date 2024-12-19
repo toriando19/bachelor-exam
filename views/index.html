@@ -82,40 +82,59 @@
 
         <br><br><br><br><br>
 
-        <section class="user-profile">
-            <!-- PROFILE INFO -->
-            <div class="user-profile-info">
-                <h1> Min Profil </h1>
-                
-                <span for="userProfileUserName"> Brugernavn: </span> <span id="userProfileUserName"> </span> <br>
-                <span for="userProfileName"> Navn: </span> <span id="userProfileName"> </span> <br>
-                <span for="userProfileEmail"> Email: </span> <span id="userProfileEmail"> </span> <br>
-                <span for="userProfilePassword"> Password: </span> <span id="userProfilePassword"> </span>
+
+        <div class="overlay">
+            <div class="overlay-header">
+                <button class="overlay-close"> < </button> <!-- replace with icon-image  -->
+                <h1 class="overlay-h1"> Header </h1>
             </div>
-        
-            <!-- MY INTERESTS -->
-            <div class="user-profile-interest">
-                <h1> Mine Interesser </h1>
-                
-                <form id="interestForm">
-                    <input id="checkTVA" type="checkbox" data-interest-id="4">
-                    <label for="checkTVA"> TVA </label>
-                    <br>
-        
-                    <input id="checkSport" type="checkbox" data-interest-id="6">
-                    <label for="checkSport"> Sara og Monopolet </label>
-                    <br>
-        
-                    <input id="checkBagedyst" type="checkbox" data-interest-id="1">
-                    <label for="checkBagedyst"> Den Store Bagedyst </label>
-                    <br>
-        
-                    <input id="checkKenderTypen" type="checkbox" data-interest-id="3">
-                    <label for="checkKenderTypen"> Kender du typen </label>
-                    <br>
-                </form>
-            </div>
-        </section>        
+
+        </div>
+
+
+
+
+
+
+
+        <div id="profileOverlay" class="overlay">
+            <section id="userProfileSection" class="user-profile">
+                <!-- PROFILE INFO -->
+                <button id="profileClose"> X </button>
+
+                <div class="user-profile-info">
+                    <h1> Min Profil </h1>
+                    
+                    <span for="userProfileUserName"> Brugernavn: </span> <span id="userProfileUserName"> </span> <br>
+                    <span for="userProfileName"> Navn: </span> <span id="userProfileName"> </span> <br>
+                    <span for="userProfileEmail"> Email: </span> <span id="userProfileEmail"> </span> <br>
+                    <span for="userProfilePassword"> Password: </span> <span id="userProfilePassword"> </span>
+                </div>
+            
+                <!-- MY INTERESTS -->
+                <div class="user-profile-interest">
+                    <h1> Mine Interesser </h1>
+                    
+                    <form id="interestForm">
+                        <input id="checkTVA" type="checkbox" data-interest-id="4">
+                        <label for="checkTVA"> TVA </label>
+                        <br>
+            
+                        <input id="checkSport" type="checkbox" data-interest-id="6">
+                        <label for="checkSport"> Sara og Monopolet </label>
+                        <br>
+            
+                        <input id="checkBagedyst" type="checkbox" data-interest-id="1">
+                        <label for="checkBagedyst"> Den Store Bagedyst </label>
+                        <br>
+            
+                        <input id="checkKenderTypen" type="checkbox" data-interest-id="3">
+                        <label for="checkKenderTypen"> Kender du typen </label>
+                        <br>
+                    </form>
+                </div>
+            </section>        
+        </div>
         
         <!-- Notifications  -->
         <section class="log-notifications">
@@ -155,7 +174,7 @@
                     <h1> Dine matches er baseret på </h1>
                     <!-- <h1> > </h1> replace with icon-image  -->
                 </div>
-                <button> ✎ Ændre </button>
+                <button id="changeInterest"> ✎ Ændre </button>
             </div>
 
             <div id="matchingInterestsContainer"></div>
