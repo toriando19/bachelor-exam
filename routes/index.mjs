@@ -11,7 +11,6 @@ router.use(express.static(path.join(path.resolve(), 'views'))); // Adjust 'publi
 
 // Serve the index.html as the root
 router.get('/', (req, res) => {
-  console.log('Hello');
   res.sendFile(path.resolve('views/index.html')); // Serve from the public folder
 });
 
