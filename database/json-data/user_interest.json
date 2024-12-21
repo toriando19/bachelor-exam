@@ -1,10 +1,5 @@
 [
     {
-      "user_interest_id": 1,
-      "user_interest_user": "4",
-      "user_interest_interest": "1"
-    },
-    {
       "user_interest_id": 3,
       "user_interest_user": "7",
       "user_interest_interest": "1"
@@ -65,8 +60,13 @@
       "user_interest_interest": "3"
     },
     {
-      "user_interest_id": 25,
+      "user_interest_id": 29,
       "user_interest_user": "4",
       "user_interest_interest": "6"
+    },
+    {
+      "user_interest_id": 30,
+      "user_interest_user": "4",
+      "user_interest_interest": "1"
     }
   ]
