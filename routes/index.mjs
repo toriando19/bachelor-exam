@@ -1,6 +1,6 @@
 import path from 'path';
 import express from 'express';
-import { fetchAllUsers, fetchAllInterests, fetchAllUserInterest, fetchAllMatches, addUserInterest, removeUserInterest } from '../database/postgres/api-postgres.mjs';
+import { loginUser, fetchAllUsers, fetchAllInterests, fetchAllUserInterest, fetchAllMatches, addUserInterest, removeUserInterest } from '../database/postgres/api-postgres.mjs';
 import { fetchChats, createChat, fetchNotifications, fetchMessages, createMessage } from '../database/mongo/api-mongo.mjs';
 
 const router = express.Router();
@@ -17,6 +17,23 @@ router.get('/', (req, res) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Postgres Routes  ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body; // Extract email and password from the request body
+
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required.' }); // Return error if missing data
+  }
+
+  try {
+    const data = await loginUser(email, password); // Pass the email and password to the loginUser function
+    res.status(200).json(data); // Respond with the user data if login is successful
+  } catch (error) {
+    res.status(401).json({ error: error.message }); // Handle authentication errors
+  }
+});
+
+
 
 router.get('/users', async (req, res) => {
   const data = await fetchAllUsers();

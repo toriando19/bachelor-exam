@@ -15,32 +15,33 @@ document.querySelector('#loginForm').addEventListener('submit', async function (
     }
 
     try {
-        // Fetch user data from the backend
-        const response = await fetch('http://localhost:3000/users');
-        if (!response.ok) throw new Error('Failed to fetch user data');
+        // Send login request to the new API
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
 
-        const users = await response.json();
-        const user = users.find(u => u.user_email === email && u.user_password === password);
-
-        if (!user) {
-            alert('Invalid credentials. Please try again.');
+        if (!response.ok) {
+            if (response.status === 401) {
+                alert('Invalid credentials. Please try again.');
+            } else {
+                alert('An error occurred during login. Please try again.');
+            }
             return;
         }
 
-        // Fetch user interests data
-        const interestResponse = await fetch('http://localhost:3000/userinterest');
-        if (!interestResponse.ok) throw new Error('Failed to fetch user interests');
-
-        const userInterests = await interestResponse.json();
-        const userInterest = userInterests.filter(interest => parseInt(interest.user_interest_user) === user.user_id);
+        const data = await response.json();
 
         // Store session data
         const sessionData = {
-            user_id: user.user_id,
-            username: user.user_username,
-            user_name: user.user_name,
-            user_email: user.user_email,
-            user_interest: userInterest
+            user_id: data.user_id,
+            username: data.username,
+            user_name: data.user_name,
+            user_email: data.user_email,
+            user_interest: data.user_interest || [],
         };
         sessionStorage.setItem('sessionData', JSON.stringify(sessionData));
 
@@ -49,7 +50,7 @@ document.querySelector('#loginForm').addEventListener('submit', async function (
         document.querySelector('#password').value = '';
 
         // Update the UI
-        updateApplicationUI(user, userInterest);
+        updateApplicationUI(data, data.user_interest || []);
 
     } catch (error) {
         console.error('Error during login:', error);

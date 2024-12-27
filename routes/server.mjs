@@ -5,6 +5,12 @@ import userRoutes from './index.mjs';
 
 const app = express();
 
+// Middleware to parse JSON bodies
+app.use(express.json());
+
+// Middleware to parse URL-encoded form data (if needed)
+app.use(express.urlencoded({ extended: true }));
+
 // Connect to the PostgreSQL database
 connectToPGDatabase();
 
