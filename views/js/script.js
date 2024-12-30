@@ -89,22 +89,26 @@ document.getElementById('profileClose').addEventListener('click', function() {
 
 
 
-document.getElementById("chatsMenu").addEventListener("click", function() {
+document.getElementById("chatsMenu").addEventListener("click", handleChatsClick);
+document.getElementById("chats").addEventListener("click", handleChatsClick);
+
+function handleChatsClick() {
     // Get the profile overlay and burger menu elements
     const chatsOverlay = document.getElementById("chatsOverlay");
     const profileOverlay = document.getElementById("profileOverlay");
     const chatOverlay = document.getElementById("chatOverlay");
     const burgerMenu = document.getElementById("burgerMenu");
     const button = document.getElementById("hamburgerMenu");
-    
-    // Show the profile overlay and hide the burger menu
+
+    // Show the chats overlay and hide others
     setActiveMenu("chatsMenu");
-    chatsOverlay.style.display = "block";
-    profileOverlay.style.display = "none";
-    chatOverlay.style.display = "none";
-    burgerMenu.style.display = "none";
-    button.textContent = "☰"; // Change button text back to "☰"
-});
+    chatsOverlay.style.display = "block"; // Show the chats overlay
+    profileOverlay.style.display = "none"; // Hide the profile overlay
+    chatOverlay.style.display = "none"; // Hide the chat overlay
+    burgerMenu.style.display = "none"; // Hide the burger menu
+    button.textContent = "☰"; // Reset burger menu button text
+}
+
 
 // Add an onclick function to the close button to hide the profile section and overlay
 document.getElementById('chatsClose').addEventListener('click', function() {
