@@ -98,7 +98,7 @@ export const addUserInterest = async (user_interest_user, user_interest_interest
 
     // Log the inserted user_interest_user and user_interest_interest
     if (result.length > 0) {
-      console.log('Interest added successfully: User:', result[0].user_interest_user,', Interest', result[0].user_interest_interest);
+      // console.log('Interest added successfully: User:', result[0].user_interest_user,', Interest', result[0].user_interest_interest);
     } else {
       console.log('No interest added');
     }
@@ -123,7 +123,7 @@ export const removeUserInterest = async (user_interest_user, user_interest_inter
 
     // Log the deleted user_interest_user and user_interest_interest
     if (result.length > 0) {
-      console.log('Interest removed successfully: User:', result[0].user_interest_user,', Interest', result[0].user_interest_interest);
+      // console.log('Interest removed successfully: User:', result[0].user_interest_user,', Interest', result[0].user_interest_interest);
     } else {
       console.log('No interest removed');
     }
