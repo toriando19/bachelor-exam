@@ -54,7 +54,6 @@ document.querySelector('#loginForm').addEventListener('submit', async function (
 
     } catch (error) {
         console.error('Error during login:', error);
-        alert('An error occurred. Please try again.');
     }
 });
 

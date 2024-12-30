@@ -44,11 +44,11 @@
     
     <!-- APPLICATION STARTS HERE -->
     
-    <section class="application">
+    <section id="frontpageOverlay" class="application">
         
         <!-- HEADER -->
         <section class="header">
-            <img src="img/medr-logo.png" alt="logo">
+            <img id="frontpageLogo" src="img/medr-logo.png" alt="logo">
             
             <div>
                 <div class="dr-nav">
@@ -194,17 +194,38 @@
 
 
 
-        <!-- My Matches/Chats  -->
+        <!-- My Chats  -->
         <div id="chatsOverlay" class="overlay"> 
             
             <div class="overlay-header">
-                <button id="profileClose" class="overlay-close"> < </button> <!-- replace with icon-image  -->
+                <button id="chatsClose" class="overlay-close"> < </button> <!-- replace with icon-image  -->
                 <h1 class="overlay-h1"> Mine chats </h1>
             </div>
             
-            <section" class="matching-users">
+            <section class="matching-users">
 
                 <div id="chat-result"></div>
+
+                <br><br>
+
+
+            </section>
+
+        </div>
+
+
+
+
+         <!-- Specific Chat  -->
+         <div id="chatOverlay" class="overlay"> 
+            
+            <div class="overlay-header">
+                <button id="chatClose" class="overlay-close"> < </button> <!-- replace with icon-image  -->
+                <h1 class="overlay-h1"> Bagedyst Eksepert </h1>
+            </div>
+            
+            <section>
+
                 <div id="message-timeline"></div>
                 <div id="message-input"></div>
 
