@@ -181,3 +181,14 @@ window.addEventListener('load', async function () {
         console.error('Error:', error);
     }
 });
+
+document.querySelectorAll('#interestForm .toggleSwitch').forEach(toggle => {
+    toggle.addEventListener('click', function () {
+        const checkbox = this.previousElementSibling;
+        checkbox.checked = !checkbox.checked; // Toggle the checkbox state
+        console.log(`${checkbox.id} is now ${checkbox.checked ? 'checked' : 'unchecked'}`);
+
+        // Trigger the change event to enable/disable the submit button
+        checkbox.dispatchEvent(new Event('change'));
+    });
+});

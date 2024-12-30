@@ -297,10 +297,25 @@
     display: none;
 }
 
+#profileOverlay h1 {
+    font-size: 18px;
+    font-weight: 900;
+}
+
 .user-profile-info {
-    margin: 1rem;
+    margin-top: 1rem;
     margin-left: 2rem;
     color: var(--colorDarkText);
+    font-size: 14px;
+}
+
+.user-overview-info {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+}
+
+.userInfoLabel {
+    font-weight: 900;
 }
 
 .user-profile-interest {
@@ -312,6 +327,61 @@
 .user-profile-interest button{
     /* background-color: var(--colorRed); */
 }
+
+/* /////////////////////////////////////////////////////////////////////////// */
+/* MY INTERESTS & TOGGLE */
+
+#interestForm {
+    font-size: 16px;
+}
+
+.toggleContainer {
+    width: 70%;
+    display: grid;
+    align-items: center;
+    grid-template-columns: 0.5fr 3fr 1fr;
+    margin-bottom: 15px;
+}
+
+label {
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+input[type="checkbox"] {
+    display: none; /* Hide the checkbox */
+}
+
+.toggleSwitch {
+    width: 40px;
+    height: 18px;
+    background-color: var(--colorGreyDark);
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.toggleSwitch::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    background-color: var(--colorLightText);
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s;
+}
+
+input[type="checkbox"]:checked + .toggleSwitch {
+    background-color: var(--colorRed)
+}
+
+input[type="checkbox"]:checked + .toggleSwitch::before {
+    transform: translateX(20px);
+}
+
 
 
 /* /////////////////////////////////////////////////////////////////////////// */

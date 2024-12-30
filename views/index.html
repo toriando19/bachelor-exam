@@ -111,37 +111,69 @@
                     <button id="profileClose" class="overlay-close"> < </button> <!-- replace with icon-image  -->
                     <h1 class="overlay-h1"> Profil </h1>
                 </div>
+                
+                <br>
 
                 <div class="user-profile-info">
                     <h1> Min Profil </h1>
+
+                    <br>
                     
-                    <span for="userProfileUserName"> Brugernavn: </span> <span id="userProfileUserName"> </span> <br>
-                    <span for="userProfileName"> Navn: </span> <span id="userProfileName"> </span> <br>
-                    <span for="userProfileEmail"> Email: </span> <span id="userProfileEmail"> </span> <br>
-                    <span for="userProfilePassword"> Password: </span> <span id="userProfilePassword"> </span>
+                    <div class="user-overview-info">
+                        <span class="userInfoLabel" for="userProfileUserName"> Brugernavn </span> <span id="userProfileUserName"> </span>
+                        <span class="userInfoLabel" for="userProfileName"> Navn </span> <span id="userProfileName"> </span>
+                        <span class="userInfoLabel" for="userProfileEmail"> Email </span> <span id="userProfileEmail"> </span>
+                        <span class="userInfoLabel" for="userProfilePassword"> Password </span> <span id="userProfilePassword"> </span>
+                    </div>
                 </div>
+
+                <br>
             
                 <!-- MY INTERESTS -->
                 <div class="user-profile-interest">
                     <h1> Mine Interesser </h1>
                     
-                    <form id="interestForm">
-                        <input id="checkTVA" type="checkbox" data-interest-id="4">
-                        <label for="checkTVA"> TVA </label>
-                        <br>
-            
-                        <input id="checkSport" type="checkbox" data-interest-id="6">
-                        <label for="checkSport"> Sara og Monopolet </label>
-                        <br>
-            
-                        <input id="checkBagedyst" type="checkbox" data-interest-id="1">
-                        <label for="checkBagedyst"> Den Store Bagedyst </label>
-                        <br>
-            
-                        <input id="checkKenderTypen" type="checkbox" data-interest-id="3">
-                        <label for="checkKenderTypen"> Kender du typen </label>
-                        <br>
+                    <br> 
+
+                    <form id="interestForm" class="toggleInterest">
+                        <div class="toggleContainer">
+                            <span class="icon">👁️</span>
+                            <label for="checkDSB">Den Store Bagedyst</label>
+                            <input id="checkDSB" type="checkbox" data-interest-id="1" />
+                            <span class="toggleSwitch"></span>
+                        </div>
+                        <div class="toggleContainer">
+                            <span class="icon">👁️</span>
+                            <label for="checkAME">Alle Mod En </label>
+                            <input id="checkAME" type="checkbox" data-interest-id="2" />
+                            <span class="toggleSwitch"></span>
+                        </div>
+                        <div class="toggleContainer">
+                            <span class="icon">👁️</span>
+                            <label for="checkKDT">Kender Du Typen</label>
+                            <input id="checkKDT" type="checkbox" data-interest-id="3" />
+                            <span class="toggleSwitch"></span>
+                        </div>
+                        <div class="toggleContainer">
+                            <span class="icon">👁️</span>
+                            <label for="checkTVA">TVA</label>
+                            <input id="checkTVA" type="checkbox" data-interest-id="4" />
+                            <span class="toggleSwitch"></span>
+                        </div>
+                        <div class="toggleContainer">
+                            <span class="icon">💰</span>
+                            <label for="checkGenstart">Genstart</label>
+                            <input id="checkGenstart" type="checkbox" data-interest-id="5" />
+                            <span class="toggleSwitch"></span>
+                        </div>
+                        <div class="toggleContainer">
+                            <span class="icon">🎵</span>
+                            <label for="checkSara">Sara Og Monopolet</label>
+                            <input id="checkSara" type="checkbox" data-interest-id="6" />
+                            <span class="toggleSwitch"></span>
+                        </div>
                     </form>
+                    
                 </div>
             </section>        
         </div>

@@ -32,3 +32,9 @@ document.getElementById('changeInterest').addEventListener('click', function() {
 
 // Call the function to populate the data
 populateUserProfile();
+
+
+
+
+
+
