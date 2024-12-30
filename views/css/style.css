@@ -64,6 +64,7 @@
 
 .overlay-h1 {
     font-size: 20px;
+    font-weight: 500;
 }
 
 .overlay-close {
@@ -267,20 +268,27 @@
 }
 
 .menu-nav {
+    margin-top: 1rem;
     display: flex;
     flex-direction: column;
     font-size: 14px;
 }
 
 .menu-nav a {
-    margin-left: 1rem;
+    padding-left: 1rem;
+    padding-top: 12px;
+    padding-bottom: 12px;
 }
 
 .menuSpacer {
-    margin-top: 10px;
-    margin-bottom: 10px;
     border-bottom: 0.5px solid var(--colorGreyLight);
 }
+
+.active {
+    font-weight: 900;
+    background-color: rgba(90, 90, 90, 0.3);
+}
+
 
 /* /////////////////////////////////////////////////////////////////////////// */
 /* USER PROFILE */
