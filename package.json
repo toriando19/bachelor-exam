@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "helmet": "^8.0.0",
     "pg": "^8.13.1"
   },
   "devDependencies": {
