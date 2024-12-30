@@ -117,8 +117,8 @@ router.get('/new-chat', async (req, res) => {
     // Return the result as a JSON response
     res.json(data);
   } catch (error) {
-    console.error('Error in creating new chat:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    // console.error('Error in creating new chat:', error);
+    // res.status(500).json({ error: 'Internal server error' });
   }
 });
 
