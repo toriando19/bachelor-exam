@@ -223,13 +223,15 @@
 /* BURGER MENU */
 .burger-menu {
     display: none;
-    position: absolute;
     z-index: 5;
-    background-color: var(--colorGreyDark);
-    top: 10%; 
+    background-color: var(--colorShadeDark);
+    color: var(--colorLightText);
+    top: 12%; 
     left: 10%;
     height: 90vh;
+    width: 90vw;
     position: fixed;
+    padding-top: 1rem;
 }
 
 .burger-menu-overlay {
@@ -238,7 +240,17 @@
     background-color: var(--colorDarkText);
     opacity: 50%;
     height: 100vh;
-    z-index: 20;
+    z-index: 5;
+}
+
+.burger-menu button {
+    background-color: var(--colorDrRed);
+    font-size: 12px;
+    padding: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+    float: left;
+    margin-left: 1rem;
 }
 
 .dr-nav {
@@ -252,6 +264,22 @@
 .dr-nav a {
     margin-right: 1rem;
     font-size: 13px;
+}
+
+.menu-nav {
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+
+.menu-nav a {
+    margin-left: 1rem;
+}
+
+.menuSpacer {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-bottom: 0.5px solid var(--colorGreyLight);
 }
 
 /* /////////////////////////////////////////////////////////////////////////// */
@@ -308,13 +336,52 @@
 
 /* /////////////////////////////////////////////////////////////////////////// */
 /* CHATS */
-.matching-users {
+
+#chatsOverlay {
     display: none;
 }
 
+.matching-users {
+    color: var(--colorDarkText);
+}
+
 .icebreaker {
+    color: var(--colorDarkText);
+}
+
+
+
+.myChatOne {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-bottom: 0.5px solid var(--colorGreyDark);
+}
+
+.myChatOne h1 {
+    font-size: 15px;
+}
+
+.myChatOne p {
+    font-size: 12px;
+}
+
+.myChatTwo {
+    padding: 10px;
+    border-bottom: 0.5px solid var(--colorGreyDark);
+}
+
+.myChatTwo h1 {
+    font-size: 15px;
+}
+
+/* /////////////////////////////////////////////////////////////////////////// */
+/* SPECIFIC CHAT */
+
+#chatOverlay {
     display: none;
 }
+
 
 
 

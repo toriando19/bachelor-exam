@@ -64,17 +64,25 @@
             </div>
 
             <!-- HAMBURGERMENU -->
-            <div class="burger-menu">
-                <h1 id="welcomeUser">Welcome </h1> 
-                <button id="logoutBtn"> Logout </button>
+            <div id="burgerMenu" class="burger-menu">
+                <!-- <h1 id="welcomeUser">Welcome </h1>  -->
+                <button id="logoutBtn"> LOG UD </button>
+
+                <br><br>
+                <div class="menuSpacer"></div>
                 
                 <div class="menu-nav">
-                    <a> FORSIDE </a>
-                    <a> MIN PROFIL </a>
-                    <a> MINE CHATS </a>
-                    <a> MINE MATCHES </a>
+                    <a id="frontpageMenu"> FORSIDE </a>
+                    <div class="menuSpacer"></div>
+                    <a id="profileMenu"> MIN PROFIL </a>
+                    <div class="menuSpacer"></div>
+                    <a id="chatsMenu"> MINE CHATS </a>
+                    <div class="menuSpacer"></div>
+                    <a id="matchesMenu"> MINE MATCHES </a>
                 </div>
 
+                <div class="menuSpacer"></div>
+                
                 <div class="burger-menu-overlay"></div>
             </div>
 
@@ -187,27 +195,37 @@
 
 
         <!-- My Matches/Chats  -->
-        <section class="matching-users">
+        <div id="chatsOverlay" class="overlay"> 
+            
+            <div class="overlay-header">
+                <button id="profileClose" class="overlay-close"> < </button> <!-- replace with icon-image  -->
+                <h1 class="overlay-h1"> Mine chats </h1>
+            </div>
+            
+            <section" class="matching-users">
 
-            <h1> Mine Chats </h1>
-            <div id="chat-result"></div>
-            <div id="message-timeline"></div>
-            <div id="message-input"></div>
+                <div id="chat-result"></div>
+                <div id="message-timeline"></div>
+                <div id="message-input"></div>
 
-        </section>
+                <br><br>
+    
+                <!-- Icebreaker  -->
+                <section class="icebreaker">
+    
+                    <h1> Icebreaker </h1>
+                    <div id="icebreaker"></div>
+                    <button id="shuffleIcebreaker"> Shuffle </button>
+    
+                </section>
+    
+                <br><br>
 
-        <br><br>
 
-        <!-- Icebreaker  -->
-        <section class="icebreaker">
+            </section>
 
-            <h1> Icebreaker </h1>
-            <div id="icebreaker"></div>
-            <button id="shuffleIcebreaker"> Shuffle </button>
+        </div>
 
-        </section>
-
-        <br><br>
         
 
 
