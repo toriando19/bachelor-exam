@@ -88,6 +88,7 @@ document.querySelector('#logoutBtn').addEventListener('click', function () {
     if (confirm('Are you sure you want to logout?')) {
         sessionStorage.removeItem('sessionData');
         document.querySelector('.application').style.display = 'none';
+        document.querySelector('.burger-menu').style.display = 'none';
         document.querySelector('.login').style.display = 'block';
         document.querySelector('#email').value = '';
         document.querySelector('#password').value = '';
