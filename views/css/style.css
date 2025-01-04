@@ -419,6 +419,13 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     display: none;
 }
 
+.chat-entry {
+    border-bottom: 1px solid var(--colorGreyLight);
+    align-items: center;
+    display: flex;
+    padding: 1rem;
+}
+
 .matching-users {
     color: var(--colorDarkText);
 }
@@ -427,31 +434,23 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     color: var(--colorDarkText);
 }
 
-
-
-.myChatOne {
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    border-bottom: 0.5px solid var(--colorGreyDark);
+.profile-image {
+    width: 13%;
+    border-radius: 30px;
+    margin-right: 10px;
 }
 
-.myChatOne h1 {
-    font-size: 15px;
+.name-displayer {
+    color: var(--colorDarkText);
+    font-size: 16px;
+    font-weight: 500;
 }
 
-.myChatOne p {
-    font-size: 12px;
+.message-preview {
+    color: var(--colorGreyDark);
+    font-size: 14px;
 }
 
-.myChatTwo {
-    padding: 10px;
-    border-bottom: 0.5px solid var(--colorGreyDark);
-}
-
-.myChatTwo h1 {
-    font-size: 15px;
-}
 
 /* /////////////////////////////////////////////////////////////////////////// */
 /* SPECIFIC CHAT */

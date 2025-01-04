@@ -121,17 +121,60 @@ async function fetchChatDocuments() {
     const resultContainer = document.getElementById('chat-result');
     resultContainer.innerHTML = ''; // Clear previous results
 
-    // Display the chats and their associated users
+
+    // Sort filteredChats to show the chat with the newest message first
+    filteredChats.sort((a, b) => {
+      const timeA = new Date(a.last_message_time); // Assuming the chat object has a last_message_time property
+      const timeB = new Date(b.last_message_time);
+      return timeB - timeA; // Sort in descending order (newest first)
+    });
+
+    /// Display the chats and their associated users
     filteredChats.forEach(chat => {
       const matchedUser = users.find(user => user.user_id === (chat.chat_user_1 === user_id ? chat.chat_user_2 : chat.chat_user_1));
       if (matchedUser) {
         const displayName = matchedUser.user_nickname || matchedUser.user_username;
-        const p = document.createElement('p');
-        p.textContent = `Chat with ${displayName}`;
-        p.addEventListener('click', () => showMessageInput(chat.id, matchedUser.user_id, displayName)); // When chat is clicked, show the input
-        resultContainer.appendChild(p);
+    
+        // Create a container div for the chat entry
+        const chatContainer = document.createElement('div');
+        chatContainer.classList.add('chat-entry');
+    
+        // Create an img element for the user's profile picture
+        const profileImage = document.createElement('img');
+        profileImage.src = matchedUser.profile_picture || '../img/profile.jpg'; // Fallback to a default image if none provided
+        profileImage.alt = `${displayName}'s profile picture`;
+        profileImage.classList.add('profile-image');
+    
+        // Create a div to group text elements (name and last message)
+        const textBlock = document.createElement('div');
+        textBlock.classList.add('text-block');
+    
+        // Create the main p element for displaying the user's name
+        const nameDisplayer = document.createElement('p');
+        nameDisplayer.textContent = `${displayName} >`;
+        nameDisplayer.classList.add('name-displayer');
+        nameDisplayer.addEventListener('click', () => showMessageInput(chat.id, matchedUser.user_id, displayName));
+    
+        // Create another p element for additional information (e.g., last message preview)
+        const additionalInfo = document.createElement('p');
+        additionalInfo.textContent = `${chat.last_message || 'No messages yet'}`;
+        additionalInfo.classList.add('message-preview');
+    
+        // Append name and message preview to the text block
+        textBlock.appendChild(nameDisplayer);
+        textBlock.appendChild(additionalInfo);
+    
+        // Append the image and text block to the chat container
+        chatContainer.appendChild(profileImage);
+        chatContainer.appendChild(textBlock);
+    
+        // Append the chat container to the result container
+        resultContainer.appendChild(chatContainer);
       }
     });
+    
+
+
 
   } catch (error) {
     console.error(error.message);
