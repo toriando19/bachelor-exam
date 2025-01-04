@@ -9,6 +9,31 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
   // Show the chat overlay
   chatOverlay.style.display = 'block';
 
+  // Dynamically update the chat header div with the recipient's name and nickname
+  const chatHeader = document.getElementById('chatHeader');
+
+  // Fetch the user data again to get the nickname
+  const userResponse = await fetch('http://localhost:3000/users');
+  if (!userResponse.ok) {
+    console.error('Failed to fetch users');
+    return;
+  }
+  
+  const users = await userResponse.json();
+  const matchedUser = users.find(user => user.user_id === recipient_id); // Find the matched user by ID
+
+  if (matchedUser) {
+    // Check if matchedUser has a nickname, and display it accordingly
+    if (matchedUser.user_nickname) {
+      chatHeader.innerHTML = `<div class="chatMultiNames"> <p class="chatProfileName">${matchedUser.user_username}</p><p class="chatProfileNickname">${recipient_name}</p> </div>`;
+    } else {
+      chatHeader.innerHTML = `<p class="chatProfileNickname">${recipient_name}</p>`;
+    }
+  } else {
+    console.error("Matched user not found.");
+    chatHeader.innerHTML = recipient_name;
+  }
+
   // Display the input field and button
   inputDiv.innerHTML = `
     <input type="text" id="userMessage" placeholder="Type your message here" />
@@ -37,6 +62,8 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
     }
   });
 }
+
+
 
 // Function to send message to the create-message API
 async function sendMessageToAPI(chat_id, recipient_id, message) {
