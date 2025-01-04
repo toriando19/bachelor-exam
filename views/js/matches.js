@@ -166,23 +166,23 @@ async function viewUserInfo(username, matchPercentage) {
                     <h1 class="overlay-h1"> ${user.user_username} </h1>
                 </div>
             </div>
-            <p><strong>Percent Match:</strong> ${matchPercentage}%</p>
-            <p><strong>User Interests:</strong></p>
-            <ul>
-                ${interestDescriptions.map(description => `<li>${description}</li>`).join('')}
-            </ul>
+            <div class="specificMatch-info">
+                <div class="match-overall-percentage">
+                    <h3> Fælles Interesser </h3>
+                    <p> ${matchPercentage}% </p>
+                </div>
+                <div class="match-progress-bar">
+                    <div class="filled" style="width: ${matchPercentage}%;"></div>
+                </div>
+
+                <br>
+
+                <p><strong>User Interests:</strong></p>
+                <ul>
+                    ${interestDescriptions.map(description => `<li>${description}</li>`).join('')}
+                </ul>
+            </div>
         `;
-
-        // Add the progress bar below the percentage
-        const progressBarContainer = document.createElement('div');
-        progressBarContainer.classList.add('match-progress-bar');
-
-        const progressBarFilled = document.createElement('div');
-        progressBarFilled.classList.add('filled');
-        progressBarFilled.style.width = `${matchPercentage}%`;  // Set the filled portion based on the match percentage
-
-        progressBarContainer.appendChild(progressBarFilled);
-        userInfoSection.appendChild(progressBarContainer);
 
         // Show the overlay
         document.getElementById('specificMatchOverlay').style.display = 'block';
@@ -204,6 +204,7 @@ async function viewUserInfo(username, matchPercentage) {
         alert('Error fetching user info.');
     }
 }
+
 
 
 

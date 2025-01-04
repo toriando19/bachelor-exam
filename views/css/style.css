@@ -618,6 +618,7 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 
 #specificMatchOverlay {
     display: none;
+    font-size: 14px;
 }
 
 .profileContainer {
@@ -635,13 +636,14 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     color: var(--colorDarkText);
 }
 
+.specificMatch-info {
+    padding: 2rem;
+}
+
 
 .match-overlay-header {
     background-color: var(--colorBackground);
     padding: 2rem 2rem 1rem 1rem;
-    /* display: grid;
-    flex-direction: column;
-    gap: 0.5rem; */
     box-shadow: 0px 10px 6px rgba(0, 0, 0, 0.2);
 }
 
@@ -659,15 +661,27 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     color: var(--colorDarkText);
 }
 
+.match-overall-percentage {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.match-overall-percentage h3 {
+    font-size: 14px;
+}
+
+.match-overall-percentage p {
+    color: var(--colorGreyLight);
+}
+
 
 
 .match-progress-bar {
     width: 100%;
     height: 10px;
-    background-color: var(--colorGreyLight);  /* Light grey background */
-    border-radius: 5px;
+    background-color: var(--colorShadeLight);  /* Light grey background */
     overflow: hidden;
-    margin-top: 10px;
 }
 
 .match-progress-bar .filled {
