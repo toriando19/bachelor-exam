@@ -122,37 +122,6 @@ document.getElementById('chatsClose').addEventListener('click', function() {
 });
 
 
-
-document.getElementById("chatMenu").addEventListener("click", function() {
-    // Get the profile overlay and burger menu elements
-    const profileOverlay = document.getElementById("profileOverlay");
-    const chatsOverlay = document.getElementById("chatsOverlay");
-    const chatOverlay = document.getElementById("chatOverlay");
-    const matchOverlay = document.getElementById("specificMatchOverlay");
-    const burgerMenu = document.getElementById("burgerMenu");
-    const button = document.getElementById("hamburgerMenu");
-    
-    // Show the profile overlay and hide the burger menu
-    setActiveMenu("chatMenu");
-    chatOverlay.style.display = "block";
-    profileOverlay.style.display = "none";
-    chatsOverlay.style.display = "none";
-    matchOverlay.style.display = "none";
-    burgerMenu.style.display = "none";
-    button.textContent = "☰"; // Change button text back to "☰"
-});
-
-// Add an onclick function to the close button to hide the profile section and overlay
-document.getElementById('chatClose').addEventListener('click', function() {
-    document.getElementById('chatOverlay').style.display = 'none';
-});
-
-
-
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // - - - -  ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

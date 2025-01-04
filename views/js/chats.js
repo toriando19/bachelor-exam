@@ -1,74 +1,53 @@
-// Function to show message input field and existing messages when a user is clicked
+// Show the chat overlay with the input field and icebreaker when a chat is clicked
 async function showMessageInput(chat_id, recipient_id, recipient_name) {
   console.log("Chat ID:", chat_id, "Recipient ID:", recipient_id, "Recipient Name:", recipient_name);
 
+  const chatOverlay = document.getElementById('chatOverlay'); // Reference to the chat overlay
   const inputDiv = document.getElementById('message-input');
-  const messageTimelineDiv = document.getElementById('message-timeline');
+  const icebreakerDiv = document.getElementById('icebreaker'); // Reference to the icebreaker section
 
-  // Clear the message timeline
-  messageTimelineDiv.innerHTML = '';
+  // Show the chat overlay
+  chatOverlay.style.display = 'block';
 
-  try {
-    // Fetch existing messages for the selected chat
-    const messagesResponse = await fetch(`http://localhost:3000/messages`);
-    if (!messagesResponse.ok) throw new Error('Failed to fetch messages');
-    
-    const messages = await messagesResponse.json();
-    const filteredMessages = messages.filter(message => message.chat_id === chat_id);
+  // Display the input field and button
+  inputDiv.innerHTML = `
+    <input type="text" id="userMessage" placeholder="Type your message here" />
+    <button id="submitMessage">Send Message</button>
+  `;
 
-    // Get the user_id from the session
-    const sessionData = JSON.parse(sessionStorage.getItem("sessionData"));
-    if (!sessionData || !sessionData.user_id) throw new Error('User ID not found in session data');
-    
-    const user_id = sessionData.user_id;
-    console.log("Session User ID:", user_id);
+  // Display the icebreaker questions
+  initializeIcebreaker();
 
-    // Display the filtered messages
-    filteredMessages.sort((a, b) => new Date(a.sent_at) - new Date(b.sent_at));
-    filteredMessages.forEach(message => {
-      const messageElement = document.createElement('div');
-      messageElement.classList.add('message');
-      const senderName = message.sender_id === user_id ? "Me" : message.sender_name || "Unknown";
-      messageElement.innerHTML = `
-        <p><strong>${senderName}</strong> at ${new Date(message.sent_at).toLocaleString()}:</p>
-        <p>${message.message}</p>
-      `;
-      messageTimelineDiv.appendChild(messageElement);
-    });
+  // Hide icebreaker when the user starts typing a message
+  document.getElementById('userMessage').addEventListener('focus', () => {
+    icebreakerDiv.style.display = 'none';
+  });
 
-    // Add input field and submit button
-    inputDiv.innerHTML = `
-      <input type="text" id="userMessage" placeholder="Type your message here" />
-      <button id="submitMessage">Send Message</button>
-    `;
+  // Handle message submission
+  document.getElementById('submitMessage').addEventListener('click', async () => {
+    const message = document.getElementById('userMessage').value;
+    console.log("Message Input Value:", message);
 
-    document.getElementById('submitMessage').addEventListener('click', async () => {
-      const message = document.getElementById('userMessage').value;
-      console.log("Message Input Value:", message);
-      if (message.trim() !== "") {
-        await sendMessageToAPI(chat_id, user_id, recipient_id, message);
-        document.getElementById('userMessage').value = ''; // Clear input
-        showMessageInput(chat_id, recipient_id, recipient_name); // Refresh messages
-      } else {
-        alert("Message cannot be empty");
-      }
-    });
-
-  } catch (error) {
-    console.error(error.message);
-  }
+    // Only send the message if it isn't empty
+    if (message.trim() !== "") {
+      await sendMessageToAPI(chat_id, recipient_id, message);
+      document.getElementById('userMessage').value = ''; // Clear input
+    } else {
+      alert("Message cannot be empty");
+    }
+  });
 }
 
 // Function to send message to the create-message API
-async function sendMessageToAPI(chat_id, sender_id, recipient_id, message) {
-  console.log("Sending message:", { chat_id, sender_id, recipient_id, message });
+async function sendMessageToAPI(chat_id, recipient_id, message) {
+  console.log("Sending message:", { chat_id, recipient_id, message });
   try {
     const response = await fetch('http://localhost:3000/create-message', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         chat_id,
-        sender_id,
+        sender_id: recipient_id, // Assuming recipient_id is the user sending the message
         recipient_id,
         message,
         sent_at: new Date(),
@@ -94,12 +73,14 @@ async function fetchChatDocuments() {
     const user_id = sessionData.user_id;
     console.log("Fetching chats for User ID:", user_id);
 
+    // Fetch chat data for the user
     const chatResponse = await fetch('http://localhost:3000/chats');
     if (!chatResponse.ok) throw new Error('Failed to fetch chats');
 
     const chats = await chatResponse.json();
     const filteredChats = chats.filter(chat => chat.chat_user_1 === user_id || chat.chat_user_2 === user_id);
 
+    // Fetch user data
     const userResponse = await fetch('http://localhost:3000/users');
     if (!userResponse.ok) throw new Error('Failed to fetch users');
 
@@ -107,13 +88,14 @@ async function fetchChatDocuments() {
     const resultContainer = document.getElementById('chat-result');
     resultContainer.innerHTML = ''; // Clear previous results
 
+    // Display the chats and their associated users
     filteredChats.forEach(chat => {
       const matchedUser = users.find(user => user.user_id === (chat.chat_user_1 === user_id ? chat.chat_user_2 : chat.chat_user_1));
       if (matchedUser) {
         const displayName = matchedUser.user_nickname || matchedUser.user_username;
         const p = document.createElement('p');
         p.textContent = `Chat with ${displayName}`;
-        p.addEventListener('click', () => showMessageInput(chat.id, matchedUser.user_id, displayName));
+        p.addEventListener('click', () => showMessageInput(chat.id, matchedUser.user_id, displayName)); // When chat is clicked, show the input
         resultContainer.appendChild(p);
       }
     });
@@ -123,16 +105,20 @@ async function fetchChatDocuments() {
   }
 }
 
-// Call to initialize chats
+// Call to initialize chats when the page loads
 fetchChatDocuments();
 
 
+// Add an onclick function to the close button to hide the profile section and overlay
+document.getElementById('chatClose').addEventListener('click', function() {
+  document.getElementById('chatOverlay').style.display = 'none';
+});
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Icebreaker  ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Array of 20 strings
+// Array of 20 strings for icebreaker questions
 const strings = [
   "What's your favorite hobby?",
   "If you could visit any place in the world, where would it be?",
@@ -164,7 +150,7 @@ function shuffleArray(array) {
   }
 }
 
-// Function to shuffle and display 3 strings
+// Function to shuffle and display 3 strings as icebreaker questions
 function shuffleAndDisplay() {
   shuffleArray(strings);
   const selectedStrings = strings.slice(0, 3);
@@ -190,8 +176,14 @@ function initializeIcebreaker() {
   shuffleAndDisplay();  // Call to shuffle and display the initial 3 questions
 }
 
-// Call initialize function on page load
+// Initialize the icebreaker on page load
 initializeIcebreaker();
 
 // Add event listener to the shuffle button
 document.getElementById('shuffleIcebreaker').addEventListener('click', shuffleAndDisplay);
+
+// Event listener to close the chat overlay
+document.getElementById('closeChatButton').addEventListener('click', () => {
+  const chatOverlay = document.getElementById('chat-overlay');
+  chatOverlay.style.display = 'none';
+});

@@ -457,7 +457,7 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 /* SPECIFIC CHAT */
 
 #chatOverlay {
-    /* display: none; */
+    display: none;
 }
 
 
