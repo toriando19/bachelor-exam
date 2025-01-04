@@ -45,12 +45,14 @@ function handleFrontPageClick() {
     const profileOverlay = document.getElementById("profileOverlay");
     const chatsOverlay = document.getElementById("chatsOverlay");
     const chatOverlay = document.getElementById("chatOverlay");
+    const matchOverlay = document.getElementById("specificMatchOverlay");
     const burgerMenu = document.getElementById("burgerMenu");
     const button = document.getElementById("hamburgerMenu");
 
     // Hide all overlays and the burger menu
     setActiveMenu("frontpageMenu");
     profileOverlay.style.display = "none";
+    matchOverlay.style.display = "none";
     burgerMenu.style.display = "none";
     chatsOverlay.style.display = "none";
     chatOverlay.style.display = "none";
@@ -66,11 +68,13 @@ document.getElementById("profileMenu").addEventListener("click", function() {
     const button = document.getElementById("hamburgerMenu");
     const chatOverlay = document.getElementById("chatOverlay");
     const chatsOverlay = document.getElementById("chatsOverlay");
+    const matchOverlay = document.getElementById("specificMatchOverlay");
     
     // Show profile overlay and section, hide burger menu
     setActiveMenu("profileMenu");
     profileOverlay.style.display = "block";
     userProfileSection.style.display = "block"; // Ensure this is visible
+    matchOverlay.style.display = "none";
     chatOverlay.style.display = "none";
     chatsOverlay.style.display = "none";
     burgerMenu.style.display = "none";
@@ -89,6 +93,16 @@ document.getElementById('profileClose').addEventListener('click', function() {
 
 
 
+document.getElementById('specficMatchClose').addEventListener('click', function() {
+    const matchOverlay = document.getElementById('specificMatchOverlay');
+    
+    // Hide profile section and overlay
+    matchOverlay.style.display = 'none';
+    setActiveMenu("frontpageMenu");
+});
+
+
+
 document.getElementById("chatsMenu").addEventListener("click", handleChatsClick);
 document.getElementById("chats").addEventListener("click", handleChatsClick);
 
@@ -99,6 +113,7 @@ function handleChatsClick() {
     const chatOverlay = document.getElementById("chatOverlay");
     const burgerMenu = document.getElementById("burgerMenu");
     const button = document.getElementById("hamburgerMenu");
+    const matchOverlay = document.getElementById("specificMatchOverlay");
 
     // Show the chats overlay and hide others
     setActiveMenu("chatsMenu");
@@ -106,6 +121,7 @@ function handleChatsClick() {
     profileOverlay.style.display = "none"; // Hide the profile overlay
     chatOverlay.style.display = "none"; // Hide the chat overlay
     burgerMenu.style.display = "none"; // Hide the burger menu
+    matchOverlay.style.display = "none";
     button.textContent = "☰"; // Reset burger menu button text
 }
 
@@ -123,6 +139,7 @@ document.getElementById("chatMenu").addEventListener("click", function() {
     const profileOverlay = document.getElementById("profileOverlay");
     const chatsOverlay = document.getElementById("chatsOverlay");
     const chatOverlay = document.getElementById("chatOverlay");
+    const matchOverlay = document.getElementById("specificMatchOverlay");
     const burgerMenu = document.getElementById("burgerMenu");
     const button = document.getElementById("hamburgerMenu");
     
@@ -131,6 +148,7 @@ document.getElementById("chatMenu").addEventListener("click", function() {
     chatOverlay.style.display = "block";
     profileOverlay.style.display = "none";
     chatsOverlay.style.display = "none";
+    matchOverlay.style.display = "none";
     burgerMenu.style.display = "none";
     button.textContent = "☰"; // Change button text back to "☰"
 });

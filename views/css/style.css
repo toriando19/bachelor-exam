@@ -613,6 +613,48 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     width: 50%;
 }
 
+/* /////////////////////////////////////////////////////////////////////////// */
+/* SPECIFIC MATCH */
+
+#specificMatchOverlay {
+    display: none;
+}
+
+.specific-match {
+    color: var(--colorDarkText);
+}
+
+
+.match-overlay-header {
+    background-color: var(--colorBackground);
+    padding: 2rem 2rem 1rem 1rem;
+    /* display: grid;
+    flex-direction: column;
+    gap: 0.5rem; */
+    box-shadow: 0px 10px 6px rgba(0, 0, 0, 0.2);
+}
+
+.match-overlay-h1 {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.match-overlay-close {
+    background-color: var(--colorBackground);
+    border: none;
+    top: 0;
+    left: 0;
+    font-size: 14px;
+    color: var(--colorDarkText);
+}
+
+
+
+
+
+
+
+
 
 /* /////////////////////////////////////////////////////////////////////////// */
 /* INTERESTS OVERVIEW */

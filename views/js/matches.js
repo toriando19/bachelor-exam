@@ -166,6 +166,9 @@ async function viewUserInfo(username, matchPercentage) {
                 ${interestDescriptions.map(description => `<li>${description}</li>`).join('')}
             </ul>
         `;
+
+        // Show the overlay
+        document.getElementById('specificMatchOverlay').style.display = 'block';
     } catch (error) {
         console.error('Error fetching user info:', error);
         alert('Error fetching user info.');
