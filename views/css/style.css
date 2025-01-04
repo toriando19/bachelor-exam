@@ -691,6 +691,15 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     transition: width 0.3s ease;  /* Smooth transition for progress */
 }
 
+.chat-start-button {
+    width: 100%;
+    padding: 5px;
+    background-color: var(--colorRed);
+    color: var(--colorLightText);
+    text-align: center;
+    border: none;
+}
+
 
 
 

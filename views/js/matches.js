@@ -125,6 +125,14 @@ async function createChat(chat_user_1_id, chat_user_2_id) {
 
 async function viewUserInfo(username, matchPercentage) {
     try {
+        const sessionData = JSON.parse(sessionStorage.getItem('sessionData')); // Get session data here
+        if (!sessionData || !sessionData.user_id) {
+            console.error('No session data or user ID found in sessionStorage.');
+            return;
+        }
+
+        const currentUserId = sessionData.user_id; // Now we have the currentUserId inside this function
+
         const usersResponse = await fetch('http://localhost:3000/users');
         const users = await usersResponse.json();
 
@@ -157,7 +165,7 @@ async function viewUserInfo(username, matchPercentage) {
             return;
         }
 
-        // Clear previous content inside the userInfoSection
+        // Clear previous content inside the userInfoSection and append the user info along with the chat button
         userInfoSection.innerHTML = `
             <div class="match-overlay-header">
                 <button id="specficMatchClose" class="match-overlay-close"> < </button> <!-- replace with icon-image -->
@@ -181,8 +189,22 @@ async function viewUserInfo(username, matchPercentage) {
                 <ul>
                     ${interestDescriptions.map(description => `<li>${description}</li>`).join('')}
                 </ul>
+
+
+                <br><br>
+
+                <button id="startChatButton" class="chat-start-button"> Start en chat med ${user.user_username} </button>
+            
             </div>
+            
         `;
+
+        // Add event listener to the chat button
+        const chatButton = document.getElementById('startChatButton');
+        chatButton.onclick = () => {
+            alert(`You're starting a chat with ${user.user_username}`);
+            createChat(currentUserId, user.user_id);  // Now we are sure currentUserId is available here
+        };
 
         // Show the overlay
         document.getElementById('specificMatchOverlay').style.display = 'block';
@@ -204,6 +226,10 @@ async function viewUserInfo(username, matchPercentage) {
         alert('Error fetching user info.');
     }
 }
+
+
+
+
 
 
 
