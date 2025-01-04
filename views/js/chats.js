@@ -40,13 +40,8 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
     <button id="submitMessage">Send Message</button>
   `;
 
-  // Display the icebreaker questions
+  // Display the icebreaker questions (fixed at the bottom)
   initializeIcebreaker();
-
-  // Hide icebreaker when the user starts typing a message
-  document.getElementById('userMessage').addEventListener('focus', () => {
-    icebreakerDiv.style.display = 'none';
-  });
 
   // Handle message submission
   document.getElementById('submitMessage').addEventListener('click', async () => {
@@ -62,7 +57,6 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
     }
   });
 }
-
 
 
 // Function to send message to the create-message API
