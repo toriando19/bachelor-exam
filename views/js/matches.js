@@ -157,6 +157,7 @@ async function viewUserInfo(username, matchPercentage) {
             return;
         }
 
+        // Clear previous content inside the userInfoSection
         userInfoSection.innerHTML = `
             <div class="match-overlay-header">
                 <button id="specficMatchClose" class="match-overlay-close"> < </button> <!-- replace with icon-image -->
@@ -171,6 +172,17 @@ async function viewUserInfo(username, matchPercentage) {
                 ${interestDescriptions.map(description => `<li>${description}</li>`).join('')}
             </ul>
         `;
+
+        // Add the progress bar below the percentage
+        const progressBarContainer = document.createElement('div');
+        progressBarContainer.classList.add('match-progress-bar');
+
+        const progressBarFilled = document.createElement('div');
+        progressBarFilled.classList.add('filled');
+        progressBarFilled.style.width = `${matchPercentage}%`;  // Set the filled portion based on the match percentage
+
+        progressBarContainer.appendChild(progressBarFilled);
+        userInfoSection.appendChild(progressBarContainer);
 
         // Show the overlay
         document.getElementById('specificMatchOverlay').style.display = 'block';
@@ -192,6 +204,7 @@ async function viewUserInfo(username, matchPercentage) {
         alert('Error fetching user info.');
     }
 }
+
 
 
 
