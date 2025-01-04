@@ -157,7 +157,7 @@ async function fetchChatDocuments() {
     
         // Create another p element for additional information (e.g., last message preview)
         const additionalInfo = document.createElement('p');
-        additionalInfo.textContent = `${chat.last_message || 'No messages yet'}`;
+        additionalInfo.textContent = `${chat.last_message || 'No messages yet · 04.01'}`;
         additionalInfo.classList.add('message-preview');
     
         // Append name and message preview to the text block

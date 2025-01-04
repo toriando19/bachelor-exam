@@ -421,13 +421,14 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 
 .chat-entry {
     border-bottom: 1px solid var(--colorGreyLight);
-    align-items: center;
+    /* align-items: center; */
     display: flex;
     padding: 1rem;
 }
 
 .matching-users {
     color: var(--colorDarkText);
+    font-weight: 500;
 }
 
 .icebreaker {
@@ -435,8 +436,9 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 }
 
 .profile-image {
-    width: 13%;
-    border-radius: 30px;
+    width: 10%;
+    height: 10%;
+    border-radius: 20px;
     margin-right: 10px;
 }
 
