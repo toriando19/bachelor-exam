@@ -242,64 +242,63 @@ async function fetchAndDisplayAdminChats() {
     filteredChats.forEach(chat => {
       const matchedUser = users.find(user => user.user_id === (chat.chat_user_1 === user_id ? chat.chat_user_2 : chat.chat_user_1));
       if (matchedUser) {
-        const displayName = matchedUser.user_nickname || matchedUser.user_username;
-    
+        const matchDisplayName = matchedUser.user_nickname || matchedUser.user_username;
+
         // Create a container div for the chat entry
-        const chatContainer = document.createElement('div');
-        chatContainer.classList.add('chat-entry');
-    
+        const matchContainer = document.createElement('div');
+        matchContainer.classList.add('match-entry');
+
         // Create an img element for the user's profile picture
         const profileImage = document.createElement('img');
         profileImage.src = matchedUser.profile_picture || '../img/profile.jpg'; // Fallback to a default image if none provided
-        profileImage.alt = `${displayName}'s profile picture`;
+        profileImage.alt = `${matchDisplayName}'s profile picture`;
         profileImage.classList.add('profile-image');
-    
-        // Create a div to group text elements (name and last message)
-        const textBlock = document.createElement('div');
-        textBlock.classList.add('text-block');
-    
+
+        // Create a div to group text elements (name, status, and button)
+        const matchTextBlock = document.createElement('div');
+        matchTextBlock.classList.add('match-text-block');
+        matchTextBlock.style.display = 'flex'; // Use Flexbox
+        matchTextBlock.style.justifyContent = 'space-between'; // Space between the left and right elements
+        matchTextBlock.style.alignItems = 'center'; // Ensure everything is vertically aligned
+
         // Create the main p element for displaying the user's name
-        const nameDisplayer = document.createElement('p');
-        nameDisplayer.textContent = `${displayName} >`;
-        nameDisplayer.classList.add('name-displayer');
-        nameDisplayer.addEventListener('click', () => showMessageInput(chat.id, matchedUser.user_id, displayName));
-    
-        // Create another p element for additional information (e.g., last message preview)
-        const additionalInfo = document.createElement('p');
-        additionalInfo.textContent = `${chat.last_message || 'No messages yet · 04.01'}`;
-        additionalInfo.classList.add('message-preview');
-    
+        const nameMatchDisplayer = document.createElement('p');
+        nameMatchDisplayer.textContent = `${matchedUser.user_username}`;
+        nameMatchDisplayer.classList.add('match-name-displayer');
+        
         // Add status for chat (whether messages exist or not)
         const status = document.createElement('span');
         status.classList.add('chat-status');
-        status.textContent = chat.last_message ? 'Active' : 'No messages';
-    
+        // status.textContent = chat.last_message ? 'Active' : 'No messages';
+        status.textContent = chat.last_message ? 'Chat' : 'Chat';
+
         // Create delete button for the chat
         const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
+        deleteButton.textContent = 'Slet chat';
         deleteButton.classList.add('delete-chat-button');
         deleteButton.addEventListener('click', async () => {
-          const confirmation = confirm("Are you sure you want to delete this chat?");
+          const confirmation = confirm(`Slet chat med ${matchedUser.user_username}`);
           if (confirmation) {
             await deleteChat(chat.id);
-            chatContainer.remove();  // Remove the chat from the UI after deletion
+            matchContainer.remove();  // Remove the chat from the UI after deletion
           }
         });
-    
-        // Append name, message preview, status, and delete button to the text block
-        textBlock.appendChild(nameDisplayer);
-        textBlock.appendChild(additionalInfo);
-        textBlock.appendChild(status);
-        textBlock.appendChild(deleteButton);
-    
+
+        // Append name, status, and delete button to the text block
+        matchTextBlock.appendChild(nameMatchDisplayer);
+        matchTextBlock.appendChild(status);
+        matchTextBlock.appendChild(deleteButton);
+
         // Append the image and text block to the chat container
-        chatContainer.appendChild(profileImage);
-        chatContainer.appendChild(textBlock);
-    
+        matchContainer.appendChild(profileImage);
+        matchContainer.appendChild(matchTextBlock);
+
         // Append the chat container to the result container
-        resultContainer.appendChild(chatContainer);
+        resultContainer.appendChild(matchContainer);
       }
     });
+
+
 
   } catch (error) {
     console.error(error.message);
