@@ -158,8 +158,10 @@ async function viewUserInfo(username, matchPercentage) {
         }
 
         userInfoSection.innerHTML = `
-            <h3>User Info</h3>
-            <p><strong>Username:</strong> ${user.user_username}</p>
+            <div class="match-overlay-header">
+                <button id="specficMatchClose" class="match-overlay-close"> < </button> <!-- replace with icon-image -->
+                <h1 class="overlay-h1"> ${user.user_username} </h1>
+            </div>
             <p><strong>Percent Match:</strong> ${matchPercentage}%</p>
             <p><strong>User Interests:</strong></p>
             <ul>
@@ -169,8 +171,24 @@ async function viewUserInfo(username, matchPercentage) {
 
         // Show the overlay
         document.getElementById('specificMatchOverlay').style.display = 'block';
+
+        // Add the event listener for the close button inside this function
+        const closeButton = document.getElementById('specficMatchClose');
+        closeButton.addEventListener('click', function() {
+            const matchOverlay = document.getElementById('specificMatchOverlay');
+
+            // Hide profile section and overlay
+            matchOverlay.style.display = 'none';
+
+            // Set the active menu back to the "frontpageMenu"
+            setActiveMenu("frontpageMenu");
+        });
+
     } catch (error) {
         console.error('Error fetching user info:', error);
         alert('Error fetching user info.');
     }
 }
+
+
+

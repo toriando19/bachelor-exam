@@ -92,17 +92,6 @@ document.getElementById('profileClose').addEventListener('click', function() {
 });
 
 
-
-document.getElementById('specficMatchClose').addEventListener('click', function() {
-    const matchOverlay = document.getElementById('specificMatchOverlay');
-    
-    // Hide profile section and overlay
-    matchOverlay.style.display = 'none';
-    setActiveMenu("frontpageMenu");
-});
-
-
-
 document.getElementById("chatsMenu").addEventListener("click", handleChatsClick);
 document.getElementById("chats").addEventListener("click", handleChatsClick);
 
