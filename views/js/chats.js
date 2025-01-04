@@ -1,3 +1,7 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ---  ///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // Show the chat overlay with the input field and icebreaker when a chat is clicked
 async function showMessageInput(chat_id, recipient_id, recipient_name) {
   console.log("Chat ID:", chat_id, "Recipient ID:", recipient_id, "Recipient Name:", recipient_name);
@@ -69,7 +73,9 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
   });
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// --- ///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Function to send message to the create-message API
 async function sendMessageToAPI(chat_id, recipient_id, message) {
@@ -96,6 +102,11 @@ async function sendMessageToAPI(chat_id, recipient_id, message) {
     console.error("Error sending message:", error);
   }
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// --- ///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 // Function to fetch and display chat documents based on the user_id
 async function fetchChatDocuments() {
@@ -189,6 +200,133 @@ fetchChatDocuments();
 document.getElementById('chatClose').addEventListener('click', function() {
   document.getElementById('chatOverlay').style.display = 'none';
 });
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// --- ///////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// Function to fetch and display admin-related chat documents
+async function fetchAndDisplayAdminChats() {
+  try {
+    const sessionData = JSON.parse(sessionStorage.getItem("sessionData"));
+    if (!sessionData || !sessionData.user_id) throw new Error('User ID not found in session data');
+    
+    const user_id = sessionData.user_id;
+    console.log("Fetching admin chats for User ID:", user_id);
+
+    // Fetch chat data for the user
+    const chatResponse = await fetch('http://localhost:3000/chats');
+    if (!chatResponse.ok) throw new Error('Failed to fetch chats');
+
+    const chats = await chatResponse.json();
+    const filteredChats = chats.filter(chat => chat.chat_user_1 === user_id || chat.chat_user_2 === user_id);
+
+    // Fetch user data
+    const userResponse = await fetch('http://localhost:3000/users');
+    if (!userResponse.ok) throw new Error('Failed to fetch users');
+
+    const users = await userResponse.json();
+    const resultContainer = document.getElementById('adminChats');
+    resultContainer.innerHTML = ''; // Clear previous results
+
+    // Sort filteredChats to show the chat with the newest message first
+    filteredChats.sort((a, b) => {
+      const timeA = new Date(a.last_message_time); // Assuming the chat object has a last_message_time property
+      const timeB = new Date(b.last_message_time);
+      return timeB - timeA; // Sort in descending order (newest first)
+    });
+
+    // Display the chats and their associated users
+    filteredChats.forEach(chat => {
+      const matchedUser = users.find(user => user.user_id === (chat.chat_user_1 === user_id ? chat.chat_user_2 : chat.chat_user_1));
+      if (matchedUser) {
+        const displayName = matchedUser.user_nickname || matchedUser.user_username;
+    
+        // Create a container div for the chat entry
+        const chatContainer = document.createElement('div');
+        chatContainer.classList.add('chat-entry');
+    
+        // Create an img element for the user's profile picture
+        const profileImage = document.createElement('img');
+        profileImage.src = matchedUser.profile_picture || '../img/profile.jpg'; // Fallback to a default image if none provided
+        profileImage.alt = `${displayName}'s profile picture`;
+        profileImage.classList.add('profile-image');
+    
+        // Create a div to group text elements (name and last message)
+        const textBlock = document.createElement('div');
+        textBlock.classList.add('text-block');
+    
+        // Create the main p element for displaying the user's name
+        const nameDisplayer = document.createElement('p');
+        nameDisplayer.textContent = `${displayName} >`;
+        nameDisplayer.classList.add('name-displayer');
+        nameDisplayer.addEventListener('click', () => showMessageInput(chat.id, matchedUser.user_id, displayName));
+    
+        // Create another p element for additional information (e.g., last message preview)
+        const additionalInfo = document.createElement('p');
+        additionalInfo.textContent = `${chat.last_message || 'No messages yet · 04.01'}`;
+        additionalInfo.classList.add('message-preview');
+    
+        // Add status for chat (whether messages exist or not)
+        const status = document.createElement('span');
+        status.classList.add('chat-status');
+        status.textContent = chat.last_message ? 'Active' : 'No messages';
+    
+        // Create delete button for the chat
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.classList.add('delete-chat-button');
+        deleteButton.addEventListener('click', async () => {
+          const confirmation = confirm("Are you sure you want to delete this chat?");
+          if (confirmation) {
+            await deleteChat(chat.id);
+            chatContainer.remove();  // Remove the chat from the UI after deletion
+          }
+        });
+    
+        // Append name, message preview, status, and delete button to the text block
+        textBlock.appendChild(nameDisplayer);
+        textBlock.appendChild(additionalInfo);
+        textBlock.appendChild(status);
+        textBlock.appendChild(deleteButton);
+    
+        // Append the image and text block to the chat container
+        chatContainer.appendChild(profileImage);
+        chatContainer.appendChild(textBlock);
+    
+        // Append the chat container to the result container
+        resultContainer.appendChild(chatContainer);
+      }
+    });
+
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
+const deleteChat = async (chatId) => {
+  try {
+    const response = await fetch(`http://localhost:3000/delete-chat/${chatId}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete chat');
+    }
+
+    const result = await response.json();
+    console.log(result);  // You can log or handle the result here
+  } catch (error) {
+    console.error('Error deleting chat:', error);
+  }
+};
+
+
+// Call to initialize chats for the admin on page load
+fetchAndDisplayAdminChats();
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Icebreaker  ////////////////////////////////////////////////////////////////////////////////////////////////////

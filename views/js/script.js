@@ -69,12 +69,14 @@ document.getElementById("profileMenu").addEventListener("click", function() {
     const chatOverlay = document.getElementById("chatOverlay");
     const chatsOverlay = document.getElementById("chatsOverlay");
     const matchOverlay = document.getElementById("specificMatchOverlay");
+    const matchesOverlay = document.getElementById("matchesOverlay");
     
     // Show profile overlay and section, hide burger menu
     setActiveMenu("profileMenu");
     profileOverlay.style.display = "block";
     userProfileSection.style.display = "block"; // Ensure this is visible
     matchOverlay.style.display = "none";
+    matchesOverlay.style.display = "none";
     chatOverlay.style.display = "none";
     chatsOverlay.style.display = "none";
     burgerMenu.style.display = "none";
@@ -103,6 +105,7 @@ function handleChatsClick() {
     const burgerMenu = document.getElementById("burgerMenu");
     const button = document.getElementById("hamburgerMenu");
     const matchOverlay = document.getElementById("specificMatchOverlay");
+    const matchesOverlay = document.getElementById("matchesOverlay");
 
     // Show the chats overlay and hide others
     setActiveMenu("chatsMenu");
@@ -111,6 +114,7 @@ function handleChatsClick() {
     chatOverlay.style.display = "none"; // Hide the chat overlay
     burgerMenu.style.display = "none"; // Hide the burger menu
     matchOverlay.style.display = "none";
+    matchesOverlay.style.display = "none";
     button.textContent = "☰"; // Reset burger menu button text
 }
 
@@ -118,6 +122,36 @@ function handleChatsClick() {
 // Add an onclick function to the close button to hide the profile section and overlay
 document.getElementById('chatsClose').addEventListener('click', function() {
     document.getElementById('chatsOverlay').style.display = 'none';
+    setActiveMenu("frontpageMenu");
+});
+
+
+document.getElementById("matchesMenu").addEventListener("click", function() {
+    const profileOverlay = document.getElementById("profileOverlay");
+    const userProfileSection = document.getElementById("userProfileSection");
+    const burgerMenu = document.getElementById("burgerMenu");
+    const button = document.getElementById("hamburgerMenu");
+    const chatOverlay = document.getElementById("chatOverlay");
+    const chatsOverlay = document.getElementById("chatsOverlay");
+    const matchOverlay = document.getElementById("specificMatchOverlay");
+    const matchesOverlay = document.getElementById("matchesOverlay");
+    
+    // Show profile overlay and section, hide burger menu
+    setActiveMenu("matchesMenu");
+    matchesOverlay.style.display = "block";
+    profileOverlay.style.display = "none";
+    userProfileSection.style.display = "none"; // Ensure this is visible
+    matchOverlay.style.display = "none";
+    chatOverlay.style.display = "none";
+    chatsOverlay.style.display = "none";
+    burgerMenu.style.display = "none";
+    button.textContent = "☰"; // Change button text back to "☰"
+});
+
+document.getElementById('matchesClose').addEventListener('click', function() {
+    const matchesOverlay = document.getElementById("matchesOverlay");
+    // Hide profile section and overlay
+    matchesOverlay.style.display = "none";
     setActiveMenu("frontpageMenu");
 });
 

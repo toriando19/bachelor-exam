@@ -1,7 +1,7 @@
 import path from 'path';
 import express from 'express';
 import { loginUser, fetchAllUsers, fetchAllInterests, fetchAllUserInterest, fetchMatchingUserInterest, fetchAllMatches, addUserInterest, removeUserInterest } from '../database/postgres/api-postgres.mjs';
-import { fetchChats, createChat, fetchNotifications, fetchMessages, createMessage } from '../database/mongo/api-mongo.mjs';
+import { fetchChats, createChat, deleteChat, fetchNotifications, fetchMessages, createMessage } from '../database/mongo/api-mongo.mjs';
 
 const router = express.Router();
 
@@ -124,6 +124,31 @@ router.get('/new-chat', async (req, res) => {
   } catch (error) {
     // console.error('Error in creating new chat:', error);
     // res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+// MongoDB Route to handle deleting a chat
+router.delete('/delete-chat/:chat_id', async (req, res) => {
+  const { chat_id } = req.params;  // Get the chat_id from the route parameters
+
+  // Check if chat_id is provided
+  if (!chat_id) {
+    return res.status(400).json({ error: 'Chat ID is required' });
+  }
+
+  try {
+    // Call the deleteChat function to delete the chat by chat_id
+    const result = await deleteChat(chat_id);
+    
+    // Check if the delete operation was successful
+    if (result.deletedCount === 1) {
+      res.json({ success: true, message: `Chat with ID ${chat_id} deleted successfully` });
+    } else {
+      res.status(404).json({ error: `Chat with ID ${chat_id} not found` });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete chat' });
   }
 });
 

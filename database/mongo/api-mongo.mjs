@@ -96,6 +96,27 @@ export async function createChat(chat_user_1, chat_user_2) {
 }
 
 
+// Function to delete a chat document by its chat_id
+export async function deleteChat(chat_id) {
+  try {
+    const { chatCollection, client } = await connectToMongoDB('chats');
+    
+    // Find and delete the chat with the given chat_id
+    const result = await chatCollection.deleteOne({ id: chat_id });
+
+    // Close the client connection after the operation
+    await client.close();
+
+    // Return the result of the delete operation
+    return result;
+  } catch (error) {
+    console.error('Error deleting chat:', error);
+    throw error;  // Ensure the error is thrown for handling in the route
+  }
+}
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Create Message  ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

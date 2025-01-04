@@ -554,8 +554,6 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 }
 
 
-
-
 /* /////////////////////////////////////////////////////////////////////////// */
 /* ICEBREAKER */
 
@@ -603,6 +601,17 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     padding: 10px;
     border-bottom: 1px solid var(--colorGreyLight);
 }
+
+
+
+/* /////////////////////////////////////////////////////////////////////////// */
+/* ALL MATCHES */
+
+#matchesOverlay {
+    display: none;
+}
+
+
 
 
 
