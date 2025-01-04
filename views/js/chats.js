@@ -171,18 +171,27 @@ function shuffleAndDisplay() {
   const icebreakerDiv = document.getElementById('icebreaker');
   
   // Create HTML for the icebreaker questions and add event listeners to them
-  icebreakerDiv.innerHTML = selectedStrings.map(str => `<p class="icebreaker-question">${str}</p>`).join('');
+  icebreakerDiv.innerHTML = selectedStrings.map(str => `
+    <p class="icebreaker-question">${str}</p>
+  `).join('');
 
-  // Add event listener to each question
+  // Add event listeners to the question paragraphs
   const questionElements = document.querySelectorAll('.icebreaker-question');
   questionElements.forEach(question => {
     question.addEventListener('click', () => {
-      // When a question is clicked, set it as the value of the input field
       const userMessageInput = document.getElementById('userMessage');
       userMessageInput.value = question.textContent;  // Set clicked question in the input field
     });
   });
 }
 
-// Add event listener to the button
+// Function to initialize with default set of 3 questions
+function initializeIcebreaker() {
+  shuffleAndDisplay();  // Call to shuffle and display the initial 3 questions
+}
+
+// Call initialize function on page load
+initializeIcebreaker();
+
+// Add event listener to the shuffle button
 document.getElementById('shuffleIcebreaker').addEventListener('click', shuffleAndDisplay);

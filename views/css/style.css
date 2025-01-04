@@ -466,6 +466,10 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 /* /////////////////////////////////////////////////////////////////////////// */
 /* ICEBREAKER */
 
+#icebreaker {
+    margin: 1rem;
+}
+
 .icebreaker {
     background-color: var(--colorBlue);
     color: var(--colorLightText);
@@ -488,10 +492,6 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     border: 1px solid var(--colorLightText);
     background-color: var(--colorBlue);
     color: var(--colorLightText);
-}
-
-#icebreaker {
-    margin: 1rem;
 }
 
 .icebreaker-question {
