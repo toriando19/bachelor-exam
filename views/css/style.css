@@ -620,6 +620,16 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     display: none;
 }
 
+.profileContainer {
+    align-items: center;
+    text-align: center;
+}
+
+.profilePicture {
+    width: 15%;
+    border-radius: 50px;
+}
+
 .specific-match {
     color: var(--colorDarkText);
 }

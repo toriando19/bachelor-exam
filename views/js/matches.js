@@ -160,7 +160,10 @@ async function viewUserInfo(username, matchPercentage) {
         userInfoSection.innerHTML = `
             <div class="match-overlay-header">
                 <button id="specficMatchClose" class="match-overlay-close"> < </button> <!-- replace with icon-image -->
-                <h1 class="overlay-h1"> ${user.user_username} </h1>
+                <div class="profileContainer">
+                    <img class="profilePicture" src="img/profile.jpg" alt="logo">
+                    <h1 class="overlay-h1"> ${user.user_username} </h1>
+                </div>
             </div>
             <p><strong>Percent Match:</strong> ${matchPercentage}%</p>
             <p><strong>User Interests:</strong></p>
