@@ -18,7 +18,7 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
     console.error('Failed to fetch users');
     return;
   }
-  
+
   const users = await userResponse.json();
   const matchedUser = users.find(user => user.user_id === recipient_id); // Find the matched user by ID
 
@@ -36,12 +36,23 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
 
   // Display the input field and button
   inputDiv.innerHTML = `
-    <input type="text" id="userMessage" placeholder="Type your message here" />
-    <button id="submitMessage">Send Message</button>
+    <div class="inputStyle">
+      <button id="displayIcebreaker">❆</button>
+      <input type="text" id="userMessage" placeholder="Aa" />
+      <button id="submitMessage">Send</button>
+    </div>
   `;
 
   // Display the icebreaker questions (fixed at the bottom)
   initializeIcebreaker();
+
+  document.getElementById('displayIcebreaker').addEventListener('click', () => {
+    const icebreakerSection = document.getElementById('icebreakerSection');
+    // Check the computed style to handle cases where display is not explicitly set
+    const currentDisplay = window.getComputedStyle(icebreakerSection).display;
+    icebreakerSection.style.display = currentDisplay === 'none' ? 'block' : 'none';
+  });  
+
 
   // Handle message submission
   document.getElementById('submitMessage').addEventListener('click', async () => {
@@ -57,6 +68,7 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
     }
   });
 }
+
 
 
 // Function to send message to the create-message API

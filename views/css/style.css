@@ -460,7 +460,6 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     display: none;
 }
 
-
 .chat-overlay-header {
     background-color: var(--colorBackground);
     padding: 2rem 2rem 1rem 1rem;
@@ -521,15 +520,59 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 }
 
 
+/* /////////////////////////////////////////////////////////////////////////// */
+/* MESSAGE INPUT */
+
+.message-input {
+    bottom: 0;
+    position: fixed;
+    width: 100%;
+}
+
+.inputStyle {
+    display: flex;
+    flex-direction: row;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    background-color: var(--colorGreyDark);
+}
+
+#userMessage {
+    width: 60%;
+    padding-left: 10px;
+    border: none;
+    border-radius: 20px 0px 0px 20px;
+    background-color: var(--colorShadeLight);
+}
+
+#submitMessage {
+    background-color: var(--colorRed);
+    border: none;
+    width: 5rem;
+    border-radius: 0px 20px 20px 0px;
+}
+
+
+
 
 /* /////////////////////////////////////////////////////////////////////////// */
 /* ICEBREAKER */
+
+#displayIcebreaker {
+    border: none;
+    background-color: var(--colorGreyDark);
+    align-items: center;
+    text-align: center;
+    font-size: 30px;
+    margin-left: 10px;
+}
 
 #icebreaker {
     margin: 1rem;
 }
 
-.icebreaker {
+#icebreakerSection {
+    display: none;
     background-color: var(--colorBlue);
     color: var(--colorLightText);
     padding-bottom: 10px;
