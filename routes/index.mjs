@@ -1,6 +1,6 @@
 import path from 'path';
 import express from 'express';
-import { loginUser, fetchAllUsers, fetchAllInterests, fetchAllUserInterest, fetchAllMatches, addUserInterest, removeUserInterest } from '../database/postgres/api-postgres.mjs';
+import { loginUser, fetchAllUsers, fetchAllInterests, fetchAllUserInterest, fetchMatchingUserInterest, fetchAllMatches, addUserInterest, removeUserInterest } from '../database/postgres/api-postgres.mjs';
 import { fetchChats, createChat, fetchNotifications, fetchMessages, createMessage } from '../database/mongo/api-mongo.mjs';
 
 const router = express.Router();
@@ -47,6 +47,11 @@ router.get('/interests', async (req, res) => {
 
 router.get('/userinterest', async (req, res) => {
   const data = await fetchAllUserInterest();
+  res.json(data);
+});
+
+router.get('/matchinginterests', async (req, res) => {
+  const data = await fetchMatchingUserInterest();
   res.json(data);
 });
 

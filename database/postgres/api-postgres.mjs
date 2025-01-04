@@ -72,6 +72,31 @@ export const fetchAllUserInterest = async () => {
   }
 };
 
+// Fetch matching user-interests
+export const fetchMatchingUserInterest = async (sessionUserId, relatedUserId) => {
+  try {
+    // Query to get common interests between the session user and the related user
+    const query = `
+      SELECT * FROM user_interest
+      WHERE user_interest_user IN ($1, $2) 
+      AND user_interest_interest IN (
+        SELECT user_interest_interest 
+        FROM user_interest 
+        WHERE user_interest_user = $1
+      )
+    `;
+
+    const userInterests = await queryDatabase(query, [sessionUserId, relatedUserId]);
+    return userInterests;
+  } catch (err) {
+    throw new Error("Error fetching matching user interests: " + err.message);
+  }
+};
+
+
+
+
+
 // Fetch all matches
 export const fetchAllMatches = async () => {
   try {
