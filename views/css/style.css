@@ -457,9 +457,49 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 /* SPECIFIC CHAT */
 
 #chatOverlay {
-    display: none;
+    /* display: none; */
 }
 
+
+
+
+/* /////////////////////////////////////////////////////////////////////////// */
+/* ICEBREAKER */
+
+.icebreaker {
+    background-color: var(--colorBlue);
+    color: var(--colorLightText);
+    padding-bottom: 10px;
+}
+
+.icebreaker-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1rem;
+    box-shadow: 0px 10px 6px rgba(0, 0, 0, 0.2);
+}
+
+.icebreaker-header h1 {
+    color: var(--colorShadeBlue);
+}
+
+.icebreaker-header button {
+    border: 1px solid var(--colorLightText);
+    background-color: var(--colorBlue);
+    color: var(--colorLightText);
+}
+
+#icebreaker {
+    margin: 1rem;
+}
+
+.icebreaker-question {
+    line-height: 1.5;
+    font-size: 14px;
+    padding: 10px;
+    border-bottom: 1px solid var(--colorGreyLight);
+}
 
 
 
