@@ -142,25 +142,21 @@ document.getElementById('chatClose').addEventListener('click', function() {
 // Array of 20 strings for icebreaker questions
 const strings = [
   "What's your favorite hobby?",
-  "If you could visit any place in the world, where would it be?",
   "What’s the best meal you’ve ever had?",
   "Do you have a favorite movie or TV show?",
   "What’s the most interesting book you’ve read?",
-  "If you could have any superpower, what would it be?",
   "What’s one thing on your bucket list?",
   "What’s your favorite season of the year?",
   "Do you prefer coffee or tea?",
   "What’s the most exciting trip you’ve been on?",
   "What’s your dream job?",
   "What’s one skill you wish you could master?",
-  "If you could meet any historical figure, who would it be?",
   "What’s your favorite type of music?",
   "Do you have a favorite sport or physical activity?",
   "What’s your go-to comfort food?",
   "What’s your favorite holiday tradition?",
   "Do you prefer sunrise or sunset?",
   "What’s one thing you’re grateful for today?",
-  "If you could live in any time period, which one would it be?"
 ];
 
 // Function to shuffle an array
