@@ -908,7 +908,6 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 
 /* /////////////////////////////////////////////////////////////////////////// */
 /* INTERESTS OVERVIEW */
-
 .interests-overview {
     background-color: var(--colorShadeLight);
     margin-left: -1rem;
@@ -920,7 +919,7 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 .interests-overview-header {
     display: flex;
     flex-direction: row;
-    align-content: center;
+    align-items: center;
     justify-content: space-between;
 }
 
@@ -932,21 +931,46 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     margin-right: 1rem;
 }
 
-#matchingInterestsContainer {
-    display: flex; 
-    flex-direction: row; 
-    overflow-x: auto; 
-    scrollbar-width: none;
-}
-
-#matchingInterestsContainer p {
+.interest-item {
+    display: flex;
+    align-items: center;
     margin-right: 1rem;
+    padding-right: 1rem;
     border: 1px solid var(--colorGreyLight);
     color: var(--colorGreyDark);
-    padding: 10px;
-    font-size: 14px;
-    flex-shrink: 0;
+    width: fit-content;
+    white-space: nowrap;
+    margin-bottom: 10px; /* Space between interest items */
+    font-size: 15px;
 }
+
+.interest-item img {
+    width: 3rem; 
+    height: 3rem;
+    opacity: 40%;
+    /* margin-right: 5px;  */
+}
+
+.title-category-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#matchingInterestsContainer {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 1rem; /* Ensure space at the bottom of container */
+}
+
+#matchingInterestsCount {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--colorGreyDark);
+}
+
 
 
 
