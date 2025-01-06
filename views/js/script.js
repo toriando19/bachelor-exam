@@ -28,10 +28,10 @@ document.getElementById("hamburgerMenu").addEventListener("click", function() {
     // Toggle the display of the burger menu
     if (burgerMenu.style.display === "none" || burgerMenu.style.display === "") {
         burgerMenu.style.display = "block";
-        button.textContent = "x"; // Change button text to "X"
+        button.innerHTML = '<img src="img/icons/x-black.png" alt="Menu">'; // Change button text to "X"
     } else {
         burgerMenu.style.display = "none";
-        button.textContent = "☰"; // Change button text back to "☰"
+        button.innerHTML = '<img src="img/icons/burger-black.png" alt="Menu">'; // Change button text back to "☰"
     }
 });
 
@@ -56,7 +56,7 @@ function handleFrontPageClick() {
     burgerMenu.style.display = "none";
     chatsOverlay.style.display = "none";
     chatOverlay.style.display = "none";
-    button.textContent = "☰"; 
+    button.innerHTML = '<img src="img/icons/burger-black.png" alt="Menu">';
 }
 
 
@@ -80,7 +80,7 @@ document.getElementById("profileMenu").addEventListener("click", function() {
     chatOverlay.style.display = "none";
     chatsOverlay.style.display = "none";
     burgerMenu.style.display = "none";
-    button.textContent = "☰"; // Change button text back to "☰"
+    button.innerHTML = '<img src="img/icons/burger-black.png" alt="Menu">'; // Change button text back to "☰"
 });
 
 document.getElementById('profileClose').addEventListener('click', function() {
@@ -115,7 +115,7 @@ function handleChatsClick() {
     burgerMenu.style.display = "none"; // Hide the burger menu
     matchOverlay.style.display = "none";
     matchesOverlay.style.display = "none";
-    button.textContent = "☰"; // Reset burger menu button text
+    button.innerHTML = '<img src="img/icons/burger-black.png" alt="Menu">'; // Reset burger menu button text
 }
 
 
@@ -145,7 +145,7 @@ document.getElementById("matchesMenu").addEventListener("click", function() {
     chatOverlay.style.display = "none";
     chatsOverlay.style.display = "none";
     burgerMenu.style.display = "none";
-    button.textContent = "☰"; // Change button text back to "☰"
+    button.innerHTML = '<img src="img/icons/burger-black.png" alt="Menu">'; // Change button text back to "☰"
 });
 
 document.getElementById('matchesClose').addEventListener('click', function() {
