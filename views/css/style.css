@@ -360,7 +360,11 @@
     display: grid;
     align-items: center;
     grid-template-columns: 0.5fr 3fr 1fr;
-    margin-bottom: 15px;
+    margin-left: -0.5rem;
+}
+
+.toggleContainer img {
+    width: 2.5rem;
 }
 
 label {
@@ -400,6 +404,21 @@ input[type="checkbox"]:checked + .toggleSwitch {
 
 input[type="checkbox"]:checked + .toggleSwitch::before {
     transform: translateX(20px);
+}
+
+.submit-interest {
+    margin-top: 1rem;
+    border: none;
+    background-color: var(--colorRed);
+    color: var(--colorDarkText);
+    padding: 10px;
+    font-weight: 700;
+}
+
+.submit-interest:disabled {
+    background-color: var(--colorShadeLight);
+    color: var(--colorGreyLight);
+    font-weight: 100;
 }
 
 
@@ -940,7 +959,6 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     color: var(--colorGreyDark);
     width: fit-content;
     white-space: nowrap;
-    margin-bottom: 10px; /* Space between interest items */
     font-size: 15px;
 }
 
@@ -962,7 +980,6 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     flex-direction: row;
     overflow-x: auto;
     scrollbar-width: none;
-    padding-bottom: 1rem; /* Ensure space at the bottom of container */
 }
 
 #matchingInterestsCount {

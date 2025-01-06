@@ -40,6 +40,7 @@ window.addEventListener('load', async function () {
 
         // Create and append the submit button
         const submitButton = document.createElement('button');
+        submitButton.classList.add('submit-interest');
         submitButton.type = 'submit';
         submitButton.textContent = 'Submit Changes';
         submitButton.disabled = true;  // Disable initially
