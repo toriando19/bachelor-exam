@@ -212,7 +212,7 @@
     margin-top: 5px;
     border: none;
     background-color: var(--colorRed);
-    color: var(--colorLightText);
+    color: var(--colorDarkText);
     font-size: 25px;
 }
 
@@ -748,7 +748,7 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     margin-bottom: 5px;
     background-color: var(--colorRed);
     border: none;
-    color: var(--colorLightText);
+    color: var(--colorDarkText);
 }
 
 
@@ -823,7 +823,7 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     border: none;
     padding: 5px;
     width: 100%;
-    color: var(--colorLightText);
+    color: var(--colorDarkText);
 }
 
 .match-chat {
@@ -923,7 +923,7 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     width: 100%;
     padding: 5px;
     background-color: var(--colorRed);
-    color: var(--colorLightText);
+    color: var(--colorDarkText);
     text-align: center;
     border: none;
 }
