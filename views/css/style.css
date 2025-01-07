@@ -563,6 +563,13 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 /* /////////////////////////////////////////////////////////////////////////// */
 /* DISPLAY MESSAGE */
 
+#message-timeline {
+    padding-top: 1rem;
+    max-height: 580px; /* Set a height to limit the area */
+    overflow-y: auto; /* Adds vertical scrolling when content overflows */
+    padding-right: 10px; /* Optional: Prevents scrollbar from covering content */
+  }
+
 .message-element {
     margin-bottom: 1rem;
     margin-left: 1rem;
