@@ -2,9 +2,64 @@
 // ---  ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Show the chat overlay with the input field and icebreaker when a chat is clicked
+// Function to fetch and display messages for a specific chat
+async function fetchMessagesForChat(chat_id, user_id) {
+  try {
+    // Fetch all messages for the selected chat
+    const messagesResponse = await fetch(`http://localhost:3000/messages?chat_id=${chat_id}`);
+    if (!messagesResponse.ok) {
+      throw new Error('Failed to fetch messages');
+    }
+    const messages = await messagesResponse.json();
+
+    // Get the message timeline container
+    const messageTimeline = document.getElementById('message-timeline');
+    messageTimeline.innerHTML = ''; // Clear previous messages
+
+    // Filter messages to show only those relevant to the session user
+    const filteredMessages = messages.filter(message => {
+      return message.sender_id === user_id || message.recipient_id === user_id;
+    });
+
+    // Sort messages by the sent_at time (newest first)
+    filteredMessages.sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at));
+
+    // Render the messages in the timeline
+    filteredMessages.forEach(message => {
+      const messageDiv = document.createElement('div');
+      messageDiv.classList.add('message-entry');
+
+      // Determine if the message is sent by the current user or the other participant
+      const isSender = message.sender_id === user_id;
+
+      // Create the content of the message
+      const messageContent = document.createElement('div');
+      messageContent.classList.add(isSender ? 'sent-message' : 'received-message');
+      messageContent.textContent = message.message;
+
+      // Add timestamp
+      const timestamp = document.createElement('span');
+      timestamp.classList.add('message-timestamp');
+      timestamp.textContent = new Date(message.sent_at).toLocaleString();
+
+      // Append the message content and timestamp to the message div
+      messageDiv.appendChild(messageContent);
+      messageDiv.appendChild(timestamp);
+
+      // Append the message div to the message timeline
+      messageTimeline.appendChild(messageDiv);
+    });
+  } catch (error) {
+    console.error('Error fetching messages:', error.message);
+  }
+}
+
+// Modify the `showMessageInput` function to call `fetchMessagesForChat`
 async function showMessageInput(chat_id, recipient_id, recipient_name) {
   console.log("Chat ID:", chat_id, "Recipient ID:", recipient_id, "Recipient Name:", recipient_name);
+
+  const sessionData = JSON.parse(sessionStorage.getItem('sessionData'));
+  const user_id = sessionData.user_id; // Get the logged-in user's ID
 
   const chatOverlay = document.getElementById('chatOverlay'); // Reference to the chat overlay
   const inputDiv = document.getElementById('message-input');
@@ -15,28 +70,7 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
 
   // Dynamically update the chat header div with the recipient's name and nickname
   const chatHeader = document.getElementById('chatHeader');
-
-  // Fetch the user data again to get the nickname
-  const userResponse = await fetch('http://localhost:3000/users');
-  if (!userResponse.ok) {
-    console.error('Failed to fetch users');
-    return;
-  }
-
-  const users = await userResponse.json();
-  const matchedUser = users.find(user => user.user_id === recipient_id); // Find the matched user by ID
-
-  if (matchedUser) {
-    // Check if matchedUser has a nickname, and display it accordingly
-    if (matchedUser.user_nickname) {
-      chatHeader.innerHTML = `<div class="chatMultiNames"> <p class="chatProfileName">${matchedUser.user_username}</p><p class="chatProfileNickname">${recipient_name}</p> </div>`;
-    } else {
-      chatHeader.innerHTML = `<p class="chatProfileNickname">${recipient_name}</p>`;
-    }
-  } else {
-    console.error("Matched user not found.");
-    chatHeader.innerHTML = recipient_name;
-  }
+  chatHeader.innerHTML = `<p class="chatProfileNickname">${recipient_name}</p>`;
 
   // Display the input field and button
   inputDiv.innerHTML = `
@@ -47,12 +81,14 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
     </div>
   `;
 
+  // Fetch and display the messages for the selected chat
+  fetchMessagesForChat(chat_id, user_id);
+
   // Display the icebreaker questions (fixed at the bottom)
   initializeIcebreaker();
 
   document.getElementById('displayIcebreaker').addEventListener('click', () => {
     const icebreakerSection = document.getElementById('icebreakerSection');
-    // Check the computed style to handle cases where display is not explicitly set
     const currentDisplay = window.getComputedStyle(icebreakerSection).display;
     icebreakerSection.style.display = currentDisplay === 'none' ? 'block' : 'none';
   });
@@ -62,18 +98,18 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
     const message = document.getElementById('userMessage').value;
     console.log("Message Input Value:", message);
 
-    // Only send the message if it isn't empty
     if (message.trim() !== "") {
-      const sessionData = JSON.parse(sessionStorage.getItem('sessionData'));
-      const sender_id = sessionData.user_id; // Get the logged-in user's ID (sender)
-
-      await sendMessageToAPI(chat_id, sender_id, recipient_id, message); // Pass the correct sender_id and recipient_id
+      await sendMessageToAPI(chat_id, user_id, recipient_id, message); // Pass the correct sender_id and recipient_id
       document.getElementById('userMessage').value = ''; // Clear input
+
+      // Re-fetch the messages to include the newly sent message
+      fetchMessagesForChat(chat_id, user_id);
     } else {
       alert("Message cannot be empty");
     }
   });
 }
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
