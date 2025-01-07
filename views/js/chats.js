@@ -2,8 +2,7 @@
 // ---  ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Function to fetch and display messages for a specific chat
-async function fetchAndDisplayMessages(chat_id) {
+async function fetchAndDisplayMessages(chat_id, user_id) {
   try {
     // Fetch all messages for the chat_id from the /messages endpoint
     const messagesResponse = await fetch('http://localhost:3000/messages');
@@ -16,26 +15,60 @@ async function fetchAndDisplayMessages(chat_id) {
     const messageTimeline = document.getElementById('message-timeline');
     messageTimeline.innerHTML = '';  // Clear previous messages
 
+    let lastDate = null; // Store the last displayed date
+    
     // Display each message in the timeline
     filteredMessages.forEach(message => {
+      const messageDate = new Date(message.sent_at);
+      
+      // Format the date as "7. januar 2025"
+      const formattedDate = messageDate.toLocaleDateString('da-DK', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+    
+      // Check if the date has changed (i.e., it's a new day)
+      if (lastDate !== formattedDate) {
+        lastDate = formattedDate; // Update the last date
+    
+        // Create a new date header element and add it to the timeline
+        const dateElement = document.createElement('p');
+        dateElement.classList.add('message-date');
+        dateElement.innerHTML = formattedDate; // Insert the formatted date text
+        messageTimeline.appendChild(dateElement);
+      }
+    
+      // Create the message element
       const messageElement = document.createElement('div');
-      messageElement.classList.add('message-item');
-
-      // Display the message content
+      messageElement.classList.add('message-element');
+    
+      // Display the time in the shortened format "13:54"
+      const shortenedTime = messageDate.toLocaleTimeString('da-DK', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    
+      // Display the message content with shortened time
       messageElement.innerHTML = `
-        <div class="message-sender">${message.sender_id}</div>
+        <div class="message-time">${shortenedTime}</div>
         <div class="message-text">${message.message}</div>
-        <div class="message-time">${new Date(message.sent_at).toLocaleTimeString()}</div>
       `;
       
-      // Append message to the timeline
+      // Append the message to the timeline
       messageTimeline.appendChild(messageElement);
     });
+    
+    
 
   } catch (error) {
     console.error('Error fetching or displaying messages:', error);
   }
 }
+
+
+
+
 
 // Modify the `showMessageInput` function to call `fetchMessagesForChat`
 async function showMessageInput(chat_id, recipient_id, recipient_name) {

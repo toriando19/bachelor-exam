@@ -563,9 +563,30 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 /* /////////////////////////////////////////////////////////////////////////// */
 /* DISPLAY MESSAGE */
 
-.message-item {
-    color: var(--colorDarkText);
+.message-element {
+    margin-bottom: 1rem;
+    margin-left: 1rem;
 }
+
+.message-date {
+    color: var(--colorGreyLight);
+    font-size: 12px;
+    text-align: center;
+}
+
+.message-time {
+    color: var(--colorGreyLight);
+    font-size: 12px;
+}
+
+.message-text {
+    background-color: var(--colorRed);
+    color: var(--colorDarkText);
+    padding: 10px;
+    width: 50%;
+    border-radius: 5px;
+}
+
 
 
 /* /////////////////////////////////////////////////////////////////////////// */
