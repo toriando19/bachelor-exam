@@ -165,8 +165,12 @@ router.get('/messages', async (req, res) => {
 });
 
 router.post('/create-message', async (req, res) => {
-  const data = await createMessage();
-  res.json(data);
+  try {
+    const data = await createMessage(req, res);  // Pass req and res to createMessage
+    res.json(data);  // Send the data back as a response
+  } catch (error) {
+    res.status(500).json({ error: 'Error processing the request' });
+  }
 });
 
 export default router;

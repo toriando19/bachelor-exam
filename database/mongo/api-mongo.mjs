@@ -125,50 +125,62 @@ export async function deleteChat(chat_id) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Function to create a new message and log the activity
-export async function createMessage(chat_id, sender_id, message, recipient_id) {
+export async function createMessage(req, res) {
   try {
+    // Destructure data from the request body
+    const { chat_id, sender_id, recipient_id, message } = req.body;
+
+    // Check if all required fields are present
+    if (!chat_id || !sender_id || !recipient_id || !message) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    // Connect to MongoDB and get collections
     const { messagesCollection, logsCollection, client } = await connectToMongoDB('messages');
 
-    // Generate a unique id for the message
+    // Generate a unique ID for the message
     const messageId = `message-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`;
 
-    // Create the new message document
+    // Create the message document
     const newMessage = {
       id: messageId,
       chat_id: chat_id, // Chat ID associated with the message
-      sender_id: sender_id, // Sender ID (user_id from sessionData)
-      recipient_id: recipient_id, // Sender ID (user_id from sessionData)
-      message: message, // Message text from the input field
-      sent_at: new Date(), // Timestamp for when the message is sent
+      sender_id: sender_id, // Sender ID
+      recipient_id: recipient_id, // Recipient ID
+      message: message, // Message content
+      sent_at: new Date(), // Timestamp of when the message is sent
     };
 
-    console.log('New message data:', newMessage);
+    console.log('New message data:', newMessage); // Log the message data for debugging
 
-    // Insert the new message document into the messages collection
+    // Insert the new message into the messages collection
     const messageResult = await messagesCollection.insertOne(newMessage);
     console.log('Message Insert Result:', messageResult);
 
-    // Log the message creation as a notification (optional)
+    // Create a log entry for the message creation
     const newMessageNotification = {
       id: `log-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`,
-      event_type: `message`,
-      user_id: sender_id, // The sender's user ID
-      related_user: chat_id, // The chat ID (or related user, depending on your logic)
+      event_type: 'message',
+      user_id: sender_id, // Sender's user ID
+      related_user: chat_id, // Chat ID
       message: `User ${sender_id} sent a message in chat ${chat_id}: "${message}"`,
       created_at: new Date(),
     };
 
     console.log('New message notification data:', newMessageNotification);
 
-    // Insert the notification into the logs collection
+    // Insert the log entry into the logs collection
     const logResult = await logsCollection.insertOne(newMessageNotification);
     console.log('Log Insert Result:', logResult);
 
-    // Close the client connection after operations
+    // Close the MongoDB client connection
     await client.close();
 
+    // Return a success response with the results of both insertions
     return { messageResult, logResult };
   } catch (error) {
     console.error('Error creating message:', error);
+    res.status(500).json({ error: 'Error creating message' });
   }
 }
+
