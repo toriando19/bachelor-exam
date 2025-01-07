@@ -680,6 +680,10 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 .chat-status, .delete-chat-button {
     margin-left: 10px; /* Adds some space between status and button */
 }
+
+.chat-status-icon {
+    width: 3rem;
+}
   
 
 
