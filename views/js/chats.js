@@ -91,7 +91,7 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
   // Display the input field and button
   inputDiv.innerHTML = `
     <div class="inputStyle">
-      <button id="displayIcebreaker">❆</button>
+      <button id="displayIcebreaker"> <img src="img/icons/ice-blue.png" alt="ice"> </button>
       <input type="text" id="userMessage" placeholder="Aa" />
       <button id="submitMessage">Send</button>
     </div>

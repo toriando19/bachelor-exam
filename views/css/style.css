@@ -610,7 +610,11 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     flex-direction: row;
     padding-top: 1rem;
     padding-bottom: 1rem;
-    background-color: var(--colorGreyDark);
+    background-color: var(--colorGreyLight);
+}
+
+.inputStyle img {
+    width: 1.8rem;
 }
 
 #userMessage {
@@ -634,7 +638,7 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 
 #displayIcebreaker {
     border: none;
-    background-color: var(--colorGreyDark);
+    background-color: var(--colorGreyLight);
     align-items: center;
     text-align: center;
     font-size: 30px;
@@ -643,6 +647,17 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 
 #icebreaker {
     margin: 1rem;
+}
+
+.icebreaker-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.icebreaker img {
+    width: 1.5rem;
+    margin-right: 5px;
 }
 
 #icebreakerSection {
