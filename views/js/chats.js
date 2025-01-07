@@ -3,54 +3,37 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Function to fetch and display messages for a specific chat
-async function fetchMessagesForChat(chat_id, user_id) {
+async function fetchAndDisplayMessages(chat_id) {
   try {
-    // Fetch all messages for the selected chat
-    const messagesResponse = await fetch(`http://localhost:3000/messages?chat_id=${chat_id}`);
-    if (!messagesResponse.ok) {
-      throw new Error('Failed to fetch messages');
-    }
+    // Fetch all messages for the chat_id from the /messages endpoint
+    const messagesResponse = await fetch('http://localhost:3000/messages');
+    if (!messagesResponse.ok) throw new Error('Failed to fetch messages');
+
     const messages = await messagesResponse.json();
+    const filteredMessages = messages.filter(message => message.chat_id === chat_id);
 
-    // Get the message timeline container
+    // Get the message container to display messages
     const messageTimeline = document.getElementById('message-timeline');
-    messageTimeline.innerHTML = ''; // Clear previous messages
+    messageTimeline.innerHTML = '';  // Clear previous messages
 
-    // Filter messages to show only those relevant to the session user
-    const filteredMessages = messages.filter(message => {
-      return message.sender_id === user_id || message.recipient_id === user_id;
-    });
-
-    // Sort messages by the sent_at time (newest first)
-    filteredMessages.sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at));
-
-    // Render the messages in the timeline
+    // Display each message in the timeline
     filteredMessages.forEach(message => {
-      const messageDiv = document.createElement('div');
-      messageDiv.classList.add('message-entry');
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('message-item');
 
-      // Determine if the message is sent by the current user or the other participant
-      const isSender = message.sender_id === user_id;
-
-      // Create the content of the message
-      const messageContent = document.createElement('div');
-      messageContent.classList.add(isSender ? 'sent-message' : 'received-message');
-      messageContent.textContent = message.message;
-
-      // Add timestamp
-      const timestamp = document.createElement('span');
-      timestamp.classList.add('message-timestamp');
-      timestamp.textContent = new Date(message.sent_at).toLocaleString();
-
-      // Append the message content and timestamp to the message div
-      messageDiv.appendChild(messageContent);
-      messageDiv.appendChild(timestamp);
-
-      // Append the message div to the message timeline
-      messageTimeline.appendChild(messageDiv);
+      // Display the message content
+      messageElement.innerHTML = `
+        <div class="message-sender">${message.sender_id}</div>
+        <div class="message-text">${message.message}</div>
+        <div class="message-time">${new Date(message.sent_at).toLocaleTimeString()}</div>
+      `;
+      
+      // Append message to the timeline
+      messageTimeline.appendChild(messageElement);
     });
+
   } catch (error) {
-    console.error('Error fetching messages:', error.message);
+    console.error('Error fetching or displaying messages:', error);
   }
 }
 
@@ -82,7 +65,7 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
   `;
 
   // Fetch and display the messages for the selected chat
-  fetchMessagesForChat(chat_id, user_id);
+  fetchAndDisplayMessages(chat_id, user_id);
 
   // Display the icebreaker questions (fixed at the bottom)
   initializeIcebreaker();
@@ -103,7 +86,7 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
       document.getElementById('userMessage').value = ''; // Clear input
 
       // Re-fetch the messages to include the newly sent message
-      fetchMessagesForChat(chat_id, user_id);
+      fetchAndDisplayMessages(chat_id, user_id);
     } else {
       alert("Message cannot be empty");
     }
@@ -166,7 +149,6 @@ async function sendMessageToAPI(chat_id, sender_id, recipient_id, message) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-// Function to fetch and display chat documents based on the user_id
 async function fetchChatDocuments() {
   try {
     const sessionData = JSON.parse(sessionStorage.getItem("sessionData"));
@@ -190,7 +172,6 @@ async function fetchChatDocuments() {
     const resultContainer = document.getElementById('chat-result');
     resultContainer.innerHTML = ''; // Clear previous results
 
-
     // Sort filteredChats to show the chat with the newest message first
     filteredChats.sort((a, b) => {
       const timeA = new Date(a.last_message_time); // Assuming the chat object has a last_message_time property
@@ -198,7 +179,7 @@ async function fetchChatDocuments() {
       return timeB - timeA; // Sort in descending order (newest first)
     });
 
-    /// Display the chats and their associated users
+    // Display the chats and their associated users
     filteredChats.forEach(chat => {
       const matchedUser = users.find(user => user.user_id === (chat.chat_user_1 === user_id ? chat.chat_user_2 : chat.chat_user_1));
       if (matchedUser) {
@@ -222,7 +203,11 @@ async function fetchChatDocuments() {
         const nameDisplayer = document.createElement('p');
         nameDisplayer.textContent = `${displayName} >`;
         nameDisplayer.classList.add('name-displayer');
-        nameDisplayer.addEventListener('click', () => showMessageInput(chat.id, matchedUser.user_id, displayName));
+        nameDisplayer.addEventListener('click', () => {
+          // When a chat is clicked, fetch and display the messages for the selected chat
+          showMessageInput(chat.id, matchedUser.user_id, displayName);
+          fetchAndDisplayMessages(chat.id);  // Fetch and display messages for this chat
+        });
     
         // Create another p element for additional information (e.g., last message preview)
         const additionalInfo = document.createElement('p');
@@ -241,9 +226,6 @@ async function fetchChatDocuments() {
         resultContainer.appendChild(chatContainer);
       }
     });
-    
-
-
 
   } catch (error) {
     console.error(error.message);

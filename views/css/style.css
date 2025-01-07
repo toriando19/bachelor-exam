@@ -562,7 +562,7 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 /* /////////////////////////////////////////////////////////////////////////// */
 /* DISPLAY MESSAGE */
 
-.message-entry {
+.message-item {
     color: var(--colorDarkText);
 }
 
