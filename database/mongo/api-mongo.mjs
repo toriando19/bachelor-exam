@@ -125,7 +125,7 @@ export async function deleteChat(chat_id) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Function to create a new message and log the activity
-export async function createMessage(chat_id, sender_id, message) {
+export async function createMessage(chat_id, sender_id, message, recipient_id) {
   try {
     const { messagesCollection, logsCollection, client } = await connectToMongoDB('messages');
 
@@ -137,6 +137,7 @@ export async function createMessage(chat_id, sender_id, message) {
       id: messageId,
       chat_id: chat_id, // Chat ID associated with the message
       sender_id: sender_id, // Sender ID (user_id from sessionData)
+      recipient_id: recipient_id, // Sender ID (user_id from sessionData)
       message: message, // Message text from the input field
       sent_at: new Date(), // Timestamp for when the message is sent
     };

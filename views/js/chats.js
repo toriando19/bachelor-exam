@@ -55,8 +55,7 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
     // Check the computed style to handle cases where display is not explicitly set
     const currentDisplay = window.getComputedStyle(icebreakerSection).display;
     icebreakerSection.style.display = currentDisplay === 'none' ? 'block' : 'none';
-  });  
-
+  });
 
   // Handle message submission
   document.getElementById('submitMessage').addEventListener('click', async () => {
@@ -65,7 +64,10 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
 
     // Only send the message if it isn't empty
     if (message.trim() !== "") {
-      await sendMessageToAPI(chat_id, recipient_id, message);
+      const sessionData = JSON.parse(sessionStorage.getItem('sessionData'));
+      const sender_id = sessionData.user_id; // Get the logged-in user's ID (sender)
+
+      await sendMessageToAPI(chat_id, sender_id, recipient_id, message); // Pass the correct sender_id and recipient_id
       document.getElementById('userMessage').value = ''; // Clear input
     } else {
       alert("Message cannot be empty");
@@ -73,21 +75,40 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
   });
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // --- ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Function to send message to the create-message API
-async function sendMessageToAPI(chat_id, recipient_id, message) {
-  console.log("Sending message:", { chat_id, recipient_id, message });
+async function sendMessageToAPI(chat_id, sender_id, recipient_id, message) {
+  console.log("Sending message:", { chat_id, sender_id, recipient_id, message });
+
+  // Input Validation
+  if (!chat_id || !sender_id || !recipient_id || !message) {
+    console.error("Error: Missing required fields. Please provide chat_id, sender_id, recipient_id, and message.");
+    return { error: "Missing required fields" };
+  }
+
+  // Check if the message content is empty or null, and handle accordingly
+  if (!message.trim()) {
+    console.warn("Warning: The message is empty or only contains whitespace. Inserting as a null message.");
+    message = null; // Store as null if message is empty
+  }
+
+  // Debugging to make sure we're sending the right values to the API
+  console.log("Chat ID being sent:", chat_id);
+  console.log("Sender ID being sent:", sender_id);
+  console.log("Recipient ID being sent:", recipient_id);
+  console.log("Message being sent:", message);
+
   try {
     const response = await fetch('http://localhost:3000/create-message', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         chat_id,
-        sender_id: recipient_id, // Assuming recipient_id is the user sending the message
-        recipient_id,
+        sender_id,  // Sender ID (logged-in user)
+        recipient_id,  // Recipient ID (other user in the chat)
         message,
         sent_at: new Date(),
       }),
@@ -102,6 +123,7 @@ async function sendMessageToAPI(chat_id, recipient_id, message) {
     console.error("Error sending message:", error);
   }
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // --- ///////////////////////////////////////////////////////////////////////////////////////////////
