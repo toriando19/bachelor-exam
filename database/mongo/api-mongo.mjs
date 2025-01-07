@@ -49,14 +49,18 @@ export async function createChat(chat_user_1, chat_user_2) {
   try {
     const { chatCollection, logsCollection, client } = await connectToMongoDB('chats');
 
+    // Ensure chat_user_1 and chat_user_2 are integers
+    const user1 = parseInt(chat_user_1, 10);
+    const user2 = parseInt(chat_user_2, 10);
+
     // Generate a unique id for the chat
     const chatId = `chat-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`;
 
     // Create the new chat document
     const newChat = {
       id: chatId,
-      chat_user_1: chat_user_1,
-      chat_user_2: chat_user_2,
+      chat_user_1: user1, // Store as integer
+      chat_user_2: user2, // Store as integer
       created_at: new Date(),
     };
 
@@ -66,18 +70,16 @@ export async function createChat(chat_user_1, chat_user_2) {
     const chatResult = await chatCollection.insertOne(newChat);
     console.log('Chat Insert Result:', chatResult);
 
-    // Log the creation as a notification (You might want to dynamically set user IDs here)
+    // Log the creation as a notification
     const newChatNotification = {
       id: `log-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`,
       event_type: `chats`,
-      user_id: chat_user_1,  // Assuming user_id of the first user creates the log
-      related_user: chat_user_2,  // Assuming the second user is related
-      // message: chat_user_1 === chat_user_1 ? `Du har startet en chat med` : "har startet en chat med dig",
+      user_id: user1,  // Use integer for user_id
+      related_user: user2,  // Use integer for related_user
       message1: "Du har startet en chat med",
       message2: "har startet en chat med dig",
       created_at: new Date(),
     };
-
 
     console.log('New notification data:', newChatNotification);
 
@@ -94,6 +96,7 @@ export async function createChat(chat_user_1, chat_user_2) {
     throw error;  // Ensure the error is thrown for handling in the route
   }
 }
+
 
 
 // Function to delete a chat document by its chat_id
