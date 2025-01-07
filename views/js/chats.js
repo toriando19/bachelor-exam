@@ -2,153 +2,6 @@
 // ---  ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Function to fetch and display messages for a specific chat
-async function fetchAndDisplayMessages(chat_id) {
-  try {
-    // Fetch all messages for the chat_id from the /messages endpoint
-    const messagesResponse = await fetch('http://localhost:3000/messages');
-    if (!messagesResponse.ok) throw new Error('Failed to fetch messages');
-
-    const messages = await messagesResponse.json();
-    const filteredMessages = messages.filter(message => message.chat_id === chat_id);
-
-    // Get the message container to display messages
-    const messageTimeline = document.getElementById('message-timeline');
-    messageTimeline.innerHTML = '';  // Clear previous messages
-
-    // Display each message in the timeline
-    filteredMessages.forEach(message => {
-      const messageElement = document.createElement('div');
-      messageElement.classList.add('message-item');
-
-      // Display the message content
-      messageElement.innerHTML = `
-        <div class="message-sender">${message.sender_id}</div>
-        <div class="message-text">${message.message}</div>
-        <div class="message-time">${new Date(message.sent_at).toLocaleTimeString()}</div>
-      `;
-      
-      // Append message to the timeline
-      messageTimeline.appendChild(messageElement);
-    });
-
-  } catch (error) {
-    console.error('Error fetching or displaying messages:', error);
-  }
-}
-
-// Modify the `showMessageInput` function to call `fetchMessagesForChat`
-async function showMessageInput(chat_id, recipient_id, recipient_name) {
-  console.log("Chat ID:", chat_id, "Recipient ID:", recipient_id, "Recipient Name:", recipient_name);
-
-  const sessionData = JSON.parse(sessionStorage.getItem('sessionData'));
-  const user_id = sessionData.user_id; // Get the logged-in user's ID
-
-  const chatOverlay = document.getElementById('chatOverlay'); // Reference to the chat overlay
-  const inputDiv = document.getElementById('message-input');
-  const icebreakerDiv = document.getElementById('icebreaker'); // Reference to the icebreaker section
-
-  // Show the chat overlay
-  chatOverlay.style.display = 'block';
-
-  // Dynamically update the chat header div with the recipient's name and nickname
-  const chatHeader = document.getElementById('chatHeader');
-  chatHeader.innerHTML = `<p class="chatProfileNickname">${recipient_name}</p>`;
-
-  // Display the input field and button
-  inputDiv.innerHTML = `
-    <div class="inputStyle">
-      <button id="displayIcebreaker">❆</button>
-      <input type="text" id="userMessage" placeholder="Aa" />
-      <button id="submitMessage">Send</button>
-    </div>
-  `;
-
-  // Fetch and display the messages for the selected chat
-  fetchAndDisplayMessages(chat_id, user_id);
-
-  // Display the icebreaker questions (fixed at the bottom)
-  initializeIcebreaker();
-
-  document.getElementById('displayIcebreaker').addEventListener('click', () => {
-    const icebreakerSection = document.getElementById('icebreakerSection');
-    const currentDisplay = window.getComputedStyle(icebreakerSection).display;
-    icebreakerSection.style.display = currentDisplay === 'none' ? 'block' : 'none';
-  });
-
-  // Handle message submission
-  document.getElementById('submitMessage').addEventListener('click', async () => {
-    const message = document.getElementById('userMessage').value;
-    console.log("Message Input Value:", message);
-
-    if (message.trim() !== "") {
-      await sendMessageToAPI(chat_id, user_id, recipient_id, message); // Pass the correct sender_id and recipient_id
-      document.getElementById('userMessage').value = ''; // Clear input
-
-      // Re-fetch the messages to include the newly sent message
-      fetchAndDisplayMessages(chat_id, user_id);
-    } else {
-      alert("Message cannot be empty");
-    }
-  });
-}
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// --- ///////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-async function sendMessageToAPI(chat_id, sender_id, recipient_id, message) {
-  console.log("Sending message:", { chat_id, sender_id, recipient_id, message });
-
-  // Input Validation
-  if (!chat_id || !sender_id || !recipient_id || !message) {
-    console.error("Error: Missing required fields. Please provide chat_id, sender_id, recipient_id, and message.");
-    return { error: "Missing required fields" };
-  }
-
-  // Check if the message content is empty or null, and handle accordingly
-  if (!message.trim()) {
-    console.warn("Warning: The message is empty or only contains whitespace. Inserting as a null message.");
-    message = null; // Store as null if message is empty
-  }
-
-  // Debugging to make sure we're sending the right values to the API
-  console.log("Chat ID being sent:", chat_id);
-  console.log("Sender ID being sent:", sender_id);
-  console.log("Recipient ID being sent:", recipient_id);
-  console.log("Message being sent:", message);
-
-  try {
-    const response = await fetch('http://localhost:3000/create-message', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id,
-        sender_id,  // Sender ID (logged-in user)
-        recipient_id,  // Recipient ID (other user in the chat)
-        message,
-        sent_at: new Date(),
-      }),
-    });
-
-    if (response.ok) {
-      console.log("Message sent successfully");
-    } else {
-      console.error("Failed to send message:", response.statusText);
-    }
-  } catch (error) {
-    console.error("Error sending message:", error);
-  }
-}
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// --- ///////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 async function fetchChatDocuments() {
   try {
     const sessionData = JSON.parse(sessionStorage.getItem("sessionData"));
@@ -180,7 +33,7 @@ async function fetchChatDocuments() {
     });
 
     // Display the chats and their associated users
-    filteredChats.forEach(chat => {
+    filteredChats.forEach(async (chat) => {
       const matchedUser = users.find(user => user.user_id === (chat.chat_user_1 === user_id ? chat.chat_user_2 : chat.chat_user_1));
       if (matchedUser) {
         const displayName = matchedUser.user_nickname || matchedUser.user_username;
@@ -209,9 +62,18 @@ async function fetchChatDocuments() {
           fetchAndDisplayMessages(chat.id);  // Fetch and display messages for this chat
         });
     
+        // Fetch the latest message for this chat
+        const messagesResponse = await fetch('http://localhost:3000/messages');
+        const messages = await messagesResponse.json();
+        const chatMessages = messages.filter(message => message.chat_id === chat.id);
+        
+        // Sort messages by sent time in descending order and get the latest one
+        const latestMessage = chatMessages.sort((a, b) => new Date(b.sent_at) - new Date(a.sent_at))[0];
+        const messagePreview = latestMessage ? latestMessage.message : 'No messages yet · 04.01';
+
         // Create another p element for additional information (e.g., last message preview)
         const additionalInfo = document.createElement('p');
-        additionalInfo.textContent = `${chat.last_message || 'No messages yet · 04.01'}`;
+        additionalInfo.textContent = `${messagePreview}`;
         additionalInfo.classList.add('message-preview');
     
         // Append name and message preview to the text block
@@ -231,6 +93,7 @@ async function fetchChatDocuments() {
     console.error(error.message);
   }
 }
+
 
 // Call to initialize chats when the page loads
 fetchChatDocuments();
