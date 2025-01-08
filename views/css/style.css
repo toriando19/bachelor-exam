@@ -733,6 +733,26 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     margin-right: auto; /* Aligns the name to the left */
 }
 
+.open-chat-button {
+    background-color: var(--colorBackground);
+    border: none;
+    padding: 0; /* No padding */
+    margin: 0; /* No margin */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 3rem; /* Set the button width to the same as the image */
+    height: 3rem; /* Set the button height to match */
+}
+
+.open-chat-button img {
+    width: 100%; /* Make the image fill the entire button */
+    height: 100%; /* Ensure the image takes the full height */
+    object-fit: cover; /* Ensure the image maintains its aspect ratio and covers the entire button */
+}
+
+
+
 .delete-chat-button {
     background-color: var(--colorRed);
     border: none;

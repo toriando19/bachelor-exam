@@ -389,32 +389,25 @@ async function fetchAndDisplayAdminChats() {
         nameMatchDisplayer.textContent = `${matchedUser.user_username}`;
         nameMatchDisplayer.classList.add('match-name-displayer');
         
-        // Create an img element for the chat status (active or inactive)
-        const statusImage = document.createElement('img');
-        statusImage.classList.add('chat-status-icon');
-
+        // Create a button to open the chat and display messages
+        const openChatButton = document.createElement('button');
+        openChatButton.innerHTML = '<img src="img/icons/chat-black.png" alt="chat">';
+        openChatButton.classList.add('open-chat-button');
+        
         // Define the icon mapping for active and inactive chats
         const iconMapping = {
             active: 'chat-fill-black.png',
             inactive: 'chat-black.png'
         };
 
-        // Get the appropriate icon filename based on whether the chat has a message
-        const statusType = chat.last_message ? 'active' : 'inactive';  // Determine if chat is active or inactive
-        const iconFilename = iconMapping[statusType] || 'default-icon.png';  // Fallback to default if no match found
-
-        // Set the image source for the status icon
-        statusImage.src = `/img/icons/${iconFilename}`;
-        statusImage.alt = statusType; // Use status type (active/inactive) as alt text
-
-        // Create a button to open the chat and display messages
-        const openChatButton = document.createElement('button');
-        openChatButton.textContent = 'Open Chat';
-        openChatButton.classList.add('open-chat-button');
+        // Event listener for when the button is clicked
         openChatButton.addEventListener('click', () => {
             // Fetch and display messages for the selected chat
             showMessageInput(chat.id, matchedUser.user_id, matchDisplayName);  // Open chat input
             fetchAndDisplayMessages(chat.id, user_id);  // Fetch messages for this chat
+            
+            // Set the appropriate icon when chat is opened (active)
+            openChatButton.innerHTML = `<img src="img/icons/${iconMapping.active}" alt="chat active">`;
 
             // Reuse existing code for hiding matchesOverlay
             const matchesOverlay = document.getElementById("matchesOverlay");
@@ -428,8 +421,6 @@ async function fetchAndDisplayAdminChats() {
             burgerMenu.style.display = "none";
             button.innerHTML = '<img src="img/icons/burger-black.png" alt="Menu">'; // Reset burger menu button text
         });
-
-
 
         // Create delete button for the chat
         const deleteButton = document.createElement('button');
@@ -445,7 +436,6 @@ async function fetchAndDisplayAdminChats() {
 
         // Append name, status image, and delete button to the text block
         matchTextBlock.appendChild(nameMatchDisplayer);
-        matchTextBlock.appendChild(statusImage); // Appending the status image instead of the span
         matchTextBlock.appendChild(openChatButton);  // Append the Open Chat button
         matchTextBlock.appendChild(deleteButton);
 
@@ -462,6 +452,8 @@ async function fetchAndDisplayAdminChats() {
     console.error(error.message);
   }
 }
+
+
 
 
 const deleteChat = async (chatId) => {
