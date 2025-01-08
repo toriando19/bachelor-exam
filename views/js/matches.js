@@ -22,6 +22,10 @@ async function displayMatchingUsers() {
         const usersResponse = await fetch('http://localhost:3000/users');
         const users = await usersResponse.json();
 
+        // Fetch all chats from the backend to check if a chat already exists
+        const chatsResponse = await fetch('http://localhost:3000/chats');
+        const chats = await chatsResponse.json();
+
         const matchingUsers = {};
 
         // Loop through all interests to find matching users
@@ -66,6 +70,17 @@ async function displayMatchingUsers() {
 
         sortedMatchingUsers.forEach(({ userId, percentage, latestTimestamp }) => {
             const matchingUser = users.find(user => user.user_id == userId);
+
+            // Check if a chat already exists between currentUserId and matchingUser.user_id
+            const chatExists = chats.some(chat => 
+                (chat.chat_user_1 === currentUserId && chat.chat_user_2 === matchingUser.user_id) || 
+                (chat.chat_user_1 === matchingUser.user_id && chat.chat_user_2 === currentUserId)
+            );
+
+            // Skip the match if a chat already exists
+            if (chatExists) {
+                return;
+            }
 
             const matchContainer = document.createElement('div');
             matchContainer.classList.add('match-container');
@@ -145,6 +160,7 @@ async function displayMatchingUsers() {
         alert('An error occurred while fetching matching users.');
     }
 }
+
 
 
 
