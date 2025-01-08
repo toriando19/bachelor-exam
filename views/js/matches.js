@@ -3,96 +3,104 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 async function displayMatchingUsers() {
-    const sessionData = JSON.parse(sessionStorage.getItem('sessionData')); // Assuming it's stored as a JSON string
+    const sessionData = JSON.parse(sessionStorage.getItem('sessionData'));
 
     if (!sessionData || !sessionData.user_id) {
         console.error('No session data or user ID found in sessionStorage.');
         return;
     }
 
-    const currentUserId = sessionData.user_id;  // Get the logged-in user ID
-    const currentUserUsername = sessionData.user_username;  // Get the logged-in user's username from sessionStorage
-    const currentUserInterests = sessionData.user_interest;  // Get the interests from session data
-    const totalUserInterests = currentUserInterests.length;  // Total number of interests from session data
+    const currentUserId = sessionData.user_id;
+    const currentUserInterests = sessionData.user_interest.map(interest => interest.user_interest_interest);
 
     try {
+        // Fetch all user interests from the backend
         const userInterestResponse = await fetch('http://localhost:3000/userinterest');
         const userInterests = await userInterestResponse.json();
 
-        const matchingUserInterests = [];
-        currentUserInterests.forEach(interest => {
-            const matchedInterests = userInterests.filter(item =>
-                item.user_interest_interest == interest.user_interest_interest &&
-                item.user_interest_user != currentUserId // Ensure we don't match the current user
-            );
-            matchingUserInterests.push(...matchedInterests);
-        });
-
+        // Fetch all users from the backend
         const usersResponse = await fetch('http://localhost:3000/users');
         const users = await usersResponse.json();
 
-        let matchingUsers = [];
-        let userInterestCounts = {}; // Track how many interests each user shares
+        const matchingUsers = {};
 
-        matchingUserInterests.forEach(item => {
-            const matchingUser = users.find(user => user.user_id == item.user_interest_user);
-            if (matchingUser && !matchingUsers.some(u => u.user_id === matchingUser.user_id)) {
-                matchingUsers.push(matchingUser);
-
-                if (!userInterestCounts[matchingUser.user_id]) {
-                    userInterestCounts[matchingUser.user_id] = 0;
+        // Loop through all interests to find matching users
+        userInterests.forEach(interest => {
+            if (currentUserInterests.includes(interest.user_interest_interest) && interest.user_interest_user !== currentUserId) {
+                if (!matchingUsers[interest.user_interest_user]) {
+                    matchingUsers[interest.user_interest_user] = {
+                        sharedInterests: 0,
+                        totalInterests: 0
+                    };
                 }
-                userInterestCounts[matchingUser.user_id]++;
+                matchingUsers[interest.user_interest_user].sharedInterests++;
             }
         });
 
+        // Calculate match percentage for each user
+        Object.keys(matchingUsers).forEach(userId => {
+            matchingUsers[userId].totalInterests = userInterests.filter(item => item.user_interest_user == userId).length;
+        });
+
+        // Sort the users by percentage match in descending order
+        const sortedMatchingUsers = Object.keys(matchingUsers)
+            .map(userId => ({
+                userId,
+                percentage: Math.round((matchingUsers[userId].sharedInterests / (currentUserInterests.length + matchingUsers[userId].totalInterests - matchingUsers[userId].sharedInterests)) * 100)
+            }))
+            .sort((a, b) => b.percentage - a.percentage);  // Sorting in descending order of match percentage
+
         const exploreMatches = document.getElementById('exploreMatches');
         exploreMatches.innerHTML = ''; // Clear previous content
-        if (matchingUsers.length > 0) {
-            matchingUsers.forEach(user => {
-                const sharedInterestCount = userInterestCounts[user.user_id];
-                const percentage = Math.round((sharedInterestCount / totalUserInterests) * 100);
 
-                const matchContainer = document.createElement('div');
-                matchContainer.classList.add('match-container');
+        // Display sorted users
+        sortedMatchingUsers.forEach(({ userId, percentage }) => {
+            const matchingUser = users.find(user => user.user_id == userId);
 
-                const newMatch = document.createElement('h4');
-                newMatch.textContent = 'Nyt match';
-                newMatch.classList.add('newMatch');
-                matchContainer.appendChild(newMatch);
-                
-                const userInfo = document.createElement('p');
-                userInfo.textContent = `${percentage}% match`;
-                matchContainer.appendChild(userInfo);
-                
-                const viewButton = document.createElement('button');
-                viewButton.classList.add('match-view');
-                viewButton.textContent = 'Se match';
-                viewButton.onclick = () => {
-                    viewUserInfo(user.user_username, percentage);
-                };
-                
-                const chatButton = document.createElement('button');
-                chatButton.textContent = 'Chat';
-                chatButton.classList.add('match-chat');
-                chatButton.onclick = () => {
-                    alert(`You're starting a chat with ${user.user_username}`);
-                    createChat(currentUserId, user.user_id);  // Pass user IDs instead of usernames
-                };
+            const matchContainer = document.createElement('div');
+            matchContainer.classList.add('match-container');
 
-                matchContainer.appendChild(viewButton);
-                matchContainer.appendChild(chatButton);
+            const newMatch = document.createElement('h4');
+            newMatch.textContent = 'Nyt match';
+            newMatch.classList.add('newMatch');
+            matchContainer.appendChild(newMatch);
 
-                exploreMatches.appendChild(matchContainer);
-            });
-        } else {
+            const userInfo = document.createElement('p');
+            userInfo.textContent = `${percentage}% match`;
+            matchContainer.appendChild(userInfo);
+
+            const viewButton = document.createElement('button');
+            viewButton.classList.add('match-view');
+            viewButton.textContent = 'Se match';
+            viewButton.onclick = () => {
+                viewUserInfo(matchingUser.user_username, percentage);
+            };
+
+            const chatButton = document.createElement('button');
+            chatButton.textContent = 'Chat';
+            chatButton.classList.add('match-chat');
+            chatButton.onclick = () => {
+                alert(`You're starting a chat with ${matchingUser.user_username}`);
+                createChat(currentUserId, matchingUser.user_id);
+            };
+
+            matchContainer.appendChild(viewButton);
+            matchContainer.appendChild(chatButton);
+
+            exploreMatches.appendChild(matchContainer);
+        });
+
+        if (sortedMatchingUsers.length === 0) {
             exploreMatches.innerHTML = 'No matching users found.';
         }
+
     } catch (error) {
         console.error('Error fetching data:', error);
         alert('An error occurred while fetching matching users.');
     }
 }
+
+
 
 window.onload = displayMatchingUsers;
 
