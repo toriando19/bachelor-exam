@@ -30,10 +30,17 @@ async function displayMatchingUsers() {
                 if (!matchingUsers[interest.user_interest_user]) {
                     matchingUsers[interest.user_interest_user] = {
                         sharedInterests: 0,
-                        totalInterests: 0
+                        totalInterests: 0,
+                        latestTimestamp: null,  // Store the most recent timestamp for this user
                     };
                 }
                 matchingUsers[interest.user_interest_user].sharedInterests++;
+
+                // Store the most recent timestamp
+                const currentInterestTime = new Date(interest.current_time).getTime();
+                if (!matchingUsers[interest.user_interest_user].latestTimestamp || currentInterestTime > matchingUsers[interest.user_interest_user].latestTimestamp) {
+                    matchingUsers[interest.user_interest_user].latestTimestamp = currentInterestTime;
+                }
             }
         });
 
@@ -46,25 +53,64 @@ async function displayMatchingUsers() {
         const sortedMatchingUsers = Object.keys(matchingUsers)
             .map(userId => ({
                 userId,
-                percentage: Math.round((matchingUsers[userId].sharedInterests / (currentUserInterests.length + matchingUsers[userId].totalInterests - matchingUsers[userId].sharedInterests)) * 100)
+                percentage: Math.round((matchingUsers[userId].sharedInterests / (currentUserInterests.length + matchingUsers[userId].totalInterests - matchingUsers[userId].sharedInterests)) * 100),
+                latestTimestamp: matchingUsers[userId].latestTimestamp,
             }))
             .sort((a, b) => b.percentage - a.percentage);  // Sorting in descending order of match percentage
 
         const exploreMatches = document.getElementById('exploreMatches');
         exploreMatches.innerHTML = ''; // Clear previous content
 
-        // Display sorted users
-        sortedMatchingUsers.forEach(({ userId, percentage }) => {
+        // Check if the latest update was within the last 2 minutes (120000ms)
+        const currentTime = new Date().getTime();
+
+        sortedMatchingUsers.forEach(({ userId, percentage, latestTimestamp }) => {
             const matchingUser = users.find(user => user.user_id == userId);
 
             const matchContainer = document.createElement('div');
             matchContainer.classList.add('match-container');
 
-            const newMatch = document.createElement('h4');
-            newMatch.textContent = 'Nyt match';
-            newMatch.classList.add('newMatch');
-            matchContainer.appendChild(newMatch);
+            // Determine if "Super Match", "Nyt match", or "Match" should be displayed
+            let showSuperMatch = false;
+            let showNewMatch = false;
+            let showMatch = false;
 
+            // If the match is 100%, show "Super Match"
+            if (percentage === 100) {
+                showSuperMatch = true;
+            }
+            // If the match is within 2 minutes, show "Nyt match" (only if it's not already a "Super Match")
+            else if (latestTimestamp && (currentTime - latestTimestamp <= 120000)) {
+                showNewMatch = true;
+            }
+            // If neither "Super Match" nor "Nyt match" apply, show "Match"
+            else {
+                showMatch = true;
+            }
+
+            // Show "Super Match" if the match percentage is 100%
+            if (showSuperMatch) {
+                const superMatch = document.createElement('h4');
+                superMatch.textContent = 'Super Match';
+                superMatch.classList.add('superMatch');  // Add the special class for styling
+                matchContainer.appendChild(superMatch);
+            }
+            // Show "Nyt match" only if it's not a "Super Match"
+            else if (showNewMatch) {
+                const newMatch = document.createElement('h4');
+                newMatch.textContent = 'Nyt match';
+                newMatch.classList.add('newMatch');
+                matchContainer.appendChild(newMatch);
+            }
+            // Show "Match" if it's not a "Super Match" or "Nyt match"
+            else if (showMatch) {
+                const matchLabel = document.createElement('h4');
+                matchLabel.textContent = 'Match';
+                matchLabel.classList.add('simpleMatch');  // Add the class for styling
+                matchContainer.appendChild(matchLabel);
+            }
+
+            // Show match percentage
             const userInfo = document.createElement('p');
             userInfo.textContent = `${percentage}% match`;
             matchContainer.appendChild(userInfo);
@@ -98,6 +144,19 @@ async function displayMatchingUsers() {
         console.error('Error fetching data:', error);
         alert('An error occurred while fetching matching users.');
     }
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Update Timestamp after Changes in Interests ///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Call this function when a user updates their preferences
+function updateInterestTimestamp() {
+    const currentTime = new Date().toISOString();
+    sessionStorage.setItem('lastUpdateTimestamp', currentTime);
+    console.log('Timestamp updated: ', currentTime);
 }
 
 

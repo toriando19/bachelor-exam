@@ -894,6 +894,17 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     background-color: var(--colorRed);
 }
 
+.simpleMatch {
+    margin: 1rem auto 0rem auto;
+    border: 1px solid var(--colorBlue);
+    /* background-color: var(--colorShadeBlue); */
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--colorShadeBlue);
+    text-align: center;
+    width: 40%;
+}
+
 .newMatch {
     margin: 1rem auto 0rem auto;
     border: 1px solid var(--colorGreen);
@@ -902,6 +913,16 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     color: var(--colorGreen);
     text-align: center;
     width: 50%;
+}
+
+.superMatch {
+    margin: 1rem auto 0rem auto;
+    border: 1px solid var(--colorYellow);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--colorYellow);
+    text-align: center;
+    width: 70%;
 }
 
 /* /////////////////////////////////////////////////////////////////////////// */
