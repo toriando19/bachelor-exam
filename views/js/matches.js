@@ -248,13 +248,30 @@ async function viewUserInfo(username, matchPercentage, matchingInterests) {
         const userInterestResponse = await fetch('http://localhost:3000/userinterest');
         const userInterests = await userInterestResponse.json();
 
-        // Show the matching interests as paragraphs instead of list items
+        // Mapping of interestId to icon and title
+        const interestMapping = {
+            1: { icon: 'movie-black.png', title: 'Den Store Bagedyst' },
+            2: { icon: 'movie-black.png', title: 'Alle mod en' },
+            3: { icon: 'movie-black.png', title: 'Kender du typen' },
+            4: { icon: 'eye-black.png', title: 'TVA' },
+            5: { icon: 'podcast-black.png', title: 'Genstart' },
+            6: { icon: 'podcast-black.png', title: 'Sara og Monopolet' }
+        };
+
+        // Show the matching interests as paragraphs with icons and titles
         const interestList = document.createElement('div'); // Using div to contain the paragraphs
         matchingInterests.forEach(interestId => {
-            const interestDescription = userInterests.find(interest => interest.user_interest_interest === interestId);
-            const paragraph = document.createElement('p');
-            paragraph.textContent = interestDescription ? interestDescription.user_interest_interest : 'Unknown Interest';
-            interestList.appendChild(paragraph);
+            const interest = interestMapping[interestId];  // Get icon and title from the mapping
+            if (interest) {
+                const interestParagraph = document.createElement('p');
+                const interestIcon = document.createElement('img');
+                interestIcon.src = interest.icon;  // Set the icon image source
+                interestIcon.alt = interest.title; // Set the alt text for the image
+
+                interestParagraph.textContent = interest.title; // Display the title of the interest
+                interestParagraph.prepend(interestIcon);  // Add the icon before the title text
+                interestList.appendChild(interestParagraph);
+            }
         });
 
         const userInfoSection = document.getElementById('userInfoSection');
@@ -320,5 +337,6 @@ async function viewUserInfo(username, matchPercentage, matchingInterests) {
         alert('Error fetching user info.');
     }
 }
+
 
 
