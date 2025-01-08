@@ -169,10 +169,6 @@ async function displayMatchingUsers() {
 }
 
 
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Update Timestamp after Changes in Interests ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,7 +230,7 @@ async function createChat(chat_user_1_id, chat_user_2_id) {
 // View User Info //////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-async function viewUserInfo(username, matchPercentage) {
+async function viewUserInfo(username, matchPercentage, matchingInterests) {
     try {
         const sessionData = JSON.parse(sessionStorage.getItem('sessionData')); // Get session data here
         if (!sessionData || !sessionData.user_id) {
@@ -242,7 +238,7 @@ async function viewUserInfo(username, matchPercentage) {
             return;
         }
 
-        const currentUserId = sessionData.user_id; // Now we have the currentUserId inside this function
+        const currentUserId = sessionData.user_id;
 
         const usersResponse = await fetch('http://localhost:3000/users');
         const users = await usersResponse.json();
@@ -254,19 +250,18 @@ async function viewUserInfo(username, matchPercentage) {
             return;
         }
 
-        const userId = user.user_id; // Get the user_id of the matched user
+        const userId = user.user_id;
 
         const userInterestResponse = await fetch('http://localhost:3000/userinterest');
         const userInterests = await userInterestResponse.json();
 
-        const matchedInterests = userInterests.filter(interest => interest.user_interest_user === userId);
-
-        const interestsResponse = await fetch('http://localhost:3000/interests');
-        const interests = await interestsResponse.json();
-
-        const interestDescriptions = matchedInterests.map(matchedInterest => {
-            const interest = interests.find(i => i.interest_id === matchedInterest.user_interest_interest);
-            return interest ? interest.interest_description : 'Unknown Interest';
+        // Show the matching interests
+        const interestList = document.createElement('ul');
+        matchingInterests.forEach(interestId => {
+            const interestDescription = userInterests.find(interest => interest.user_interest_interest === interestId);
+            const listItem = document.createElement('li');
+            listItem.textContent = interestDescription ? interestDescription.user_interest_interest : 'Unknown Interest';
+            interestList.appendChild(listItem);
         });
 
         const userInfoSection = document.getElementById('userInfoSection');
@@ -298,16 +293,13 @@ async function viewUserInfo(username, matchPercentage) {
 
                 <p><strong>User Interests:</strong></p>
                 <ul>
-                    ${interestDescriptions.map(description => `<li>${description}</li>`).join('')}
+                    ${interestList.outerHTML}
                 </ul>
-
 
                 <br><br>
 
                 <button id="startChatButton" class="chat-start-button"> Start en chat med ${user.user_username} </button>
-            
             </div>
-            
         `;
 
         // Add event listener to the chat button
@@ -337,12 +329,4 @@ async function viewUserInfo(username, matchPercentage) {
         alert('Error fetching user info.');
     }
 }
-
-
-
-
-
-
-
-
 
