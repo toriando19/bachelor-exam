@@ -256,11 +256,45 @@ async function fetchChatDocuments() {
             showMessageInput(chat.id, matchedUser.user_id, displayName);
             fetchAndDisplayMessages(chat.id);  // Fetch and display messages for this chat
           });
+
+
       
-          // Create another p element for additional information (e.g., last message preview)
-          const additionalInfo = document.createElement('p');
-          additionalInfo.textContent = `${chat.last_message || 'No messages yet · 04.01'}`;
-          additionalInfo.classList.add('message-preview');
+          function formatTimeAgo(createdAt) {
+            const now = new Date();
+            const createdAtDate = new Date(createdAt);
+            const timeDifference = now - createdAtDate; // Difference in milliseconds
+        
+            const minutes = Math.floor(timeDifference / 60000);
+            const hours = Math.floor(timeDifference / 3600000);
+            const days = Math.floor(timeDifference / 86400000);
+        
+            // Check if the time difference is less than a minute
+            if (timeDifference < 60000) {
+                return "Lige nu"; // "Just now"
+            } else if (minutes < 60) {
+                return `${minutes}`; // X minutes ago
+            } else if (hours < 24) {
+                return `${hours} t. `; // X hours ago
+            } else if (days < 7) {
+                return `${days} dag(e)`; // X days ago
+            } else {
+                return createdAtDate.toLocaleDateString(); // Show exact date if more than 7 days
+            }
+        }
+        
+        // Create the element for additional info
+        const additionalInfo = document.createElement('p');
+        
+        // Get the latest message and its timestamp
+        const latestMessage = chatMessages.length > 0 ? chatMessages[chatMessages.length - 1].message : 'No messages yet';
+        const lastMessageTime = chatMessages.length > 0 ? formatTimeAgo(chatMessages[chatMessages.length - 1].sent_at) : 'No time available';
+        
+        // Update the additional info to show the latest message and the formatted time
+        additionalInfo.textContent = `${latestMessage} · ${lastMessageTime}`;
+        additionalInfo.classList.add('message-preview');
+        
+
+
       
           // Append name and message preview to the text block
           textBlock.appendChild(nameDisplayer);
