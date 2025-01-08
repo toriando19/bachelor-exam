@@ -330,6 +330,25 @@ document.getElementById('chatClose').addEventListener('click', function() {
 // --- ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+async function hasMessages(chat_id) {
+  try {
+    // Fetch messages for the chat
+    const messagesResponse = await fetch('http://localhost:3000/messages');
+    if (!messagesResponse.ok) throw new Error('Failed to fetch messages');
+    
+    const messages = await messagesResponse.json();
+
+    // Check if there are any messages with the matching chat_id
+    const chatMessages = messages.filter(message => message.chat_id === chat_id);
+    
+    // Return true if there are messages, false otherwise
+    return chatMessages.length > 0;
+  } catch (error) {
+    console.error("Error checking messages:", error.message);
+    return false;  // If there is an error, assume no messages
+  }
+}
+
 
 async function fetchAndDisplayAdminChats() {
   try {
@@ -362,7 +381,7 @@ async function fetchAndDisplayAdminChats() {
     });
 
     // Display the chats and their associated users
-    filteredChats.forEach(chat => {
+    for (const chat of filteredChats) {
       const matchedUser = users.find(user => user.user_id === (chat.chat_user_1 === user_id ? chat.chat_user_2 : chat.chat_user_1));
       if (matchedUser) {
         const matchDisplayName = matchedUser.user_nickname || matchedUser.user_username;
@@ -399,6 +418,16 @@ async function fetchAndDisplayAdminChats() {
             active: 'chat-fill-black.png',
             inactive: 'chat-black.png'
         };
+
+        // Check if the chat has messages using the hasMessages function
+        const hasMessagesForChat = await hasMessages(chat.id);
+
+        // Set the correct icon based on message availability
+        if (hasMessagesForChat) {
+          openChatButton.innerHTML = `<img src="img/icons/${iconMapping.active}" alt="chat active">`; // Active icon if there are messages
+        } else {
+          openChatButton.innerHTML = `<img src="img/icons/${iconMapping.inactive}" alt="chat inactive">`; // Inactive icon if no messages
+        }
 
         // Event listener for when the button is clicked
         openChatButton.addEventListener('click', () => {
@@ -446,14 +475,12 @@ async function fetchAndDisplayAdminChats() {
         // Append the chat container to the result container
         resultContainer.appendChild(matchContainer);
       }
-    });
+    }
 
   } catch (error) {
     console.error(error.message);
   }
 }
-
-
 
 
 const deleteChat = async (chatId) => {
