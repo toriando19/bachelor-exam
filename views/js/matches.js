@@ -174,10 +174,15 @@ async function createChat(chat_user_1_id, chat_user_2_id) {
 
         const result = await response.json();
         console.log('Response from createChat API:', result);
-        
-        if (response.ok) {
+
+        // Check if chat already exists
+        if (result.message === 'Chat already exists') {
+            alert('Chat already exists with this user!');
+        } else if (response.ok) {
+            // If chat creation is successful
             alert('Chat created successfully!');
         } else {
+            // Handle any other errors
             alert(`Error creating chat: ${result.message || 'Unknown error'}`);
         }
     } catch (error) {
@@ -185,6 +190,7 @@ async function createChat(chat_user_1_id, chat_user_2_id) {
         alert('Error creating chat');
     }
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // View User Info //////////////////////////////////////////////////////////////////////////////////////////////////

@@ -40,11 +40,6 @@ export async function fetchMessages() {
   }
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Create Chat  ///////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Function to create a chat and log the activity
 export async function createChat(chat_user_1, chat_user_2) {
   try {
     const { chatCollection, logsCollection, client } = await connectToMongoDB('chats');
@@ -53,14 +48,31 @@ export async function createChat(chat_user_1, chat_user_2) {
     const user1 = parseInt(chat_user_1, 10);
     const user2 = parseInt(chat_user_2, 10);
 
+    // Ensure user1 is always the smaller number to prevent duplicate chats like (1-2 and 2-1)
+    const [userA, userB] = user1 < user2 ? [user1, user2] : [user2, user1];
+
+    // Check if a chat already exists between these two users
+    const existingChat = await chatCollection.findOne({
+      $or: [
+        { chat_user_1: userA, chat_user_2: userB },
+        { chat_user_1: userB, chat_user_2: userA },
+      ]
+    });
+
+    // If a chat already exists, don't create a new one
+    if (existingChat) {
+      console.log('Chat already exists between these two users');
+      return { message: 'Chat already exists' };
+    }
+
     // Generate a unique id for the chat
     const chatId = `chat-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`;
 
     // Create the new chat document
     const newChat = {
       id: chatId,
-      chat_user_1: user1, // Store as integer
-      chat_user_2: user2, // Store as integer
+      chat_user_1: userA, // Store as integer
+      chat_user_2: userB, // Store as integer
       created_at: new Date(),
     };
 
@@ -74,8 +86,8 @@ export async function createChat(chat_user_1, chat_user_2) {
     const newChatNotification = {
       id: `log-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`,
       event_type: `Chats`,
-      user_id: user1,  // Use integer for user_id
-      related_user: user2,  // Use integer for related_user
+      user_id: userA,  // Use integer for user_id
+      related_user: userB,  // Use integer for related_user
       message1: "Du har startet en chat med",
       message2: "har startet en chat med dig",
       created_at: new Date(),
@@ -96,6 +108,7 @@ export async function createChat(chat_user_1, chat_user_2) {
     throw error;  // Ensure the error is thrown for handling in the route
   }
 }
+
 
 
 
