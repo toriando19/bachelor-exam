@@ -1,60 +1,79 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Import  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Import relevant modules for the application
 import path from 'path';
 import express from 'express';
-import { loginUser, fetchAllUsers, fetchAllInterests, fetchAllUserInterest, fetchMatchingUserInterest, fetchAllMatches, addUserInterest, removeUserInterest } from '../database/postgres/api-postgres.mjs';
+
+// Import API-functions for Mongo and Postgres
+import { loginUser, fetchAllUsers, fetchAllInterests, fetchAllUserInterest, fetchMatchingUserInterest, addUserInterest, removeUserInterest } from '../database/postgres/api-postgres.mjs';
 import { fetchChats, createChat, deleteChat, fetchNotifications, fetchMessages, createMessage } from '../database/mongo/api-mongo.mjs';
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SPA setup //////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Use Express' route-handler
 const router = express.Router();
 
-// Serve static files from the "public" folder (or your assets folder)
-router.use(express.static(path.join(path.resolve(), 'views'))); // Adjust 'public' to your static assets folder
+// Serve static files from the "views" folder 
+router.use(express.static(path.join(path.resolve(), 'views')));
 
-// Serve the index.html as the root
+// Serve index.html as the root
 router.get('/', (req, res) => {
-  console.log('Hello');
-  res.sendFile(path.resolve('views/index.html')); // Serve from the public folder
+  res.sendFile(path.resolve('views/index.html')); 
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Postgres Routes  ///////////////////////////////////////////////////////////////////////////////////////////////
+// Postgres 'API' Routes  /////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Login
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body; // Extract email and password from the request body
+  const { email, password } = req.body; 
 
+  // Error-handler: Undefined user
   if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required.' }); // Return error if missing data
+    return res.status(400).json({ error: 'Email and password are required.' }); 
   }
 
   try {
-    const data = await loginUser(email, password); // Pass the email and password to the loginUser function
-    res.status(200).json(data); // Respond with the user data if login is successful
+    const data = await loginUser(email, password); 
+    res.status(200).json(data); 
   } catch (error) {
-    res.status(401).json({ error: error.message }); // Handle authentication errors
+    res.status(401).json({ error: error.message });
   }
 });
 
 
-
+// All users
 router.get('/users', async (req, res) => {
   const data = await fetchAllUsers();
   res.json(data);
 });
 
+// All interests
 router.get('/interests', async (req, res) => {
   const data = await fetchAllInterests();
   res.json(data);
 });
 
+// All user-interests
 router.get('/userinterest', async (req, res) => {
   const data = await fetchAllUserInterest();
   res.json(data);
 });
 
+// Specific user-interest
 router.get('/matchinginterests', async (req, res) => {
   const data = await fetchMatchingUserInterest();
   res.json(data);
 });
 
+
+// Add user-interest
 router.get('/add-userinterest', async (req, res) => {
   try {
     const {user_interest_user, user_interest_interest} = req.query;
@@ -70,6 +89,8 @@ router.get('/add-userinterest', async (req, res) => {
   }
 });
 
+
+// Delete user-interest
 router.get('/remove-userinterest', async (req, res) => {
   try {
     const { user_interest_user, user_interest_interest } = req.query;
@@ -85,25 +106,19 @@ router.get('/remove-userinterest', async (req, res) => {
   }
 });
 
-// API route for fetching all matches
-router.get('/matches', async (req, res) => {
-  const data = await fetchAllMatches();
-  res.json(data);
-});
-
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Mongo Routes  //////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+// All chats
 router.get('/chats', async (req, res) => {
   const data = await fetchChats();
   res.json(data);
 });
 
 
-// MongoDB Route to handle creating a new chat
+// Create new chat
 router.get('/new-chat', async (req, res) => {
   // Log the query parameters to ensure we're receiving them
   console.log('Received request to create a new chat:', req.query);
@@ -128,7 +143,7 @@ router.get('/new-chat', async (req, res) => {
 });
 
 
-// MongoDB Route to handle deleting a chat
+// Delete chat
 router.delete('/delete-chat/:chat_id', async (req, res) => {
   const { chat_id } = req.params;  // Get the chat_id from the route parameters
 
@@ -153,17 +168,19 @@ router.delete('/delete-chat/:chat_id', async (req, res) => {
 });
 
 
-
+// All notifications
 router.get('/notifications', async (req, res) => {
   const data = await fetchNotifications();
   res.json(data);
 });
 
+// All messages
 router.get('/messages', async (req, res) => {
   const data = await fetchMessages();
   res.json(data);
 });
 
+// Create new message
 router.post('/create-message', async (req, res) => {
   try {
     const data = await createMessage(req, res);  // Pass req and res to createMessage
@@ -173,4 +190,10 @@ router.post('/create-message', async (req, res) => {
   }
 });
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Export: Ready to use ///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export default router;
+
