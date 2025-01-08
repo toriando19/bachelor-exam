@@ -872,12 +872,15 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     text-align: center;
     font-weight: 700;
     flex-shrink: 0;
-    width: 8rem;
+    width: 9.5rem;
+    padding-top: 0.5rem;
     margin-right: 1rem;
 }
 
 .match-container p {
-    padding: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+
 }
 
 .match-view {
@@ -933,7 +936,7 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 }
 
 .interests-match-list img{
-    width: 2rem;
+    width: 2.5rem;
 }
 
 /* /////////////////////////////////////////////////////////////////////////// */

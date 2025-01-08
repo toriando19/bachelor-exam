@@ -111,13 +111,15 @@ async function displayMatchingUsers() {
             matchContainer.appendChild(userInfo);
 
             // Display matching interests with icons
-            // Display matching interests with icons only
             const interestsList = document.createElement('div');
             interestsList.classList.add('interests-match-list');
 
+            // Set to track icons that have already been displayed
+            const displayedIcons = new Set();
+
             matchingInterests.forEach(interestId => {
                 const interest = interestMapping[interestId];
-                if (interest) {
+                if (interest && !displayedIcons.has(interest.icon)) {
                     // Create the image element dynamically
                     const iconElement = document.createElement('img');
                     iconElement.src = `/img/icons/${interest.icon.split('/').pop()}`;  // Extract filename and update path
@@ -125,10 +127,14 @@ async function displayMatchingUsers() {
 
                     // Append the icon to the interests list
                     interestsList.appendChild(iconElement);
+
+                    // Mark this icon as displayed
+                    displayedIcons.add(interest.icon);
                 }
             });
 
             matchContainer.appendChild(interestsList);
+
 
 
             const viewButton = document.createElement('button');
