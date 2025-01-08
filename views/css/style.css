@@ -925,6 +925,17 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     width: 70%;
 }
 
+.interests-match-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.interests-match-list img{
+    width: 2rem;
+}
+
 /* /////////////////////////////////////////////////////////////////////////// */
 /* SPECIFIC MATCH */
 

@@ -1,7 +1,3 @@
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Explore Matches  ///////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 async function displayMatchingUsers() {
     const sessionData = JSON.parse(sessionStorage.getItem('sessionData'));
 
@@ -14,36 +10,39 @@ async function displayMatchingUsers() {
     const currentUserInterests = sessionData.user_interest.map(interest => interest.user_interest_interest);
 
     try {
-        // Fetch all user interests from the backend
-        const userInterestResponse = await fetch('http://localhost:3000/userinterest');
-        const userInterests = await userInterestResponse.json();
-
-        // Fetch all users from the backend
-        const usersResponse = await fetch('http://localhost:3000/users');
-        const users = await usersResponse.json();
-
-        // Fetch all chats from the backend to check if a chat already exists
-        const chatsResponse = await fetch('http://localhost:3000/chats');
-        const chats = await chatsResponse.json();
+        // Fetch user interests, users, and chats from the backend
+        const [userInterests, users, chats] = await Promise.all([
+            fetch('http://localhost:3000/userinterest').then(res => res.json()),
+            fetch('http://localhost:3000/users').then(res => res.json()),
+            fetch('http://localhost:3000/chats').then(res => res.json())
+        ]);
 
         const matchingUsers = {};
 
-        // Loop through all interests to find matching users
+        // Mapping of interestId to icon and title
+        const interestMapping = {
+            1: { icon: 'views/img/icons/movie-white.png', title: 'Den Store Bagedyst' },
+            2: { icon: 'views/img/icons/movie-white.png', title: 'Alle mod en' },
+            3: { icon: 'views/img/icons/movie-white.png', title: 'Kender du typen' },
+            4: { icon: 'views/img/icons/eye-white.png', title: 'TVA' },
+            5: { icon: 'views/img/icons/podcast-white.png', title: 'Genstart' },
+            6: { icon: 'views/img/icons/podcast-white.png', title: 'Sara og Monopolet' }
+        };
+
+        // Find matching users based on shared interests
         userInterests.forEach(interest => {
-            // Exclude the current user from matching
             if (currentUserInterests.includes(interest.user_interest_interest) && interest.user_interest_user !== currentUserId) {
                 if (!matchingUsers[interest.user_interest_user]) {
                     matchingUsers[interest.user_interest_user] = {
                         sharedInterests: 0,
                         totalInterests: 0,
                         latestTimestamp: null,
-                        matchingInterests: [], // Track specific matching interests
+                        matchingInterests: []
                     };
                 }
                 matchingUsers[interest.user_interest_user].sharedInterests++;
-                matchingUsers[interest.user_interest_user].matchingInterests.push(interest.user_interest_interest);  // Store matching interest
-                
-                // Store the most recent timestamp
+                matchingUsers[interest.user_interest_user].matchingInterests.push(interest.user_interest_interest);
+
                 const currentInterestTime = new Date(interest.current_time).getTime();
                 if (!matchingUsers[interest.user_interest_user].latestTimestamp || currentInterestTime > matchingUsers[interest.user_interest_user].latestTimestamp) {
                     matchingUsers[interest.user_interest_user].latestTimestamp = currentInterestTime;
@@ -51,59 +50,44 @@ async function displayMatchingUsers() {
             }
         });
 
-        // Calculate match percentage for each user
+        // Calculate match percentages
         Object.keys(matchingUsers).forEach(userId => {
             matchingUsers[userId].totalInterests = userInterests.filter(item => item.user_interest_user == userId).length;
         });
 
-        // Sort the users by percentage match in descending order
         const sortedMatchingUsers = Object.keys(matchingUsers)
             .map(userId => ({
                 userId,
                 percentage: Math.round((matchingUsers[userId].sharedInterests / (currentUserInterests.length + matchingUsers[userId].totalInterests - matchingUsers[userId].sharedInterests)) * 100),
                 latestTimestamp: matchingUsers[userId].latestTimestamp,
-                matchingInterests: matchingUsers[userId].matchingInterests,  // Include matching interests in the sort result
+                matchingInterests: matchingUsers[userId].matchingInterests
             }))
             .sort((a, b) => b.percentage - a.percentage);
 
         const exploreMatches = document.getElementById('exploreMatches');
         exploreMatches.innerHTML = ''; // Clear previous content
 
-        // Check if the latest update was within the last 2 minutes (120000ms)
         const currentTime = new Date().getTime();
 
+        // Create match containers
         sortedMatchingUsers.forEach(({ userId, percentage, latestTimestamp, matchingInterests }) => {
             const matchingUser = users.find(user => user.user_id == userId);
 
-            // Skip if the user is the current user or if a chat already exists
-            if (matchingUser.user_id === currentUserId) {
-                return; // Ignore the current user
-            }
+            if (!matchingUser || matchingUser.user_id === currentUserId) return;
 
             const chatExists = chats.some(chat => 
                 (chat.chat_user_1 === currentUserId && chat.chat_user_2 === matchingUser.user_id) || 
                 (chat.chat_user_1 === matchingUser.user_id && chat.chat_user_2 === currentUserId)
             );
 
-            // Skip the match if a chat already exists
-            if (chatExists) {
-                return;
-            }
+            if (chatExists) return;
 
             const matchContainer = document.createElement('div');
             matchContainer.classList.add('match-container');
 
-            let showSuperMatch = false;
-            let showNewMatch = false;
-            let showMatch = false;
-
-            if (percentage === 100) {
-                showSuperMatch = true;
-            } else if (latestTimestamp && (currentTime - latestTimestamp <= 120000)) {
-                showNewMatch = true;
-            } else {
-                showMatch = true;
-            }
+            let showSuperMatch = percentage === 100;
+            let showNewMatch = latestTimestamp && (currentTime - latestTimestamp <= 120000);
+            let showMatch = !showSuperMatch && !showNewMatch;
 
             if (showSuperMatch) {
                 const superMatch = document.createElement('h4');
@@ -122,12 +106,30 @@ async function displayMatchingUsers() {
                 matchContainer.appendChild(matchLabel);
             }
 
-            // Show match percentage
             const userInfo = document.createElement('p');
             userInfo.textContent = `${percentage}% match`;
             matchContainer.appendChild(userInfo);
 
-            // Do NOT show the matching interests here in the "Explore Matches" section
+            // Display matching interests with icons
+            // Display matching interests with icons only
+            const interestsList = document.createElement('div');
+            interestsList.classList.add('interests-match-list');
+
+            matchingInterests.forEach(interestId => {
+                const interest = interestMapping[interestId];
+                if (interest) {
+                    // Create the image element dynamically
+                    const iconElement = document.createElement('img');
+                    iconElement.src = `/img/icons/${interest.icon.split('/').pop()}`;  // Extract filename and update path
+                    iconElement.alt = interest.title;  // Use title as alt text
+
+                    // Append the icon to the interests list
+                    interestsList.appendChild(iconElement);
+                }
+            });
+
+            matchContainer.appendChild(interestsList);
+
 
             const viewButton = document.createElement('button');
             viewButton.classList.add('match-view');
@@ -153,12 +155,13 @@ async function displayMatchingUsers() {
         if (sortedMatchingUsers.length === 0) {
             exploreMatches.innerHTML = 'No matching users found.';
         }
-
     } catch (error) {
         console.error('Error fetching data:', error);
         alert('An error occurred while fetching matching users.');
     }
 }
+
+
 
 
 
@@ -250,14 +253,14 @@ async function viewUserInfo(username, matchPercentage, matchingInterests) {
 
         // Mapping of interestId to icon and title
         const interestMapping = {
-            1: { icon: 'movie-black.png', title: 'Den Store Bagedyst' },
-            2: { icon: 'movie-black.png', title: 'Alle mod en' },
-            3: { icon: 'movie-black.png', title: 'Kender du typen' },
-            4: { icon: 'eye-black.png', title: 'TVA' },
-            5: { icon: 'podcast-black.png', title: 'Genstart' },
-            6: { icon: 'podcast-black.png', title: 'Sara og Monopolet' }
+            1: { icon: 'views/img/icons/movie-black.png', title: 'Den Store Bagedyst' },
+            2: { icon: 'views/img/icons/movie-black.png', title: 'Alle mod en' },
+            3: { icon: 'views/img/icons/movie-black.png', title: 'Kender du typen' },
+            4: { icon: 'views/img/icons/eye-black.png', title: 'TVA' },
+            5: { icon: 'views/img/icons/podcast-black.png', title: 'Genstart' },
+            6: { icon: 'views/img/icons/podcast-black.png', title: 'Sara og Monopolet' }
         };
-
+        
         // Show the matching interests as paragraphs with icons and titles
         const interestList = document.createElement('div'); // Using div to contain the paragraphs
         matchingInterests.forEach(interestId => {
