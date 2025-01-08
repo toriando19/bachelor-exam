@@ -234,7 +234,7 @@ async function fetchChatDocuments() {
     
         // Create the main p element for displaying the user's name
         const nameDisplayer = document.createElement('p');
-        nameDisplayer.textContent = `${displayName} >`;
+        nameDisplayer.innerHTML = `${displayName} <img src="img/icons/rightarrow-black.png" alt="arrow">`;
         nameDisplayer.classList.add('name-displayer');
         nameDisplayer.addEventListener('click', () => {
           // When a chat is clicked, fetch and display the messages for the selected chat

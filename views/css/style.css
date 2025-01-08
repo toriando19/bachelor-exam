@@ -461,9 +461,15 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 
 .chat-entry {
     border-bottom: 1px solid var(--colorGreyLight);
-    /* align-items: center; */
+    align-items: center;
     display: flex;
     padding: 1rem;
+}
+
+.text-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .matching-users {
@@ -486,6 +492,12 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     color: var(--colorDarkText);
     font-size: 16px;
     font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.name-displayer img {
+    width: 1.2rem;
 }
 
 .message-preview {
