@@ -1,3 +1,4 @@
+// Import the connection and query executer to the Postgres database
 import { queryDatabase } from './connect-postgres.mjs';
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -6,16 +7,19 @@ import { queryDatabase } from './connect-postgres.mjs';
 
 export const loginUser = async (email, password) => {
   try {
+
     // Fetch the user matching the provided email and password
     const users = await queryDatabase(
       'SELECT * FROM users WHERE user_email = $1 AND user_password = $2',
       [email, password]
     );
-
+    
+    // Verify the user
     if (users.length === 0) {
       throw new Error('Invalid credentials.');
     }
 
+    // Fetch the first user
     const user = users[0];
 
     // Fetch the user's interests
@@ -24,6 +28,7 @@ export const loginUser = async (email, password) => {
       [user.user_id]
     );
 
+    // Fetch important user-informations 
     return {
       user_id: user.user_id,
       username: user.user_username,
@@ -38,7 +43,7 @@ export const loginUser = async (email, password) => {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Fetch all items  ///////////////////////////////////////////////////////////////////////////////////////////////
+// Fetch all – functions  /////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -72,21 +77,27 @@ export const fetchAllUserInterest = async () => {
   }
 };
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Fetch specific – functions  ////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // Fetch matching user-interests
 export const fetchMatchingUserInterest = async (sessionUserId, relatedUserId) => {
   try {
+
     // Query to get common interests between the session user and the related user
     const query = `
       SELECT * FROM user_interest
       WHERE user_interest_user IN ($1, $2) 
       AND user_interest_interest IN (
-        SELECT user_interest_interest 
-        FROM user_interest 
-        WHERE user_interest_user = $1
+      SELECT user_interest_interest 
+      FROM user_interest 
+      WHERE user_interest_user = $1
       )
     `;
-
     const userInterests = await queryDatabase(query, [sessionUserId, relatedUserId]);
+
     return userInterests;
   } catch (err) {
     throw new Error("Error fetching matching user interests: " + err.message);
@@ -94,36 +105,24 @@ export const fetchMatchingUserInterest = async (sessionUserId, relatedUserId) =>
 };
 
 
-
-
-
-// Fetch all matches
-export const fetchAllMatches = async () => {
-  try {
-    const matches = await queryDatabase('SELECT * FROM matches');
-    return matches;
-  } catch (err) {
-    throw new Error("Error fetching matches: " + err.message);
-  }
-};
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Create elements  ///////////////////////////////////////////////////////////////////////////////////////////////
+// Create – functions  ////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 // Function to add user interest
 export const addUserInterest = async (user_interest_user, user_interest_interest) => {
   try {
-    const result = await queryDatabase(
-      'INSERT INTO user_interest (user_interest_user, user_interest_interest) VALUES ($1, $2) RETURNING user_interest_user, user_interest_interest',
+    const result = await queryDatabase(`
+      INSERT INTO user_interest (user_interest_user, user_interest_interest) 
+      VALUES ($1, $2) 
+      RETURNING user_interest_user, user_interest_interest
+      `,
       [user_interest_user, user_interest_interest]
     );
 
     // Log the inserted user_interest_user and user_interest_interest
     if (result.length > 0) {
-      // console.log('Interest added successfully: User:', result[0].user_interest_user,', Interest', result[0].user_interest_interest);
+      console.log('Interest added successfully: User:', result[0].user_interest_user,', Interest', result[0].user_interest_interest);
     } else {
       console.log('No interest added');
     }
@@ -132,23 +131,25 @@ export const addUserInterest = async (user_interest_user, user_interest_interest
   }
 };
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Delete elements  ///////////////////////////////////////////////////////////////////////////////////////////////
+// Delete – functions  ////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 // Function to remove user interest
 export const removeUserInterest = async (user_interest_user, user_interest_interest) => {
   try {
-    const result = await queryDatabase(
-      'DELETE FROM user_interest WHERE user_interest_user = $1 AND user_interest_interest = $2 RETURNING user_interest_user, user_interest_interest',
+    const result = await queryDatabase(`
+      DELETE FROM user_interest 
+      WHERE user_interest_user = $1 
+      AND user_interest_interest = $2 
+      RETURNING user_interest_user, user_interest_interest
+      `,
       [user_interest_user, user_interest_interest]
     );
 
-    // Log the deleted user_interest_user and user_interest_interest
+
     if (result.length > 0) {
-      // console.log('Interest removed successfully: User:', result[0].user_interest_user,', Interest', result[0].user_interest_interest);
+      console.log('Interest removed successfully: User:', result[0].user_interest_user,', Interest', result[0].user_interest_interest);
     } else {
       console.log('No interest removed');
     }
