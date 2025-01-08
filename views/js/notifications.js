@@ -1,19 +1,30 @@
 // Fetch sessionData from sessionStorage
 const sessionData = JSON.parse(sessionStorage.getItem("sessionData"));
 
-// Function to fetch and display notifications
 async function fetchNotifications() {
     try {
-        // Fetch notifications and messages from respective endpoints
-        const notificationsResponse = await fetch('http://localhost:3000/notifications');
-        const messagesResponse = await fetch('http://localhost:3000/messages');
+        // Fetch notifications, messages, and users
+        const [notificationsResponse, messagesResponse, usersResponse] = await Promise.all([
+            fetch('http://localhost:3000/notifications'),
+            fetch('http://localhost:3000/messages'),
+            fetch('http://localhost:3000/users')
+        ]);
 
-        if (!notificationsResponse.ok || !messagesResponse.ok) {
-            throw new Error(`HTTP error! Status: ${notificationsResponse.status} or ${messagesResponse.status}`);
+        if (!notificationsResponse.ok || !messagesResponse.ok || !usersResponse.ok) {
+            throw new Error(`HTTP error! Status: ${notificationsResponse.status}, ${messagesResponse.status}, or ${usersResponse.status}`);
         }
 
-        const notificationsData = await notificationsResponse.json();
-        const messagesData = await messagesResponse.json();
+        const [notificationsData, messagesData, usersData] = await Promise.all([
+            notificationsResponse.json(),
+            messagesResponse.json(),
+            usersResponse.json()
+        ]);
+
+        // Create a user mapping (user_id -> nickname or username)
+        const userMap = {};
+        usersData.forEach(user => {
+            userMap[user.user_id] = user.user_nickname || user.user_username;
+        });
 
         const logNotificationsDiv = document.getElementById('logNotifications');
 
@@ -47,22 +58,25 @@ async function fetchNotifications() {
                     let displayMessage = '';
                     const createdAt = formatTimeAgo(item.created_at);
 
+                    // Get usernames from userMap
+                    const senderName = userMap[item.user_id] || `User ${item.user_id}`;
+                    const recipientName = userMap[item.related_user] || `User ${item.related_user}`;
+
                     // Check if the item is a message or a general notification
                     if (item.event_type === 'Beskeder') {
                         // Message notification format
-                        displayMessage = `<strong>User ${item.user_id}:</strong> "${item.message}"`;
+                        displayMessage = `<strong>${senderName}:</strong> "${item.message}"`;
                     } else {
                         // Other notification format
                         const message1 = item.message1 || 'No message available';
                         const message2 = item.message2 || 'No message available';
 
-                        let relatedUser = item.related_user !== sessionData.user_id ? item.related_user : item.user_id;
-                        let loggedInData = sessionData.user_id;
+                        let relatedUser = item.related_user !== sessionData.user_id ? recipientName : senderName;
 
-                        if (loggedInData === sessionData.user_id) {
-                            displayMessage = `<strong>User ${relatedUser}</strong> ${message2}`;
+                        if (item.user_id === sessionData.user_id) {
+                            displayMessage = `${message1} <strong>${relatedUser}</strong>`;
                         } else {
-                            displayMessage = `${message1} <strong>User ${relatedUser}</strong>`;
+                            displayMessage = `<strong>${relatedUser}</strong> ${message2}`;
                         }
                     }
 
@@ -99,6 +113,7 @@ async function fetchNotifications() {
         console.error('Error fetching notifications:', error);
     }
 }
+
 
 
 
