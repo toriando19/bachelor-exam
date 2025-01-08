@@ -415,7 +415,21 @@ async function fetchAndDisplayAdminChats() {
             // Fetch and display messages for the selected chat
             showMessageInput(chat.id, matchedUser.user_id, matchDisplayName);  // Open chat input
             fetchAndDisplayMessages(chat.id, user_id);  // Fetch messages for this chat
+
+            // Reuse existing code for hiding matchesOverlay
+            const matchesOverlay = document.getElementById("matchesOverlay");
+            const burgerMenu = document.getElementById("burgerMenu");
+            const button = document.getElementById("hamburgerMenu");
+
+            // Hide matchesOverlay
+            matchesOverlay.style.display = "none";
+
+            // Also hide the burger menu if it's open
+            burgerMenu.style.display = "none";
+            button.innerHTML = '<img src="img/icons/burger-black.png" alt="Menu">'; // Reset burger menu button text
         });
+
+
 
         // Create delete button for the chat
         const deleteButton = document.createElement('button');
