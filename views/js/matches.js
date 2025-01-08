@@ -127,15 +127,7 @@ async function displayMatchingUsers() {
             userInfo.textContent = `${percentage}% match`;
             matchContainer.appendChild(userInfo);
 
-            // Show the matching interests
-            const interestList = document.createElement('ul');
-            matchingInterests.forEach(interestId => {
-                const interestDescription = userInterests.find(interest => interest.user_interest_interest === interestId);
-                const listItem = document.createElement('li');
-                listItem.textContent = interestDescription ? interestDescription.user_interest_interest : 'Unknown Interest';
-                interestList.appendChild(listItem);
-            });
-            matchContainer.appendChild(interestList);
+            // Do NOT show the matching interests here in the "Explore Matches" section
 
             const viewButton = document.createElement('button');
             viewButton.classList.add('match-view');
@@ -167,6 +159,7 @@ async function displayMatchingUsers() {
         alert('An error occurred while fetching matching users.');
     }
 }
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
