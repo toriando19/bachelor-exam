@@ -331,7 +331,6 @@ document.getElementById('chatClose').addEventListener('click', function() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-// Function to fetch and display admin-related chat documents
 async function fetchAndDisplayAdminChats() {
   try {
     const sessionData = JSON.parse(sessionStorage.getItem("sessionData"));
@@ -357,7 +356,7 @@ async function fetchAndDisplayAdminChats() {
 
     // Sort filteredChats to show the chat with the newest message first
     filteredChats.sort((a, b) => {
-      const timeA = new Date(a.last_message_time); // Assuming the chat object has a last_message_time property
+      const timeA = new Date(a.last_message_time); 
       const timeB = new Date(b.last_message_time);
       return timeB - timeA; // Sort in descending order (newest first)
     });
@@ -366,82 +365,90 @@ async function fetchAndDisplayAdminChats() {
     filteredChats.forEach(chat => {
       const matchedUser = users.find(user => user.user_id === (chat.chat_user_1 === user_id ? chat.chat_user_2 : chat.chat_user_1));
       if (matchedUser) {
-          const matchDisplayName = matchedUser.user_nickname || matchedUser.user_username;
-  
-          // Create a container div for the chat entry
-          const matchContainer = document.createElement('div');
-          matchContainer.classList.add('match-entry');
-  
-          // Create an img element for the user's profile picture
-          const profileImage = document.createElement('img');
-          profileImage.src = matchedUser.profile_picture || '../img/profile.jpg'; // Fallback to a default image if none provided
-          profileImage.alt = `${matchDisplayName}'s profile picture`;
-          profileImage.classList.add('profile-image');
-  
-          // Create a div to group text elements (name, status, and button)
-          const matchTextBlock = document.createElement('div');
-          matchTextBlock.classList.add('match-text-block');
-          matchTextBlock.style.display = 'flex'; // Use Flexbox
-          matchTextBlock.style.justifyContent = 'space-between'; // Space between the left and right elements
-          matchTextBlock.style.alignItems = 'center'; // Ensure everything is vertically aligned
-  
-          // Create the main p element for displaying the user's name
-          const nameMatchDisplayer = document.createElement('p');
-          nameMatchDisplayer.textContent = `${matchedUser.user_username}`;
-          nameMatchDisplayer.classList.add('match-name-displayer');
-          
-          // Create an img element for the chat status (active or inactive)
-          const statusImage = document.createElement('img');
-          statusImage.classList.add('chat-status-icon');
-  
-          // Define the icon mapping for active and inactive chats
-          const iconMapping = {
-              active: 'chat-fill-black.png',
-              inactive: 'chat-black.png'
-          };
-  
-          // Get the appropriate icon filename based on whether the chat has a message
-          const statusType = chat.last_message ? 'active' : 'inactive';  // Determine if chat is active or inactive
-          const iconFilename = iconMapping[statusType] || 'default-icon.png';  // Fallback to default if no match found
-  
-          // Set the image source for the status icon
-          statusImage.src = `/img/icons/${iconFilename}`;
-          statusImage.alt = statusType; // Use status type (active/inactive) as alt text
-  
-          // Create delete button for the chat
-          const deleteButton = document.createElement('button');
-          deleteButton.textContent = 'Slet chat';
-          deleteButton.classList.add('delete-chat-button');
-          deleteButton.addEventListener('click', async () => {
-              const confirmation = confirm(`Slet chat med ${matchedUser.user_username}`);
-              if (confirmation) {
-                  await deleteChat(chat.id);
-                  matchContainer.remove();  // Remove the chat from the UI after deletion
-              }
-          });
-  
-          // Append name, status image, and delete button to the text block
-          matchTextBlock.appendChild(nameMatchDisplayer);
-          matchTextBlock.appendChild(statusImage); // Appending the status image instead of the span
-          matchTextBlock.appendChild(deleteButton);
-  
-          // Append the image and text block to the chat container
-          matchContainer.appendChild(profileImage);
-          matchContainer.appendChild(matchTextBlock);
-  
-          // Append the chat container to the result container
-          resultContainer.appendChild(matchContainer);
+        const matchDisplayName = matchedUser.user_nickname || matchedUser.user_username;
+
+        // Create a container div for the chat entry
+        const matchContainer = document.createElement('div');
+        matchContainer.classList.add('match-entry');
+
+        // Create an img element for the user's profile picture
+        const profileImage = document.createElement('img');
+        profileImage.src = matchedUser.profile_picture || '../img/profile.jpg'; 
+        profileImage.alt = `${matchDisplayName}'s profile picture`;
+        profileImage.classList.add('profile-image');
+
+        // Create a div to group text elements (name, status, and button)
+        const matchTextBlock = document.createElement('div');
+        matchTextBlock.classList.add('match-text-block');
+        matchTextBlock.style.display = 'flex'; // Use Flexbox
+        matchTextBlock.style.justifyContent = 'space-between'; // Space between the left and right elements
+        matchTextBlock.style.alignItems = 'center'; // Ensure everything is vertically aligned
+
+        // Create the main p element for displaying the user's name
+        const nameMatchDisplayer = document.createElement('p');
+        nameMatchDisplayer.textContent = `${matchedUser.user_username}`;
+        nameMatchDisplayer.classList.add('match-name-displayer');
+        
+        // Create an img element for the chat status (active or inactive)
+        const statusImage = document.createElement('img');
+        statusImage.classList.add('chat-status-icon');
+
+        // Define the icon mapping for active and inactive chats
+        const iconMapping = {
+            active: 'chat-fill-black.png',
+            inactive: 'chat-black.png'
+        };
+
+        // Get the appropriate icon filename based on whether the chat has a message
+        const statusType = chat.last_message ? 'active' : 'inactive';  // Determine if chat is active or inactive
+        const iconFilename = iconMapping[statusType] || 'default-icon.png';  // Fallback to default if no match found
+
+        // Set the image source for the status icon
+        statusImage.src = `/img/icons/${iconFilename}`;
+        statusImage.alt = statusType; // Use status type (active/inactive) as alt text
+
+        // Create a button to open the chat and display messages
+        const openChatButton = document.createElement('button');
+        openChatButton.textContent = 'Open Chat';
+        openChatButton.classList.add('open-chat-button');
+        openChatButton.addEventListener('click', () => {
+            // Fetch and display messages for the selected chat
+            showMessageInput(chat.id, matchedUser.user_id, matchDisplayName);  // Open chat input
+            fetchAndDisplayMessages(chat.id, user_id);  // Fetch messages for this chat
+        });
+
+        // Create delete button for the chat
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Slet chat';
+        deleteButton.classList.add('delete-chat-button');
+        deleteButton.addEventListener('click', async () => {
+            const confirmation = confirm(`Slet chat med ${matchedUser.user_username}`);
+            if (confirmation) {
+                await deleteChat(chat.id);
+                matchContainer.remove();  // Remove the chat from the UI after deletion
+            }
+        });
+
+        // Append name, status image, and delete button to the text block
+        matchTextBlock.appendChild(nameMatchDisplayer);
+        matchTextBlock.appendChild(statusImage); // Appending the status image instead of the span
+        matchTextBlock.appendChild(openChatButton);  // Append the Open Chat button
+        matchTextBlock.appendChild(deleteButton);
+
+        // Append the image and text block to the chat container
+        matchContainer.appendChild(profileImage);
+        matchContainer.appendChild(matchTextBlock);
+
+        // Append the chat container to the result container
+        resultContainer.appendChild(matchContainer);
       }
-  });
-  
-  
-
-
+    });
 
   } catch (error) {
     console.error(error.message);
   }
 }
+
 
 const deleteChat = async (chatId) => {
   try {
