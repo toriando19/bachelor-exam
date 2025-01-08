@@ -73,7 +73,7 @@ export async function createChat(chat_user_1, chat_user_2) {
     // Log the creation as a notification
     const newChatNotification = {
       id: `log-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`,
-      event_type: `chats`,
+      event_type: `Chats`,
       user_id: user1,  // Use integer for user_id
       related_user: user2,  // Use integer for related_user
       message1: "Du har startet en chat med",
@@ -160,10 +160,10 @@ export async function createMessage(req, res) {
     // Create a log entry for the message creation
     const newMessageNotification = {
       id: `log-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`,
-      event_type: 'message',
+      event_type: 'Beskeder',
       user_id: sender_id, // Sender's user ID
-      related_user: chat_id, // Chat ID
-      message: `User ${sender_id} sent a message in chat ${chat_id}: "${message}"`,
+      related_user: recipient_id, // Chat ID
+      message: `${message}`,
       created_at: new Date(),
     };
 
