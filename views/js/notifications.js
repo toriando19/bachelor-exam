@@ -41,6 +41,12 @@ async function fetchNotifications() {
         const filteredNotifications = allData.filter(item => {
             const userIdMatch = String(item.user_id) === String(sessionData.user_id);
             const relatedUserMatch = String(item.related_user) === String(sessionData.user_id);
+
+            // Exclude messages where the logged-in user is the sender
+            if (item.event_type === 'Beskeder' && userIdMatch) {
+                return false;
+            }
+
             return userIdMatch || relatedUserMatch;
         });
 
@@ -113,6 +119,7 @@ async function fetchNotifications() {
         console.error('Error fetching notifications:', error);
     }
 }
+
 
 
 
