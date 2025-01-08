@@ -30,6 +30,7 @@ async function displayMatchingUsers() {
 
         // Loop through all interests to find matching users
         userInterests.forEach(interest => {
+            // Exclude the current user from matching
             if (currentUserInterests.includes(interest.user_interest_interest) && interest.user_interest_user !== currentUserId) {
                 if (!matchingUsers[interest.user_interest_user]) {
                     matchingUsers[interest.user_interest_user] = {
@@ -71,7 +72,11 @@ async function displayMatchingUsers() {
         sortedMatchingUsers.forEach(({ userId, percentage, latestTimestamp }) => {
             const matchingUser = users.find(user => user.user_id == userId);
 
-            // Check if a chat already exists between currentUserId and matchingUser.user_id
+            // Skip if the user is the current user or if a chat already exists
+            if (matchingUser.user_id === currentUserId) {
+                return; // Ignore the current user
+            }
+
             const chatExists = chats.some(chat => 
                 (chat.chat_user_1 === currentUserId && chat.chat_user_2 === matchingUser.user_id) || 
                 (chat.chat_user_1 === matchingUser.user_id && chat.chat_user_2 === currentUserId)
@@ -164,6 +169,7 @@ async function displayMatchingUsers() {
 
 
 
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Update Timestamp after Changes in Interests ///////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -197,6 +203,18 @@ async function createChat(chat_user_1_id, chat_user_2_id) {
         } else if (response.ok) {
             // If chat creation is successful
             alert('Chat created successfully!');
+
+            // Reload the content by calling displayMatchingUsers
+            displayMatchingUsers();
+
+            // Hide the specific match overlay
+            const matchOverlay = document.getElementById('specificMatchOverlay');
+            if (matchOverlay) {
+                matchOverlay.style.display = 'none';
+            }
+
+            // Set the active menu to the frontpage
+            setActiveMenu("frontpageMenu");
         } else {
             // Handle any other errors
             alert(`Error creating chat: ${result.message || 'Unknown error'}`);
@@ -206,6 +224,7 @@ async function createChat(chat_user_1_id, chat_user_2_id) {
         alert('Error creating chat');
     }
 }
+
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

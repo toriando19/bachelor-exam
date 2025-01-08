@@ -272,7 +272,7 @@ async function fetchChatDocuments() {
             if (timeDifference < 60000) {
                 return "Lige nu"; // "Just now"
             } else if (minutes < 60) {
-                return `${minutes}`; // X minutes ago
+                return `${minutes} min.`; // X minutes ago
             } else if (hours < 24) {
                 return `${hours} t. `; // X hours ago
             } else if (days < 7) {
