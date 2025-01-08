@@ -113,17 +113,23 @@ async function showMessageInput(chat_id, recipient_id, recipient_name) {
   document.getElementById('submitMessage').addEventListener('click', async () => {
     const message = document.getElementById('userMessage').value;
     console.log("Message Input Value:", message);
-
+  
     if (message.trim() !== "") {
       await sendMessageToAPI(chat_id, user_id, recipient_id, message); // Pass the correct sender_id and recipient_id
       document.getElementById('userMessage').value = ''; // Clear input
-
+  
       // Re-fetch the messages to include the newly sent message
       fetchAndDisplayMessages(chat_id, user_id);
+      
+      // Hide the icebreaker section after sending a message
+      const icebreakerSection = document.getElementById('icebreakerSection');
+      icebreakerSection.style.display = 'none';  // Hide the icebreaker section
+  
     } else {
       alert("Message cannot be empty");
     }
   });
+  
 }
 
 
