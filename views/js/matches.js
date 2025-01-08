@@ -36,11 +36,13 @@ async function displayMatchingUsers() {
                     matchingUsers[interest.user_interest_user] = {
                         sharedInterests: 0,
                         totalInterests: 0,
-                        latestTimestamp: null,  // Store the most recent timestamp for this user
+                        latestTimestamp: null,
+                        matchingInterests: [], // Track specific matching interests
                     };
                 }
                 matchingUsers[interest.user_interest_user].sharedInterests++;
-
+                matchingUsers[interest.user_interest_user].matchingInterests.push(interest.user_interest_interest);  // Store matching interest
+                
                 // Store the most recent timestamp
                 const currentInterestTime = new Date(interest.current_time).getTime();
                 if (!matchingUsers[interest.user_interest_user].latestTimestamp || currentInterestTime > matchingUsers[interest.user_interest_user].latestTimestamp) {
@@ -60,8 +62,9 @@ async function displayMatchingUsers() {
                 userId,
                 percentage: Math.round((matchingUsers[userId].sharedInterests / (currentUserInterests.length + matchingUsers[userId].totalInterests - matchingUsers[userId].sharedInterests)) * 100),
                 latestTimestamp: matchingUsers[userId].latestTimestamp,
+                matchingInterests: matchingUsers[userId].matchingInterests,  // Include matching interests in the sort result
             }))
-            .sort((a, b) => b.percentage - a.percentage);  // Sorting in descending order of match percentage
+            .sort((a, b) => b.percentage - a.percentage);
 
         const exploreMatches = document.getElementById('exploreMatches');
         exploreMatches.innerHTML = ''; // Clear previous content
@@ -69,7 +72,7 @@ async function displayMatchingUsers() {
         // Check if the latest update was within the last 2 minutes (120000ms)
         const currentTime = new Date().getTime();
 
-        sortedMatchingUsers.forEach(({ userId, percentage, latestTimestamp }) => {
+        sortedMatchingUsers.forEach(({ userId, percentage, latestTimestamp, matchingInterests }) => {
             const matchingUser = users.find(user => user.user_id == userId);
 
             // Skip if the user is the current user or if a chat already exists
@@ -90,43 +93,32 @@ async function displayMatchingUsers() {
             const matchContainer = document.createElement('div');
             matchContainer.classList.add('match-container');
 
-            // Determine if "Super Match", "Nyt match", or "Match" should be displayed
             let showSuperMatch = false;
             let showNewMatch = false;
             let showMatch = false;
 
-            // If the match is 100%, show "Super Match"
             if (percentage === 100) {
                 showSuperMatch = true;
-            }
-            // If the match is within 2 minutes, show "Nyt match" (only if it's not already a "Super Match")
-            else if (latestTimestamp && (currentTime - latestTimestamp <= 120000)) {
+            } else if (latestTimestamp && (currentTime - latestTimestamp <= 120000)) {
                 showNewMatch = true;
-            }
-            // If neither "Super Match" nor "Nyt match" apply, show "Match"
-            else {
+            } else {
                 showMatch = true;
             }
 
-            // Show "Super Match" if the match percentage is 100%
             if (showSuperMatch) {
                 const superMatch = document.createElement('h4');
                 superMatch.textContent = 'Super Match';
-                superMatch.classList.add('superMatch');  // Add the special class for styling
+                superMatch.classList.add('superMatch');
                 matchContainer.appendChild(superMatch);
-            }
-            // Show "Nyt match" only if it's not a "Super Match"
-            else if (showNewMatch) {
+            } else if (showNewMatch) {
                 const newMatch = document.createElement('h4');
                 newMatch.textContent = 'Nyt match';
                 newMatch.classList.add('newMatch');
                 matchContainer.appendChild(newMatch);
-            }
-            // Show "Match" if it's not a "Super Match" or "Nyt match"
-            else if (showMatch) {
+            } else if (showMatch) {
                 const matchLabel = document.createElement('h4');
                 matchLabel.textContent = 'Match';
-                matchLabel.classList.add('simpleMatch');  // Add the class for styling
+                matchLabel.classList.add('simpleMatch');
                 matchContainer.appendChild(matchLabel);
             }
 
@@ -135,11 +127,21 @@ async function displayMatchingUsers() {
             userInfo.textContent = `${percentage}% match`;
             matchContainer.appendChild(userInfo);
 
+            // Show the matching interests
+            const interestList = document.createElement('ul');
+            matchingInterests.forEach(interestId => {
+                const interestDescription = userInterests.find(interest => interest.user_interest_interest === interestId);
+                const listItem = document.createElement('li');
+                listItem.textContent = interestDescription ? interestDescription.user_interest_interest : 'Unknown Interest';
+                interestList.appendChild(listItem);
+            });
+            matchContainer.appendChild(interestList);
+
             const viewButton = document.createElement('button');
             viewButton.classList.add('match-view');
             viewButton.textContent = 'Se match';
             viewButton.onclick = () => {
-                viewUserInfo(matchingUser.user_username, percentage);
+                viewUserInfo(matchingUser.user_username, percentage, matchingInterests);
             };
 
             const chatButton = document.createElement('button');
@@ -165,6 +167,7 @@ async function displayMatchingUsers() {
         alert('An error occurred while fetching matching users.');
     }
 }
+
 
 
 
