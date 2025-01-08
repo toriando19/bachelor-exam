@@ -248,13 +248,13 @@ async function viewUserInfo(username, matchPercentage, matchingInterests) {
         const userInterestResponse = await fetch('http://localhost:3000/userinterest');
         const userInterests = await userInterestResponse.json();
 
-        // Show the matching interests
-        const interestList = document.createElement('ul');
+        // Show the matching interests as paragraphs instead of list items
+        const interestList = document.createElement('div'); // Using div to contain the paragraphs
         matchingInterests.forEach(interestId => {
             const interestDescription = userInterests.find(interest => interest.user_interest_interest === interestId);
-            const listItem = document.createElement('li');
-            listItem.textContent = interestDescription ? interestDescription.user_interest_interest : 'Unknown Interest';
-            interestList.appendChild(listItem);
+            const paragraph = document.createElement('p');
+            paragraph.textContent = interestDescription ? interestDescription.user_interest_interest : 'Unknown Interest';
+            interestList.appendChild(paragraph);
         });
 
         const userInfoSection = document.getElementById('userInfoSection');
@@ -285,9 +285,7 @@ async function viewUserInfo(username, matchPercentage, matchingInterests) {
                 <br>
 
                 <p><strong>User Interests:</strong></p>
-                <ul>
-                    ${interestList.outerHTML}
-                </ul>
+                ${interestList.outerHTML} <!-- Append the interestList as HTML here -->
 
                 <br><br>
 
@@ -322,4 +320,5 @@ async function viewUserInfo(username, matchPercentage, matchingInterests) {
         alert('Error fetching user info.');
     }
 }
+
 
