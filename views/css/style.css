@@ -939,6 +939,19 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     width: 2.5rem;
 }
 
+.interest-info-view {
+    align-items: center;
+    display: flex;
+    margin-left: -0.5rem;
+    font-size: 14px;
+}
+
+.interests-info-list {
+    width: 2.5rem;
+}
+
+
+
 /* /////////////////////////////////////////////////////////////////////////// */
 /* SPECIFIC MATCH */
 
@@ -951,6 +964,7 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
     align-items: center;
     text-align: center;
     margin-bottom: 0.5rem;
+    margin-top: -1rem;
 }
 
 .profilePicture {
@@ -969,8 +983,12 @@ input[type="checkbox"]:checked + .toggleSwitch::before {
 
 .match-overlay-header {
     background-color: var(--colorBackground);
-    padding: 2rem 2rem 1rem 1rem;
+    padding: 2.2rem 2rem 1rem 0.5rem;
     box-shadow: 0px 10px 6px rgba(0, 0, 0, 0.2);
+}
+
+.match-overlay-header img {
+    width: 2rem;
 }
 
 .match-overlay-h1 {

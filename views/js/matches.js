@@ -259,12 +259,12 @@ async function viewUserInfo(username, matchPercentage, matchingInterests) {
 
         // Mapping of interestId to icon and title
         const interestMapping = {
-            1: { icon: 'views/img/icons/movie-black.png', title: 'Den Store Bagedyst' },
-            2: { icon: 'views/img/icons/movie-black.png', title: 'Alle mod en' },
-            3: { icon: 'views/img/icons/movie-black.png', title: 'Kender du typen' },
-            4: { icon: 'views/img/icons/eye-black.png', title: 'TVA' },
-            5: { icon: 'views/img/icons/podcast-black.png', title: 'Genstart' },
-            6: { icon: 'views/img/icons/podcast-black.png', title: 'Sara og Monopolet' }
+            1: { icon: 'movie-black.png', title: 'Den Store Bagedyst' },
+            2: { icon: 'movie-black.png', title: 'Alle mod en' },
+            3: { icon: 'movie-black.png', title: 'Kender du typen' },
+            4: { icon: 'eye-black.png', title: 'TVA' },
+            5: { icon: 'podcast-black.png', title: 'Genstart' },
+            6: { icon: 'podcast-black.png', title: 'Sara og Monopolet' }
         };
         
         // Show the matching interests as paragraphs with icons and titles
@@ -274,14 +274,28 @@ async function viewUserInfo(username, matchPercentage, matchingInterests) {
             if (interest) {
                 const interestParagraph = document.createElement('p');
                 const interestIcon = document.createElement('img');
-                interestIcon.src = interest.icon;  // Set the icon image source
+                
+                // Create a container div to wrap both the icon and the paragraph
+                const interestContainer = document.createElement('div');
+                interestContainer.classList.add('interest-info-view');  // Adding class to the container
+                
+                // Set the icon properties
+                interestIcon.src = `/img/icons/${interest.icon}`;  // Correct local image path
                 interestIcon.alt = interest.title; // Set the alt text for the image
-
+                interestIcon.classList.add('interests-info-list'); // Add class for the icon
+                
+                // Set the paragraph content
                 interestParagraph.textContent = interest.title; // Display the title of the interest
-                interestParagraph.prepend(interestIcon);  // Add the icon before the title text
-                interestList.appendChild(interestParagraph);
+                
+                // Append the icon and paragraph into the container div
+                interestContainer.appendChild(interestIcon);
+                interestContainer.appendChild(interestParagraph);
+                
+                // Append the container to the interest list
+                interestList.appendChild(interestContainer);
             }
         });
+
 
         const userInfoSection = document.getElementById('userInfoSection');
         if (!userInfoSection) {
@@ -293,7 +307,7 @@ async function viewUserInfo(username, matchPercentage, matchingInterests) {
         // Clear previous content inside the userInfoSection and append the user info along with the chat button
         userInfoSection.innerHTML = `
             <div class="match-overlay-header">
-                <button id="specficMatchClose" class="match-overlay-close"> < </button> <!-- replace with icon-image -->
+                <button id="specficMatchClose" class="match-overlay-close"> <img src="img/icons/leftarrow-black.png" alt="arrow"> </button> <!-- replace with icon-image -->
                 <div class="profileContainer">
                     <img class="profilePicture" src="img/profile.jpg" alt="logo">
                     <h1 class="overlay-h1"> ${user.user_username} </h1>
@@ -346,6 +360,4 @@ async function viewUserInfo(username, matchPercentage, matchingInterests) {
         alert('Error fetching user info.');
     }
 }
-
-
 
