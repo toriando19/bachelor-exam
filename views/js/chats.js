@@ -422,7 +422,7 @@ async function fetchAndDisplayAdminChats() {
         // Check if the chat has messages using the hasMessages function
         const hasMessagesForChat = await hasMessages(chat.id);
 
-        // Set the correct icon based on message availability
+        // Set the correct icon based on message availability (initial state)
         if (hasMessagesForChat) {
           openChatButton.innerHTML = `<img src="img/icons/${iconMapping.active}" alt="chat active">`; // Active icon if there are messages
         } else {
@@ -430,14 +430,16 @@ async function fetchAndDisplayAdminChats() {
         }
 
         // Event listener for when the button is clicked
-        openChatButton.addEventListener('click', () => {
+        openChatButton.addEventListener('click', async () => {
             // Fetch and display messages for the selected chat
             showMessageInput(chat.id, matchedUser.user_id, matchDisplayName);  // Open chat input
-            fetchAndDisplayMessages(chat.id, user_id);  // Fetch messages for this chat
+            await fetchAndDisplayMessages(chat.id, user_id);  // Fetch messages for this chat
             
-            // Set the appropriate icon when chat is opened (active)
-            openChatButton.innerHTML = `<img src="img/icons/${iconMapping.active}" alt="chat active">`;
-
+            // Only set the icon to active if there are messages
+            if (hasMessagesForChat) {
+              openChatButton.innerHTML = `<img src="img/icons/${iconMapping.active}" alt="chat active">`;
+            }
+            
             // Reuse existing code for hiding matchesOverlay
             const matchesOverlay = document.getElementById("matchesOverlay");
             const burgerMenu = document.getElementById("burgerMenu");
@@ -448,7 +450,6 @@ async function fetchAndDisplayAdminChats() {
 
             // Also hide the burger menu if it's open
             burgerMenu.style.display = "none";
-            button.innerHTML = '<img src="img/icons/burger-black.png" alt="Menu">'; // Reset burger menu button text
         });
 
         // Create delete button for the chat
@@ -481,7 +482,6 @@ async function fetchAndDisplayAdminChats() {
     console.error(error.message);
   }
 }
-
 
 const deleteChat = async (chatId) => {
   try {

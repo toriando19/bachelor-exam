@@ -222,7 +222,7 @@ async function createChat(chat_user_1_id, chat_user_2_id) {
         }
     } catch (error) {
         console.error('Error creating chat:', error);
-        alert('Error creating chat');
+        // alert('Error creating chat');
     }
 }
 
